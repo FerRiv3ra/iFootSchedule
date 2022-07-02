@@ -1,0 +1,8 @@
+{
+  "name": "WorldCup",
+  "displayName": "WorldCup",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-3087410415589963~7233456098",
+    "ios_app_id": "ca-app-pub-3940256099942544~1458002511"
+  }
+}
