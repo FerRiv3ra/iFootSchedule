@@ -36,8 +36,6 @@ const Countdown = () => {
   const [minutes, setMinutes] = useState(diffMins);
   const navigation = useNavigation();
 
-  console.log(today);
-
   const timerRef = useRef(diffMins);
 
   useEffect(() => {
@@ -75,7 +73,7 @@ const Countdown = () => {
         <Animatable.View animation="zoomIn" delay={500} duration={3000}>
           <Image
             style={styles.logo}
-            source={require('../assets/logo2cup.png')}
+            source={require('../assets/logoWcup.png')}
           />
         </Animatable.View>
         <View>

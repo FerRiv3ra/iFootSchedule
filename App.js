@@ -36,13 +36,6 @@ mobileAds()
   .then(adapterStatuses => {});
 
 const App = () => {
-  useEffect(() => {
-    const init = async () => {
-      await initDatabase();
-    };
-
-    init();
-  }, []);
   return (
     <AppProvider>
       <NavigationContainer>

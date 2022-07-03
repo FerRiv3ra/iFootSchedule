@@ -7,6 +7,7 @@ import {heightScale, withScale} from '../helper/scale';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faDice, faFutbol} from '@fortawesome/free-solid-svg-icons';
 import {useNavigation} from '@react-navigation/native';
+import moment from 'moment';
 
 const WelcomeScreen = () => {
   const [today, setToday] = useState(null);
@@ -15,8 +16,8 @@ const WelcomeScreen = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    setToday(new Date());
-    setStart(new Date(2022, 10, 21, 0, 0, 0));
+    setToday(moment());
+    setStart(moment([2022, 10, 21, 0, 0, 0]));
   }, []);
 
   const handleMatch = () => {
@@ -43,7 +44,10 @@ const WelcomeScreen = () => {
           easing="ease-out"
           iterationCount="infinite"
           style={styles.containerPet}>
-          <Image style={styles.logoPet} source={require('../assets/pet.png')} />
+          <Image
+            style={styles.logoPet}
+            source={require('../assets/ball2.png')}
+          />
         </Animatable.View>
         <Animatable.View animation={'fadeInRightBig'} delay={1000}>
           <Pressable
@@ -90,8 +94,8 @@ const styles = StyleSheet.create({
     width: withScale(225),
   },
   logoPet: {
-    height: heightScale(200),
-    width: withScale(230),
+    height: heightScale(160),
+    width: withScale(180),
   },
   containerImg: {
     alignSelf: 'center',
