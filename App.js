@@ -11,6 +11,7 @@ import Countdown from './src/screens/Countdown';
 import Playground from './src/screens/Playground';
 import {AppProvider} from './src/context/AppContext';
 import {initDatabase} from './src/config/dbConfig';
+import Match from './src/screens/Match';
 
 const Stack = createStackNavigator();
 
@@ -71,6 +72,15 @@ const App = () => {
               title: 'Playground',
               headerShown: false,
             }}
+          />
+          <Stack.Screen
+            name="Match"
+            component={Match}
+            options={{
+              title: 'Match',
+              headerShown: false,
+            }}
+            initialParams={{match: {}}}
           />
         </Stack.Navigator>
       </NavigationContainer>

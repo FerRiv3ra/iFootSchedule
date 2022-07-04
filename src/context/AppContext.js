@@ -28,8 +28,12 @@ const AppProvider = ({children}) => {
   const getDataTeams = async () => {
     const db = await getDBConnection();
 
-    const resp = await db.executeSql('SELECT * FROM teams;');
-    const resp2 = await db.executeSql('SELECT * FROM teams_p;');
+    const resp = await db.executeSql(
+      'SELECT * FROM teams ORDER BY pts ASC, gd DESC;',
+    );
+    const resp2 = await db.executeSql(
+      'SELECT * FROM teams_p ORDER BY pts ASC, gd DESC;',
+    );
     const resp3 = await db.executeSql('SELECT * FROM matches;');
     const resp4 = await db.executeSql('SELECT * FROM matches_p;');
 
@@ -106,7 +110,7 @@ const AppProvider = ({children}) => {
   const getPendingMatches = async day => {
     const data = matches.filter(match => {
       const date = moment(match.dat).dayOfYear();
-      if (date > day && match.played === 'false') {
+      if (date < day && match.played === 'false') {
         return match;
       }
     });
@@ -123,6 +127,76 @@ const AppProvider = ({children}) => {
     });
 
     setPendingMatches_p(data);
+  };
+
+  const getChampion = () => {
+    const match = matches.filter(match => match.id === 64)[0];
+
+    const {local, goll, penl, visit, golv, penv} = match;
+
+    let champ_name;
+
+    if (goll === golv) {
+      if (penl > penv) {
+        champ_name = local;
+      } else {
+        champ_name = visit;
+      }
+    } else if (goll > golv) {
+      champ_name = local;
+    } else {
+      champ_name = visit;
+    }
+
+    const dataTest = {
+      name: 'QATAR',
+      group: 'A',
+      short_name: 'QAT',
+      p: 0,
+      gf: 0,
+      ga: 0,
+      gd: 0,
+      pts: 0,
+    };
+
+    const champ = teams.filter(team => team.short_name === champ_name);
+
+    return champ.length ? champ : dataTest;
+  };
+
+  const getChampion_p = () => {
+    const match = matches_p.filter(match => match.id === 64)[0];
+
+    const {local, goll, penl, visit, golv, penv} = match;
+
+    let champ_name;
+
+    if (goll === golv) {
+      if (penl > penv) {
+        champ_name = local;
+      } else {
+        champ_name = visit;
+      }
+    } else if (goll > golv) {
+      champ_name = local;
+    } else {
+      champ_name = visit;
+    }
+
+    const dataTest = {
+      name: 'QATAR',
+      group: 'A',
+      short_name: 'QAT',
+      p: 0,
+      gf: 0,
+      ga: 0,
+      gd: 0,
+      pts: 0,
+    };
+
+    const champ = teams_p.filter(team => team.short_name === champ_name);
+
+    return champ.length ? champ : dataTest;
   };
 
   return (
@@ -142,6 +216,8 @@ const AppProvider = ({children}) => {
         getPendingMatches_p,
         pendingMatches,
         pendingMatches_p,
+        getChampion,
+        getChampion_p,
       }}>
       {children}
     </AppContext.Provider>

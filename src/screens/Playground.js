@@ -1,11 +1,24 @@
-import {StyleSheet, Text, View, SafeAreaView, ScrollView} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import useApp from '../hooks/useApp';
 import Table from '../components/Table';
 import NextMatch from '../components/NextMatch';
 import moment from 'moment';
 import MatchesDay from '../components/MatchesDay';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import globalStyles from '../styles/styles';
+import {useNavigation} from '@react-navigation/native';
+import Champion from '../components/Champion';
+import DateChange from '../components/DateChange';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -15,29 +28,74 @@ const adUnitId = __DEV__
 
 const Playground = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-  const {teams_p} = useApp();
-  const today = moment('2022-11-22').dayOfYear();
+  const [today, setToday] = useState(moment('2022-11-21').dayOfYear());
+
+  const [loading, setLoading] = useState(true);
+  const {
+    teams_p,
+    getMatchesToday_p,
+    todayMatches_p,
+    getPendingMatches_p,
+    pendingMatches_p,
+    getNextMatch_p,
+    nextMatch_p,
+  } = useApp();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    setLoading(true);
+    getNextMatch_p();
+    getPendingMatches_p(today);
+    getMatchesToday_p(today);
+    setLoading(false);
+  }, [today]);
+
+  const goBack = () => {
+    navigation.goBack();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
+      <DateChange setToday={setToday} today={today} />
       <ScrollView>
         <ScrollView horizontal={true}>
           {groups.map((group, index) => (
             <Table key={index} teams={teams_p} group={group} />
           ))}
         </ScrollView>
-        <View style={styles.match}>
-          <Text style={styles.titleMatch}>Next Match</Text>
-          <NextMatch />
-        </View>
-        <View style={styles.match}>
-          <Text style={styles.titleMatch}>Today Matches</Text>
-          <MatchesDay day={today} />
-        </View>
-        <View style={styles.match}>
-          <Text style={styles.titleMatch}>Pending Matches</Text>
-          <MatchesDay day={today} pending={true} />
-        </View>
+        {nextMatch_p.id ? (
+          <View style={styles.match}>
+            <Text style={styles.titleMatch}>Next Match</Text>
+            <NextMatch nextMatch_p={nextMatch_p} />
+          </View>
+        ) : (
+          <Champion />
+        )}
+        {loading ? (
+          <ActivityIndicator animating={loading} />
+        ) : (
+          todayMatches_p.length > 0 && (
+            <View style={styles.match}>
+              <Text style={styles.titleMatch}>Today Matches</Text>
+              <MatchesDay todayMatches_p={todayMatches_p} />
+            </View>
+          )
+        )}
+        {loading ? (
+          <ActivityIndicator animating={loading} />
+        ) : (
+          pendingMatches_p.length > 0 && (
+            <View style={styles.match}>
+              <Text style={styles.titleMatch}>Pending Matches</Text>
+              <MatchesDay pendingMatches_p={pendingMatches_p} pending={true} />
+            </View>
+          )
+        )}
+        <Pressable
+          onPress={goBack}
+          style={[globalStyles.button, globalStyles.primary, styles.btn]}>
+          <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>Go Home</Text>
+        </Pressable>
       </ScrollView>
       <View style={styles.ads}>
         <BannerAd
@@ -58,6 +116,13 @@ const styles = StyleSheet.create({
   ads: {
     position: 'absolute',
     bottom: 0,
+  },
+  btn: {
+    marginHorizontal: '3%',
+    marginVertical: '7%',
+    borderBottomRightRadius: 20,
+    borderTopLeftRadius: 20,
+    bottom: 20,
   },
   container: {
     backgroundColor: '#EEE',

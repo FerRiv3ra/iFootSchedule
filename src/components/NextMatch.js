@@ -1,24 +1,43 @@
-import {StyleSheet, Text, View, ActivityIndicator, Image} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import useApp from '../hooks/useApp';
 import SECTIONS from '../helper/selectImg';
 import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
 
-const NextMatch = () => {
+const NextMatch = ({nextMatch_p}) => {
+  const [date, setDate] = useState(moment(nextMatch_p.dat).utcOffset(0));
   const [loading, setLoading] = useState(true);
-  const {getNextMatch_p, nextMatch_p} = useApp();
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     setLoading(true);
-    getNextMatch_p();
+    const getUTC = async () => {
+      const utc = await AsyncStorage.getItem('UTC');
+
+      if (utc) {
+        setDate(moment(nextMatch_p.dat).utcOffset(utc));
+      }
+    };
+
+    getUTC();
     setLoading(false);
   }, []);
 
-  // TODO: Agregar zona horaria a almacenamiento
-  const date = moment(nextMatch_p.dat).utcOffset(0);
+  const handlePress = () => {
+    navigation.navigate('Match', {match: nextMatch_p});
+  };
 
   return (
-    <View>
+    <Pressable onPress={handlePress}>
       {loading ? (
         <ActivityIndicator animating={loading} />
       ) : (
@@ -39,7 +58,7 @@ const NextMatch = () => {
           <Text style={styles.date}>{date.format('lll')}</Text>
         </View>
       )}
-    </View>
+    </Pressable>
   );
 };
 

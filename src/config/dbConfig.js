@@ -32,7 +32,7 @@ const createTableTeams = async db => {
 
 const createTableMatches = async db => {
   const query =
-    'CREATE TABLE IF NOT EXISTS matches(id INTEGER PRIMARY KEY AUTOINCREMENT, local VARCHAR(3), visit VARCHAR(3), played BOOL, dat VARCHAR(20) )';
+    'CREATE TABLE IF NOT EXISTS matches(id INTEGER PRIMARY KEY AUTOINCREMENT, local VARCHAR(3), goll INTEGER, penl INTEGER, visit VARCHAR(3), golv INTEGER, penv INTEGER, played BOOL, dat VARCHAR(20) )';
 
   try {
     await db.executeSql(query);
@@ -56,11 +56,12 @@ const addData = async db => {
 };
 
 const addDataMatches = async db => {
-  let query = 'INSERT INTO matches (local, visit, played, dat) VALUES ';
+  let query =
+    'INSERT INTO matches (local, goll, penl, visit, golv, penv, played, dat) VALUES ';
 
   matchData.forEach(
     match =>
-      (query += `("${match.local}", "${match.visit}", "${match.played}", "${match.date}"),`),
+      (query += `("${match.local}", ${match.goll}, ${match.penl}, "${match.visit}", ${match.golv}, ${match.penv}, "${match.played}", "${match.date}"),`),
   );
 
   query = `${query.slice(0, -1)};`;
@@ -77,7 +78,6 @@ const duplicateTeams = async db => {
 };
 
 const duplicateMatches = async db => {
-  console.log('Here: Matches');
   const query1 =
     'CREATE TABLE IF NOT EXISTS matches_p AS SELECT * FROM matches;';
   const query2 =
