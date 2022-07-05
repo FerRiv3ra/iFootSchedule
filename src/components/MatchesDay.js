@@ -6,6 +6,7 @@ import MatchDay from './MatchDay';
 const MatchesDay = ({
   todayMatches_p = [],
   pendingMatches_p = [],
+  parent,
   pending = false,
 }) => {
   return (
@@ -13,13 +14,13 @@ const MatchesDay = ({
       {pending ? (
         <View>
           {pendingMatches_p.map((match, index) => (
-            <MatchDay key={index} match={match} />
+            <MatchDay key={index} match={match} parent={parent} />
           ))}
         </View>
       ) : (
         <View>
           {todayMatches_p.map((match, index) => (
-            <MatchDay key={index} match={match} />
+            <MatchDay key={index} match={match} parent={parent} />
           ))}
         </View>
       )}

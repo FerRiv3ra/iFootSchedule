@@ -80,7 +80,6 @@ const App = () => {
               title: 'Match',
               headerShown: false,
             }}
-            initialParams={{match: {}}}
           />
         </Stack.Navigator>
       </NavigationContainer>

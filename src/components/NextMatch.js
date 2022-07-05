@@ -12,7 +12,7 @@ import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 
-const NextMatch = ({nextMatch_p}) => {
+const NextMatch = ({nextMatch_p, parent}) => {
   const [date, setDate] = useState(moment(nextMatch_p.dat).utcOffset(0));
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +33,7 @@ const NextMatch = ({nextMatch_p}) => {
   }, []);
 
   const handlePress = () => {
-    navigation.navigate('Match', {match: nextMatch_p});
+    navigation.navigate('Match', {match: nextMatch_p, parent});
   };
 
   return (

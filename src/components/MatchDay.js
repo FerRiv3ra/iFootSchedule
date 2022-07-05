@@ -8,7 +8,7 @@ import globalStyles from '../styles/styles';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const MatchDay = ({match}) => {
+const MatchDay = ({match, parent}) => {
   const [utc, setUtc] = useState('+00:00');
   const {local, visit, dat} = match;
   const navigation = useNavigation();
@@ -26,7 +26,7 @@ const MatchDay = ({match}) => {
   }, []);
 
   return (
-    <Pressable onPress={() => navigation.navigate('Match', {match})}>
+    <Pressable onPress={() => navigation.navigate('Match', {match, parent})}>
       <View style={styles.container}>
         <Text style={styles.text}>{local}</Text>
         <Image style={styles.logoTeam} source={SECTIONS[local]?.file} />

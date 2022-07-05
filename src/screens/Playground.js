@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import useApp from '../hooks/useApp';
 import Table from '../components/Table';
 import NextMatch from '../components/NextMatch';
@@ -16,7 +16,7 @@ import moment from 'moment';
 import MatchesDay from '../components/MatchesDay';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import DateChange from '../components/DateChange';
 
@@ -28,10 +28,12 @@ const adUnitId = __DEV__
 
 const Playground = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+  const parent = 'Playground';
   const [today, setToday] = useState(moment('2022-11-21').dayOfYear());
 
   const [loading, setLoading] = useState(true);
   const {
+    DBLoading,
     teams_p,
     getMatchesToday_p,
     todayMatches_p,
@@ -42,13 +44,15 @@ const Playground = () => {
   } = useApp();
   const navigation = useNavigation();
 
-  useEffect(() => {
+  const focusEffect = useCallback(() => {
     setLoading(true);
     getNextMatch_p();
     getPendingMatches_p(today);
     getMatchesToday_p(today);
     setLoading(false);
-  }, [today]);
+  }, [today, DBLoading]);
+
+  useFocusEffect(focusEffect);
 
   const goBack = () => {
     navigation.goBack();
@@ -66,7 +70,7 @@ const Playground = () => {
         {nextMatch_p.id ? (
           <View style={styles.match}>
             <Text style={styles.titleMatch}>Next Match</Text>
-            <NextMatch nextMatch_p={nextMatch_p} />
+            <NextMatch nextMatch_p={nextMatch_p} parent={parent} />
           </View>
         ) : (
           <Champion />
@@ -77,7 +81,7 @@ const Playground = () => {
           todayMatches_p.length > 0 && (
             <View style={styles.match}>
               <Text style={styles.titleMatch}>Today Matches</Text>
-              <MatchesDay todayMatches_p={todayMatches_p} />
+              <MatchesDay todayMatches_p={todayMatches_p} parent={parent} />
             </View>
           )
         )}
@@ -87,7 +91,11 @@ const Playground = () => {
           pendingMatches_p.length > 0 && (
             <View style={styles.match}>
               <Text style={styles.titleMatch}>Pending Matches</Text>
-              <MatchesDay pendingMatches_p={pendingMatches_p} pending={true} />
+              <MatchesDay
+                pendingMatches_p={pendingMatches_p}
+                parent={parent}
+                pending={true}
+              />
             </View>
           )
         )}

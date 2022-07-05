@@ -9,13 +9,22 @@ import {
 import React, {useEffect, useState} from 'react';
 import globalStyles from '../styles/styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faMinus, faPlus, faSave} from '@fortawesome/free-solid-svg-icons';
+import {
+  faClose,
+  faMinus,
+  faPlus,
+  faSave,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useApp from '../hooks/useApp';
 
 const ModalSettings = ({setModalVisible}) => {
   const [hours, setHours] = useState('');
   const [minutes, setMinutes] = useState('');
   const [plus, setPlus] = useState(true);
+
+  const {restorePlayground} = useApp();
 
   useEffect(() => {
     const getUTC = async () => {
@@ -29,9 +38,6 @@ const ModalSettings = ({setModalVisible}) => {
         }
         if (utc.slice(1, 3) !== '00') {
           setHours(utc.slice(1, 3));
-        }
-
-        if (utc.slice(4, 6) !== '00') {
           setMinutes(utc.slice(4, 6));
         }
       }
@@ -114,6 +120,16 @@ const ModalSettings = ({setModalVisible}) => {
 
     await AsyncStorage.setItem('UTC', utc);
 
+    Alert.alert('Success', 'Time zone saved');
+  };
+
+  const handleDelete = async () => {
+    await restorePlayground();
+
+    Alert.alert('Success', 'Data restored');
+  };
+
+  const handleClose = () => {
     setModalVisible(false);
   };
 
@@ -159,6 +175,32 @@ const ModalSettings = ({setModalVisible}) => {
           />
           <Text style={styles.textStyle}>Save</Text>
         </Pressable>
+
+        <Text style={[styles.modalText, {marginTop: 10}]}>
+          Delete playground data
+        </Text>
+        <Pressable
+          style={[styles.button, globalStyles.primary]}
+          onPress={handleDelete}>
+          <FontAwesomeIcon
+            style={[globalStyles.icon, styles.icon]}
+            size={14}
+            icon={faTrash}
+          />
+          <Text style={styles.textStyle}>Delete</Text>
+        </Pressable>
+      </View>
+      <View>
+        <Pressable
+          style={[styles.button, globalStyles.primary, styles.close]}
+          onPress={handleClose}>
+          <FontAwesomeIcon
+            style={[globalStyles.icon]}
+            size={14}
+            icon={faClose}
+          />
+          <Text>Close</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -194,6 +236,9 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
     flexDirection: 'row',
+  },
+  close: {
+    backgroundColor: '#FFF',
   },
   textStyle: {
     color: 'white',

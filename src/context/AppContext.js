@@ -5,6 +5,7 @@ import {getDBConnection, initDatabase} from '../config/dbConfig';
 const AppContext = createContext();
 
 const AppProvider = ({children}) => {
+  const [DBLoading, setDBLoading] = useState(true);
   const [teams, setTeams] = useState([]);
   const [teams_p, setTeams_p] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -26,6 +27,7 @@ const AppProvider = ({children}) => {
   }, []);
 
   const getDataTeams = async () => {
+    setDBLoading(true);
     const db = await getDBConnection();
 
     const resp = await db.executeSql(
@@ -69,23 +71,24 @@ const AppProvider = ({children}) => {
     setTeams_p(data_p);
     setMatches(dataM);
     setMatches_p(dataM_p);
+    setDBLoading(false);
 
     db.close();
   };
 
-  const getNextMatch = async () => {
+  const getNextMatch = () => {
     const nextM = matches.filter(match => match.played === 'false');
 
     setNextMatch(nextM[0]);
   };
 
-  const getNextMatch_p = async () => {
+  const getNextMatch_p = () => {
     const nextM = matches_p.filter(match => match.played === 'false');
 
     setNextMatch_p(nextM[0]);
   };
 
-  const getMatchesToday = async day => {
+  const getMatchesToday = day => {
     const data = matches.filter(match => {
       const date = moment(match.dat).dayOfYear();
       if (date === day) {
@@ -96,7 +99,7 @@ const AppProvider = ({children}) => {
     setTodayMatches(data);
   };
 
-  const getMatchesToday_p = async day => {
+  const getMatchesToday_p = day => {
     const data = matches_p.filter(match => {
       const date = moment(match.dat).dayOfYear();
       if (date === day) {
@@ -107,7 +110,7 @@ const AppProvider = ({children}) => {
     setTodayMatches_p(data);
   };
 
-  const getPendingMatches = async day => {
+  const getPendingMatches = day => {
     const data = matches.filter(match => {
       const date = moment(match.dat).dayOfYear();
       if (date < day && match.played === 'false') {
@@ -118,7 +121,7 @@ const AppProvider = ({children}) => {
     setPendingMatches(data);
   };
 
-  const getPendingMatches_p = async day => {
+  const getPendingMatches_p = day => {
     const data = matches_p.filter(match => {
       const date = moment(match.dat).dayOfYear();
       if (date < day && match.played === 'false') {
@@ -199,9 +202,84 @@ const AppProvider = ({children}) => {
     return champ.length ? champ : dataTest;
   };
 
+  const saveMatch = async (match, parent) => {
+    const db = await getDBConnection();
+
+    let queryL = 'UPDATE ';
+    let queryV = 'UPDATE ';
+    let queryM = 'UPDATE ';
+    let local;
+    let visit;
+
+    if (parent === 'Playground') {
+      queryM += `matches_p SET goll = ${match.goll}, golv = ${match.golv}, penl = ${match.penl}, penv = ${match.penv}, played = "${match.played}" WHERE id = ${match.id};`;
+      queryL += 'teams_p SET ';
+      queryV += 'teams_p SET ';
+      local = teams_p.filter(team => team.short_name === match.local)[0];
+      visit = teams_p.filter(team => team.short_name === match.visit)[0];
+    } else {
+      queryM += `matches SET goll = ${match.goll}, golv = ${match.golv}, penl = ${match.penl}, penv = ${match.penv}, played = "${match.played}" WHERE id = ${match.id};`;
+      queryL += 'teams SET ';
+      queryV += 'teams SET ';
+      local = teams.filter(team => team.short_name === match.local)[0];
+      visit = teams.filter(team => team.short_name === match.visit)[0];
+    }
+
+    let winner = '';
+    if (match.goll === match.golv) {
+      winner = 'draw';
+    } else if (match.goll > match.golv) {
+      winner = 'local';
+    } else {
+      winner = 'visit';
+    }
+
+    queryL += `p = ${local.p + 1}, gf = ${local.gf + match.goll}, ga = ${
+      local.ga + match.golv
+    }, gd = ${local.gf + match.goll - (local.ga + match.golv)}, pts = ${
+      local.pts + (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0)
+    } WHERE id = ${local.id};`;
+
+    queryV += `p = ${visit.p + 1}, gf = ${visit.gf + match.golv}, ga = ${
+      visit.ga + match.goll
+    }, gd = ${visit.gf + match.golv - (visit.ga + match.goll)}, pts = ${
+      visit.pts + (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0)
+    } WHERE id = ${visit.id};`;
+
+    try {
+      await db.executeSql(queryM);
+      await db.executeSql(queryL);
+      await db.executeSql(queryV);
+      await db.close();
+
+      await getDataTeams();
+    } catch (error) {
+      console.log('SaveMatch' + error.message);
+    }
+  };
+
+  const restorePlayground = async () => {
+    const db = await getDBConnection();
+
+    await db.executeSql('DROP TABLE matches_p;');
+    await db.executeSql('DROP TABLE teams_p;');
+    await db.executeSql(
+      'CREATE TABLE IF NOT EXISTS matches_p AS SELECT * FROM matches_b;',
+    );
+    await db.executeSql(
+      'CREATE TABLE IF NOT EXISTS teams_p AS SELECT * FROM teams_b;',
+    );
+
+    db.close();
+
+    await getDataTeams();
+    getNextMatch_p();
+  };
+
   return (
     <AppContext.Provider
       value={{
+        DBLoading,
         teams,
         teams_p,
         getNextMatch,
@@ -218,6 +296,8 @@ const AppProvider = ({children}) => {
         pendingMatches_p,
         getChampion,
         getChampion_p,
+        saveMatch,
+        restorePlayground,
       }}>
       {children}
     </AppContext.Provider>
