@@ -24,6 +24,7 @@ import SECTIONS from '../helper/selectImg';
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
 import {useNavigation} from '@react-navigation/native';
+import Penalties from '../components/Penalties';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -37,11 +38,15 @@ const Match = ({route}) => {
   const [date, setDate] = useState(moment(match.dat).utcOffset(0));
   const [loading, setLoading] = useState(true);
   const [newGame, setNewGame] = useState(true);
+  const [penalties, setPenalties] = useState(false);
+  const [played, setPlayed] = useState(0);
   const [goll, setGoll] = useState(0);
   const [golv, setGolv] = useState(0);
+  const [penl, setPenl] = useState(0);
+  const [penv, setPenv] = useState(0);
 
   const navigation = useNavigation();
-  const {saveMatch} = useApp();
+  const {saveMatch, matchesPlayed, matchesPlayed_p} = useApp();
 
   useEffect(() => {
     setLoading(true);
@@ -52,6 +57,12 @@ const Match = ({route}) => {
         setDate(moment(match.dat).utcOffset(utc));
       }
     };
+
+    if (parent === 'Playground') {
+      setPlayed(matchesPlayed_p);
+    } else {
+      setPlayed(matchesPlayed);
+    }
 
     if (match.played === 'true') {
       setGoll(match.goll);
@@ -94,13 +105,23 @@ const Match = ({route}) => {
         golv,
         id: match.id,
         local: match.local,
-        penl: match.penl,
-        penv: match.penv,
+        penl,
+        penv,
         played: true,
         visit: match.visit,
       };
 
-      await saveMatch(matchSave, parent);
+      if (
+        matchSave.goll === matchSave.golv &&
+        matchSave.penl === 0 &&
+        matchSave.penv === 0
+      ) {
+        setPenalties(true);
+        return;
+      }
+
+      console.log(matchSave);
+      // await saveMatch(matchSave, parent);
     }
 
     navigation.goBack();
@@ -202,26 +223,37 @@ const Match = ({route}) => {
             </View>
             <Text style={styles.team}>{match.visit}</Text>
           </View>
-          <Pressable
-            onPress={handleSave}
-            disabled={!newGame}
-            style={[
-              globalStyles.button,
-              styles.btn,
-              newGame && globalStyles.primary,
-            ]}>
-            <FontAwesomeIcon
+          {!penalties && (
+            <Pressable
+              onPress={handleSave}
+              disabled={!newGame}
               style={[
-                globalStyles.icon,
-                styles.icon,
-                newGame && styles.primarySave,
-              ]}
-              size={14}
-              icon={faSave}
-            />
-            <Text style={styles.textStyle}>Save</Text>
-          </Pressable>
+                globalStyles.button,
+                styles.btn,
+                newGame && globalStyles.primary,
+              ]}>
+              <FontAwesomeIcon
+                style={[
+                  globalStyles.icon,
+                  styles.icon,
+                  newGame && styles.primarySave,
+                ]}
+                size={14}
+                icon={faSave}
+              />
+              <Text style={styles.textStyle}>
+                {played >= 48 && goll !== golv ? 'Save' : 'End full time'}
+              </Text>
+            </Pressable>
+          )}
         </View>
+      )}
+      {penalties && (
+        <Penalties
+          setPenl={setPenl}
+          setPenv={setPenv}
+          handleSave={handleSave}
+        />
       )}
       <View style={styles.ads}>
         <BannerAd

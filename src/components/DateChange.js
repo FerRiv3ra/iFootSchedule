@@ -4,16 +4,30 @@ import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faMinusCircle, faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
+import useApp from '../hooks/useApp';
 
 const DateChange = ({setCurrentDay, today}) => {
   const date = moment('2022-01-01').add(today - 1, 'days');
 
+  const {matchesPlayed_p} = useApp();
+
   const handleChange = type => {
-    // Max 352
-    // Min 325
+    let limit;
+    if (matchesPlayed_p < 48) {
+      limit = 336;
+    } else if (matchesPlayed_p < 56) {
+      limit = 342;
+    } else if (matchesPlayed_p < 62) {
+      limit = 350;
+    } else if (matchesPlayed_p < 62) {
+      limit = 350;
+    } else {
+      limit = 352;
+    }
+
     const dat = date.dayOfYear();
     if (type === 'add') {
-      if (dat >= 352) {
+      if (dat >= limit) {
         return;
       } else {
         setCurrentDay(today + 1);

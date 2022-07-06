@@ -10,6 +10,8 @@ const AppProvider = ({children}) => {
   const [teams_p, setTeams_p] = useState([]);
   const [matches, setMatches] = useState([]);
   const [matches_p, setMatches_p] = useState([]);
+  const [matchesPlayed, setMatchesPlayed] = useState(0);
+  const [matchesPlayed_p, setMatchesPlayed_p] = useState(0);
   const [nextMatch, setNextMatch] = useState({});
   const [nextMatch_p, setNextMatch_p] = useState({});
   const [todayMatches, setTodayMatches] = useState([]);
@@ -38,6 +40,16 @@ const AppProvider = ({children}) => {
     );
     const resp3 = await db.executeSql('SELECT * FROM matches;');
     const resp4 = await db.executeSql('SELECT * FROM matches_p;');
+
+    const count = await db.executeSql(
+      'SELECT COUNT(*) FROM matches WHERE played = "true";',
+    );
+    const countP = await db.executeSql(
+      'SELECT COUNT(*) FROM matches_p WHERE played = "true";',
+    );
+
+    setMatchesPlayed(count[0].rows.item(0)['COUNT(*)']);
+    setMatchesPlayed_p(countP[0].rows.item(0)['COUNT(*)']);
 
     let data = [];
     resp.forEach(resulSet => {
@@ -74,6 +86,8 @@ const AppProvider = ({children}) => {
     setDBLoading(false);
 
     db.close();
+
+    generateNextMatches_p();
   };
 
   const getNextMatch = () => {
@@ -202,6 +216,7 @@ const AppProvider = ({children}) => {
     return champ.length ? champ : dataTest;
   };
 
+  // TODO: Controlar no suma a partir de octavos
   const saveMatch = async (match, parent) => {
     const db = await getDBConnection();
 
@@ -250,9 +265,12 @@ const AppProvider = ({children}) => {
       await db.executeSql(queryM);
       await db.executeSql(queryL);
       await db.executeSql(queryV);
-      await db.close();
-
       await getDataTeams();
+
+      await generateNextMatches(db);
+      await generateNextMatches_p(db);
+
+      await db.close();
     } catch (error) {
       console.log('SaveMatch' + error.message);
     }
@@ -274,6 +292,46 @@ const AppProvider = ({children}) => {
 
     await getDataTeams();
     getNextMatch_p();
+  };
+
+  const generateNextMatches = async db => {
+    if (matchesPlayed < 48) return;
+
+    if (matchesPlayed === 48) {
+      const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+      groups.forEach(async group => {
+        const groupTeam = teams.filter(team => team.gr === group);
+
+        await db.executeSql(
+          `UPDATE TABLE matches SET local = ${groupTeam[0]} WHERE local = 1${group};`,
+        );
+        await db.executeSql(
+          `UPDATE TABLE matches SET visit = ${groupTeam[1]} WHERE visit = 2${group};`,
+        );
+      });
+    }
+  };
+
+  const generateNextMatches_p = async () => {
+    if (matchesPlayed_p < 48) return;
+
+    const db = await getDBConnection();
+
+    if (matchesPlayed_p === 48) {
+      const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+      groups.forEach(async group => {
+        const groupTeam = teams_p.filter(team => team.gr === group);
+        const query1 = `UPDATE matches_p SET local = '${groupTeam[0].short_name}' WHERE local = '1${group}';`;
+        await db.executeSql(query1);
+        await db.executeSql(
+          `UPDATE matches_p SET visit = '${groupTeam[1].short_name}' WHERE visit = '2${group}';`,
+        );
+      });
+    }
+
+    db.close();
   };
 
   return (
@@ -298,6 +356,8 @@ const AppProvider = ({children}) => {
         getChampion_p,
         saveMatch,
         restorePlayground,
+        matchesPlayed,
+        matchesPlayed_p,
       }}>
       {children}
     </AppContext.Provider>
