@@ -31,10 +31,10 @@ const AppProvider = ({children}) => {
     const db = await getDBConnection();
 
     const resp = await db.executeSql(
-      'SELECT * FROM teams ORDER BY pts ASC, gd DESC;',
+      'SELECT * FROM teams ORDER BY pts DESC, gd DESC;',
     );
     const resp2 = await db.executeSql(
-      'SELECT * FROM teams_p ORDER BY pts ASC, gd DESC;',
+      'SELECT * FROM teams_p ORDER BY pts DESC, gd DESC;',
     );
     const resp3 = await db.executeSql('SELECT * FROM matches;');
     const resp4 = await db.executeSql('SELECT * FROM matches_p;');

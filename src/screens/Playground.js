@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import useApp from '../hooks/useApp';
 import Table from '../components/Table';
 import NextMatch from '../components/NextMatch';
@@ -19,6 +19,7 @@ import globalStyles from '../styles/styles';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import DateChange from '../components/DateChange';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -44,6 +45,18 @@ const Playground = () => {
   } = useApp();
   const navigation = useNavigation();
 
+  useEffect(() => {
+    const getCurrentDay = async () => {
+      const currentDay = await AsyncStorage.getItem('currentDay');
+
+      if (currentDay) {
+        setToday(Number(currentDay));
+      }
+    };
+
+    getCurrentDay();
+  }, []);
+
   const focusEffect = useCallback(() => {
     setLoading(true);
     getNextMatch_p();
@@ -54,13 +67,18 @@ const Playground = () => {
 
   useFocusEffect(focusEffect);
 
+  const setCurrentDay = async day => {
+    await AsyncStorage.setItem('currentDay', day.toString());
+    setToday(day);
+  };
+
   const goBack = () => {
     navigation.goBack();
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <DateChange setToday={setToday} today={today} />
+      <DateChange setCurrentDay={setCurrentDay} today={today} />
       <ScrollView>
         <ScrollView horizontal={true}>
           {groups.map((group, index) => (
@@ -70,7 +88,12 @@ const Playground = () => {
         {nextMatch_p.id ? (
           <View style={styles.match}>
             <Text style={styles.titleMatch}>Next Match</Text>
-            <NextMatch nextMatch_p={nextMatch_p} parent={parent} />
+            <NextMatch
+              nextMatch_p={nextMatch_p}
+              pendingMatches={pendingMatches_p}
+              todayMatches={todayMatches_p}
+              parent={parent}
+            />
           </View>
         ) : (
           <Champion />

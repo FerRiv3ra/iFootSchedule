@@ -204,7 +204,12 @@ const Match = ({route}) => {
           </View>
           <Pressable
             onPress={handleSave}
-            style={[globalStyles.button, globalStyles.primary, styles.btn]}>
+            disabled={!newGame}
+            style={[
+              globalStyles.button,
+              styles.btn,
+              newGame && globalStyles.primary,
+            ]}>
             <FontAwesomeIcon
               style={[
                 globalStyles.icon,
@@ -214,7 +219,7 @@ const Match = ({route}) => {
               size={14}
               icon={faSave}
             />
-            <Text style={styles.textStyle}>{newGame ? 'Save' : 'Go Back'}</Text>
+            <Text style={styles.textStyle}>Save</Text>
           </Pressable>
         </View>
       )}
@@ -247,6 +252,7 @@ const styles = StyleSheet.create({
     marginVertical: '7%',
     borderBottomRightRadius: 20,
     borderTopLeftRadius: 20,
+    backgroundColor: '#EEE',
   },
   container: {
     backgroundColor: '#FFF',

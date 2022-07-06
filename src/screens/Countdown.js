@@ -101,7 +101,7 @@ const Countdown = () => {
               easing="ease-out"
               iterationCount="infinite"
               style={[styles.dayCounter, {marginTop: 15, fontSize: 40}]}>
-              Letf
+              Left
             </Animatable.Text>
           </Animatable.View>
         </View>

@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faMinusCircle, faPlusCircle} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
 
-const DateChange = ({setToday, today}) => {
+const DateChange = ({setCurrentDay, today}) => {
   const date = moment('2022-01-01').add(today - 1, 'days');
 
   const handleChange = type => {
@@ -16,13 +16,13 @@ const DateChange = ({setToday, today}) => {
       if (dat >= 352) {
         return;
       } else {
-        setToday(today + 1);
+        setCurrentDay(today + 1);
       }
     } else {
       if (dat <= 325) {
         return;
       } else {
-        setToday(today - 1);
+        setCurrentDay(today - 1);
       }
     }
   };

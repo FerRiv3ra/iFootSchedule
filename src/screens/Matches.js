@@ -68,7 +68,12 @@ const Matches = () => {
         {nextMatch.id ? (
           <View style={styles.match}>
             <Text style={styles.titleMatch}>Next Match</Text>
-            <NextMatch nextMatch_p={nextMatch} parent={parent} />
+            <NextMatch
+              nextMatch_p={nextMatch}
+              pendingMatches={pendingMatches}
+              todayMatches={todayMatches}
+              parent={parent}
+            />
           </View>
         ) : (
           <Champion />

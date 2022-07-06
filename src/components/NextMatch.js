@@ -5,6 +5,7 @@ import {
   Image,
   Pressable,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
@@ -12,11 +13,12 @@ import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 
-const NextMatch = ({nextMatch_p, parent}) => {
-  const [date, setDate] = useState(moment(nextMatch_p.dat).utcOffset(0));
+const NextMatch = ({nextMatch_p, pendingMatches, todayMatches, parent}) => {
+  const [date, setDate] = useState(moment(nextMatch_p.dat));
   const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
+  const matchSet = [...pendingMatches, ...todayMatches];
 
   useEffect(() => {
     setLoading(true);
@@ -30,10 +32,17 @@ const NextMatch = ({nextMatch_p, parent}) => {
 
     getUTC();
     setLoading(false);
-  }, []);
+  }, [nextMatch_p]);
 
   const handlePress = () => {
-    navigation.navigate('Match', {match: nextMatch_p, parent});
+    if (matchSet.includes(nextMatch_p)) {
+      navigation.navigate('Match', {match: nextMatch_p, parent});
+    } else {
+      Alert.alert(
+        'Information',
+        `this match will be played on ${date.format('lll')}`,
+      );
+    }
   };
 
   return (
