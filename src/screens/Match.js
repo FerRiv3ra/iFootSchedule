@@ -8,8 +8,14 @@ import {
   Pressable,
   Platform,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  BannerAd,
+  BannerAdSize,
+  RewardedAdEventType,
+  RewardedInterstitialAd,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -23,7 +29,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SECTIONS from '../helper/selectImg';
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Penalties from '../components/Penalties';
 
 const adUnitId = __DEV__
@@ -31,6 +37,20 @@ const adUnitId = __DEV__
   : Platform.OS === 'ios'
   ? 'ca-app-pub-3087410415589963~5920374428'
   : 'ca-app-pub-3087410415589963~7233456098';
+
+const adUnitId2 = __DEV__
+  ? TestIds.REWARDED_INTERSTITIAL
+  : Platform.OS === 'ios'
+  ? 'ca-app-pub-3087410415589963~5920374428'
+  : 'ca-app-pub-3087410415589963~7233456098';
+
+const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(
+  adUnitId2,
+  {
+    requestNonPersonalizedAdsOnly: true,
+    keywords: ['sports', 'football', 'world cup'],
+  },
+);
 
 const Match = ({route}) => {
   const {match, parent} = route.params;
@@ -44,6 +64,7 @@ const Match = ({route}) => {
   const [golv, setGolv] = useState(0);
   const [penl, setPenl] = useState(0);
   const [penv, setPenv] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   const navigation = useNavigation();
   const {saveMatch, matchesPlayed, matchesPlayed_p} = useApp();
@@ -74,6 +95,32 @@ const Match = ({route}) => {
     setLoading(false);
   }, []);
 
+  const focusEffect = useCallback(() => {
+    const unsubscribeLoaded = rewardedInterstitial.addAdEventListener(
+      RewardedAdEventType.LOADED,
+      () => {
+        setLoaded(true);
+      },
+    );
+    const unsubscribeEarned = rewardedInterstitial.addAdEventListener(
+      RewardedAdEventType.EARNED_REWARD,
+      reward => {
+        console.log('User earned reward of ', reward);
+      },
+    );
+
+    // Start loading the rewarded interstitial ad straight away
+    rewardedInterstitial.load();
+
+    // Unsubscribe from events on unmount
+    return () => {
+      unsubscribeLoaded();
+      unsubscribeEarned();
+    };
+  }, []);
+
+  useFocusEffect(focusEffect);
+
   const handleLocal = type => {
     if (type === 'add') {
       setGoll(goll + 1);
@@ -98,6 +145,9 @@ const Match = ({route}) => {
   };
 
   const handleSave = async () => {
+    if (loaded) {
+      rewardedInterstitial.show();
+    }
     if (newGame) {
       const matchSave = {
         dat: match.dat,
@@ -112,6 +162,7 @@ const Match = ({route}) => {
       };
 
       if (
+        match.id > 48 &&
         matchSave.goll === matchSave.golv &&
         matchSave.penl === 0 &&
         matchSave.penv === 0
@@ -121,9 +172,9 @@ const Match = ({route}) => {
       }
 
       await saveMatch(matchSave, parent);
-    }
 
-    navigation.goBack();
+      navigation.goBack();
+    }
   };
 
   const handleClose = () => {
@@ -241,7 +292,9 @@ const Match = ({route}) => {
                 icon={faSave}
               />
               <Text style={styles.textStyle}>
-                {played >= 48 && goll !== golv ? 'Save' : 'End full time'}
+                {played < 48 || (played >= 48 && goll) !== golv
+                  ? 'Save'
+                  : 'End full time'}
               </Text>
             </Pressable>
           )}

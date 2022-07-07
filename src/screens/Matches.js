@@ -72,7 +72,7 @@ const Matches = () => {
               {matchesPlayed < 48
                 ? 'Next Match'
                 : matchesPlayed < 56
-                ? 'Round 16'
+                ? 'Round of 16'
                 : matchesPlayed < 60
                 ? 'Quarter Final'
                 : matchesPlayed < 62

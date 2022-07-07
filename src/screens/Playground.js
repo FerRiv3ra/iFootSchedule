@@ -92,7 +92,7 @@ const Playground = () => {
               {matchesPlayed_p < 48
                 ? 'Next Match'
                 : matchesPlayed_p < 56
-                ? 'Round 16'
+                ? 'Round of 16'
                 : matchesPlayed_p < 60
                 ? 'Quarter Final'
                 : matchesPlayed_p < 62

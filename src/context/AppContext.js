@@ -213,7 +213,7 @@ const AppProvider = ({children}) => {
 
     const champ = teams_p.filter(team => team.short_name === champ_name)[0];
 
-    return champ.id ? champ : dataTest;
+    return champ ? champ : dataTest;
   };
 
   const saveMatch = async (match, parent) => {

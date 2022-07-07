@@ -7,6 +7,7 @@ import {
   Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -18,6 +19,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useApp from '../hooks/useApp';
+
+const adUnitId = __DEV__
+  ? TestIds.BANNER
+  : Platform.OS === 'ios'
+  ? 'ca-app-pub-3087410415589963~5920374428'
+  : 'ca-app-pub-3087410415589963~7233456098';
 
 const ModalSettings = ({setModalVisible}) => {
   const [hours, setHours] = useState('');
@@ -124,9 +131,18 @@ const ModalSettings = ({setModalVisible}) => {
   };
 
   const handleDelete = async () => {
-    await restorePlayground();
+    const restore = async () => {
+      await restorePlayground();
 
-    Alert.alert('Success', 'Data restored');
+      await AsyncStorage.setItem('currentDay', '325');
+
+      Alert.alert('Success', 'Data restored');
+    };
+
+    Alert.alert('Confirm', 'Are you sure you want to delete the data?', [
+      {text: 'Cancel'},
+      {text: 'Yes, delete', onPress: () => restore()},
+    ]);
   };
 
   const handleClose = () => {
@@ -202,6 +218,15 @@ const ModalSettings = ({setModalVisible}) => {
           <Text>Close</Text>
         </Pressable>
       </View>
+      <View style={styles.ads}>
+        <BannerAd
+          unitId={adUnitId}
+          size={BannerAdSize.FULL_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </View>
     </View>
   );
 };
@@ -209,6 +234,10 @@ const ModalSettings = ({setModalVisible}) => {
 export default ModalSettings;
 
 const styles = StyleSheet.create({
+  ads: {
+    position: 'absolute',
+    bottom: 0,
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
