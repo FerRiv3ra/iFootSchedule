@@ -2,7 +2,7 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faMinusCircle, faPlusCircle} from '@fortawesome/free-solid-svg-icons';
+import {faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
 
@@ -17,8 +17,6 @@ const DateChange = ({setCurrentDay, today}) => {
       limit = 336;
     } else if (matchesPlayed_p < 56) {
       limit = 342;
-    } else if (matchesPlayed_p < 62) {
-      limit = 350;
     } else if (matchesPlayed_p < 62) {
       limit = 350;
     } else {
@@ -47,7 +45,7 @@ const DateChange = ({setCurrentDay, today}) => {
         <FontAwesomeIcon
           style={[globalStyles.icon, {color: '#5a0024'}]}
           size={18}
-          icon={faMinusCircle}
+          icon={faAngleLeft}
         />
       </Pressable>
       <Text style={styles.date}>{date.format('lll').slice(0, 12)}</Text>
@@ -55,7 +53,7 @@ const DateChange = ({setCurrentDay, today}) => {
         <FontAwesomeIcon
           style={[globalStyles.icon, {color: '#5a0024'}]}
           size={18}
-          icon={faPlusCircle}
+          icon={faAngleRight}
         />
       </Pressable>
     </View>

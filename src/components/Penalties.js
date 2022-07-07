@@ -100,6 +100,7 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Penalties</Text>
       {rounds.map(round => (
         <Penalty key={round.round} handleRounds={handleRounds} round={round} />
       ))}
@@ -148,5 +149,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
     textTransform: 'uppercase',
+  },
+  title: {
+    color: '#5a0024',
+    alignSelf: 'center',
+    fontSize: 18,
+    fontWeight: '700',
   },
 });

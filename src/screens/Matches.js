@@ -40,6 +40,7 @@ const Matches = () => {
     pendingMatches,
     getNextMatch,
     nextMatch,
+    matchesPlayed,
   } = useApp();
   const navigation = useNavigation();
 
@@ -67,7 +68,19 @@ const Matches = () => {
         </ScrollView>
         {nextMatch.id ? (
           <View style={styles.match}>
-            <Text style={styles.titleMatch}>Next Match</Text>
+            <Text style={styles.titleMatch}>
+              {matchesPlayed < 48
+                ? 'Next Match'
+                : matchesPlayed < 56
+                ? 'Round 16'
+                : matchesPlayed < 60
+                ? 'Quarter Final'
+                : matchesPlayed < 62
+                ? 'Semi Final'
+                : matchesPlayed < 63
+                ? 'Third place'
+                : 'Final'}
+            </Text>
             <NextMatch
               nextMatch_p={nextMatch}
               pendingMatches={pendingMatches}
@@ -81,7 +94,8 @@ const Matches = () => {
         {loading ? (
           <ActivityIndicator animating={loading} />
         ) : (
-          todayMatches.length > 0 && (
+          todayMatches.length > 0 &&
+          matchesPlayed < 64 && (
             <View style={styles.match}>
               <Text style={styles.titleMatch}>Today Matches</Text>
               <MatchesDay todayMatches_p={todayMatches} parent={parent} />

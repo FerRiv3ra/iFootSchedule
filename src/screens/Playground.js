@@ -42,6 +42,7 @@ const Playground = () => {
     pendingMatches_p,
     getNextMatch_p,
     nextMatch_p,
+    matchesPlayed_p,
   } = useApp();
   const navigation = useNavigation();
 
@@ -85,9 +86,21 @@ const Playground = () => {
             <Table key={index} teams={teams_p} group={group} />
           ))}
         </ScrollView>
-        {nextMatch_p.id ? (
+        {nextMatch_p && nextMatch_p.id ? (
           <View style={styles.match}>
-            <Text style={styles.titleMatch}>Next Match</Text>
+            <Text style={styles.titleMatch}>
+              {matchesPlayed_p < 48
+                ? 'Next Match'
+                : matchesPlayed_p < 56
+                ? 'Round 16'
+                : matchesPlayed_p < 60
+                ? 'Quarter Final'
+                : matchesPlayed_p < 62
+                ? 'Semi Final'
+                : matchesPlayed_p < 63
+                ? 'Third place'
+                : 'Final'}
+            </Text>
             <NextMatch
               nextMatch_p={nextMatch_p}
               pendingMatches={pendingMatches_p}
@@ -101,7 +114,8 @@ const Playground = () => {
         {loading ? (
           <ActivityIndicator animating={loading} />
         ) : (
-          todayMatches_p.length > 0 && (
+          todayMatches_p.length > 0 &&
+          matchesPlayed_p < 64 && (
             <View style={styles.match}>
               <Text style={styles.titleMatch}>Today Matches</Text>
               <MatchesDay todayMatches_p={todayMatches_p} parent={parent} />

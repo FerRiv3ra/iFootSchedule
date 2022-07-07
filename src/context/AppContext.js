@@ -211,68 +211,132 @@ const AppProvider = ({children}) => {
       pts: 0,
     };
 
-    const champ = teams_p.filter(team => team.short_name === champ_name);
+    const champ = teams_p.filter(team => team.short_name === champ_name)[0];
 
-    return champ.length ? champ : dataTest;
+    return champ.id ? champ : dataTest;
   };
 
-  // TODO: Controlar no suma a partir de octavos
   const saveMatch = async (match, parent) => {
     const db = await getDBConnection();
 
     let queryL = 'UPDATE ';
     let queryV = 'UPDATE ';
     let queryM = 'UPDATE ';
+    let part =
+      match.id <= 48
+        ? 'groups'
+        : match.id <= 56
+        ? 'round16'
+        : match.id <= 60
+        ? 'quarter'
+        : 'semis';
     let local;
     let visit;
 
     if (parent === 'Playground') {
       queryM += `matches_p SET goll = ${match.goll}, golv = ${match.golv}, penl = ${match.penl}, penv = ${match.penv}, played = "${match.played}" WHERE id = ${match.id};`;
-      queryL += 'teams_p SET ';
-      queryV += 'teams_p SET ';
       local = teams_p.filter(team => team.short_name === match.local)[0];
       visit = teams_p.filter(team => team.short_name === match.visit)[0];
+      queryL += part === 'groups' ? 'teams_p SET ' : 'matches_p SET ';
+      queryV += part === 'groups' ? 'teams_p SET ' : 'matches_p SET ';
     } else {
       queryM += `matches SET goll = ${match.goll}, golv = ${match.golv}, penl = ${match.penl}, penv = ${match.penv}, played = "${match.played}" WHERE id = ${match.id};`;
-      queryL += 'teams SET ';
-      queryV += 'teams SET ';
       local = teams.filter(team => team.short_name === match.local)[0];
       visit = teams.filter(team => team.short_name === match.visit)[0];
+      queryL += part === 'groups' ? 'teams SET ' : 'matches SET ';
+      queryV += part === 'groups' ? 'teams SET ' : 'matches SET ';
     }
 
     let winner = '';
-    if (match.goll === match.golv) {
-      winner = 'draw';
-    } else if (match.goll > match.golv) {
-      winner = 'local';
+    let looser = '';
+    if (part === 'groups') {
+      if (match.goll === match.golv) {
+        winner = 'draw';
+      } else if (match.goll > match.golv) {
+        winner = 'local';
+      } else {
+        winner = 'visit';
+      }
     } else {
-      winner = 'visit';
+      if (match.goll + match.penl > match.golv + match.penv) {
+        winner = 'local';
+        looser = 'visit';
+      } else {
+        winner = 'visit';
+        looser = 'local';
+      }
     }
 
-    queryL += `p = ${local.p + 1}, gf = ${local.gf + match.goll}, ga = ${
-      local.ga + match.golv
-    }, gd = ${local.gf + match.goll - (local.ga + match.golv)}, pts = ${
-      local.pts + (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0)
-    } WHERE id = ${local.id};`;
+    if (part === 'groups') {
+      queryL += `p = ${local.p + 1}, gf = ${local.gf + match.goll}, ga = ${
+        local.ga + match.golv
+      }, gd = ${local.gf + match.goll - (local.ga + match.golv)}, pts = ${
+        local.pts + (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0)
+      } WHERE id = ${local.id};`;
 
-    queryV += `p = ${visit.p + 1}, gf = ${visit.gf + match.golv}, ga = ${
-      visit.ga + match.goll
-    }, gd = ${visit.gf + match.golv - (visit.ga + match.goll)}, pts = ${
-      visit.pts + (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0)
-    } WHERE id = ${visit.id};`;
+      queryV += `p = ${visit.p + 1}, gf = ${visit.gf + match.golv}, ga = ${
+        visit.ga + match.goll
+      }, gd = ${visit.gf + match.golv - (visit.ga + match.goll)}, pts = ${
+        visit.pts + (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0)
+      } WHERE id = ${visit.id};`;
+    } else if (part === 'round16') {
+      if (match.id % 2 === 1) {
+        queryL += `local = '${match[winner]}' WHERE local = '8W${
+          match.id - 48
+        }';`;
+        queryV = '';
+      } else {
+        queryL += `visit = '${match[winner]}' WHERE visit = '8W${
+          match.id - 48
+        }';`;
+        queryV = '';
+      }
+    } else if (part === 'quarter') {
+      if (match.id % 2 === 0) {
+        queryL += `local = '${match[winner]}' WHERE local = '4W${
+          match.id - 56
+        }';`;
+        queryV = '';
+      } else {
+        queryL += `visit = '${match[winner]}' WHERE visit = '4W${
+          match.id - 56
+        }';`;
+        queryV = '';
+      }
+    } else if (part === 'semis') {
+      if (match.id % 2 === 1) {
+        queryL += `local = '${match[winner]}' WHERE local = 'SW${
+          match.id - 60
+        }';`;
+        queryV += `local = '${match[looser]}' WHERE local = 'SL${
+          match.id - 60
+        }';`;
+      } else {
+        queryL += `visit = '${match[winner]}' WHERE visit = 'SW${
+          match.id - 60
+        }';`;
+        queryV += `visit = '${match[looser]}' WHERE visit = 'SL${
+          match.id - 60
+        }';`;
+      }
+    }
 
     try {
       await db.executeSql(queryM);
-      await db.executeSql(queryL);
-      await db.executeSql(queryV);
+      if (match.id !== 64) {
+        await db.executeSql(queryL);
+      }
+      if (part === 'groups' || part === 'semis') {
+        await db.executeSql(queryV);
+      }
+      await db.close();
+
       await getDataTeams();
 
-      await generateNextMatches(db);
-      await generateNextMatches_p(db);
-
-      await db.close();
+      await generateNextMatches();
+      await generateNextMatches_p();
     } catch (error) {
-      console.log('SaveMatch' + error.message);
+      console.log('SaveMatch ' + error.message + ' ' + error);
     }
   };
 
@@ -294,8 +358,10 @@ const AppProvider = ({children}) => {
     getNextMatch_p();
   };
 
-  const generateNextMatches = async db => {
+  const generateNextMatches = async () => {
     if (matchesPlayed < 48) return;
+
+    const db = await getDBConnection();
 
     if (matchesPlayed === 48) {
       const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -311,6 +377,8 @@ const AppProvider = ({children}) => {
         );
       });
     }
+
+    db.close();
   };
 
   const generateNextMatches_p = async () => {

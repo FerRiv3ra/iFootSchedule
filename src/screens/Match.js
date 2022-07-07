@@ -120,8 +120,7 @@ const Match = ({route}) => {
         return;
       }
 
-      console.log(matchSave);
-      // await saveMatch(matchSave, parent);
+      await saveMatch(matchSave, parent);
     }
 
     navigation.goBack();
