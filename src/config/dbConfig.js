@@ -15,7 +15,7 @@ const getDBConnection = async () => {
 
     return db;
   } catch (error) {
-    console.log(error);
+    console.log('Get DB connection - ' + error);
   }
 };
 
@@ -37,7 +37,7 @@ const createTableMatches = async db => {
   try {
     await db.executeSql(query);
   } catch (error) {
-    console.log(error);
+    console.log('Create tables team - ' + error);
   }
 };
 

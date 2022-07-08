@@ -87,6 +87,7 @@ const AppProvider = ({children}) => {
 
     db.close();
 
+    generateNextMatches();
     generateNextMatches_p();
   };
 
@@ -176,9 +177,11 @@ const AppProvider = ({children}) => {
       pts: 0,
     };
 
-    const champ = teams.filter(team => team.short_name === champ_name);
+    const champ = teams.filter(team => team.short_name === champ_name)[0];
 
-    return champ.length ? champ : dataTest;
+    console.log(champ);
+
+    return champ ? champ : dataTest;
   };
 
   const getChampion_p = () => {
@@ -216,7 +219,7 @@ const AppProvider = ({children}) => {
     return champ ? champ : dataTest;
   };
 
-  const saveMatch = async (match, parent) => {
+  const saveMatch = async (match, parent, editing = false) => {
     const db = await getDBConnection();
 
     let queryL = 'UPDATE ';
@@ -323,13 +326,16 @@ const AppProvider = ({children}) => {
 
     try {
       await db.executeSql(queryM);
-      if (match.id !== 64) {
-        await db.executeSql(queryL);
+      if (!editing) {
+        if (match.id !== 64) {
+          await db.executeSql(queryL);
+        }
+        if (part === 'groups' || part === 'semis') {
+          await db.executeSql(queryV);
+        }
       }
-      if (part === 'groups' || part === 'semis') {
-        await db.executeSql(queryV);
-      }
-      await db.close();
+
+      db.close();
 
       await getDataTeams();
 
@@ -359,34 +365,25 @@ const AppProvider = ({children}) => {
   };
 
   const generateNextMatches = async () => {
-    if (matchesPlayed < 48) return;
-
-    const db = await getDBConnection();
-
     if (matchesPlayed === 48) {
+      const db = await getDBConnection();
       const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
       groups.forEach(async group => {
         const groupTeam = teams.filter(team => team.gr === group);
-
+        const query1 = `UPDATE matches SET local = '${groupTeam[0].short_name}' WHERE local = '1${group}';`;
+        await db.executeSql(query1);
         await db.executeSql(
-          `UPDATE TABLE matches SET local = ${groupTeam[0]} WHERE local = 1${group};`,
-        );
-        await db.executeSql(
-          `UPDATE TABLE matches SET visit = ${groupTeam[1]} WHERE visit = 2${group};`,
+          `UPDATE matches SET visit = '${groupTeam[1].short_name}' WHERE visit = '2${group}';`,
         );
       });
+      db.close();
     }
-
-    db.close();
   };
 
   const generateNextMatches_p = async () => {
-    if (matchesPlayed_p < 48) return;
-
-    const db = await getDBConnection();
-
     if (matchesPlayed_p === 48) {
+      const db = await getDBConnection();
       const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
       groups.forEach(async group => {
@@ -397,14 +394,15 @@ const AppProvider = ({children}) => {
           `UPDATE matches_p SET visit = '${groupTeam[1].short_name}' WHERE visit = '2${group}';`,
         );
       });
+      db.close();
     }
-
-    db.close();
   };
 
   return (
     <AppContext.Provider
       value={{
+        matches,
+        matches_p,
         DBLoading,
         teams,
         teams_p,

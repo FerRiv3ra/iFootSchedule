@@ -3,10 +3,16 @@ import React, {useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
+import globalStyles from '../styles/styles';
 
-const MatchDay = ({match}) => {
+const MatchDay = ({match, parent, editing}) => {
   const [utc, setUtc] = useState('+00:00');
   const {local, visit, dat} = match;
+
+  const navigator = useNavigation();
 
   useEffect(() => {
     const getUTC = async () => {
@@ -20,18 +26,31 @@ const MatchDay = ({match}) => {
     getUTC();
   }, []);
 
+  const handleEdit = () => {
+    navigator.navigate('Match', {match, parent, editing});
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>{local}</Text>
-      <Image style={styles.logoTeam} source={SECTIONS[local]?.file} />
-      <Text style={styles.hour}>
-        {match.played === 'true'
-          ? `${match.goll} - ${match.golv}`
-          : `${moment(dat).utcOffset(utc).hours()}:00`}
-      </Text>
-      <Image style={styles.logoTeam} source={SECTIONS[visit]?.file} />
-      <Text style={styles.text}>{visit}</Text>
-    </View>
+    <Pressable disabled={!editing} onPress={handleEdit}>
+      <View style={styles.container}>
+        <Text style={styles.text}>{local}</Text>
+        <Image style={styles.logoTeam} source={SECTIONS[local]?.file} />
+        <Text style={styles.hour}>
+          {match.played === 'true'
+            ? `${match.goll} - ${match.golv}`
+            : `${moment(dat).utcOffset(utc).hours()}:00`}
+        </Text>
+        <Image style={styles.logoTeam} source={SECTIONS[visit]?.file} />
+        <Text style={styles.text}>{visit}</Text>
+        {editing && (
+          <FontAwesomeIcon
+            style={[globalStyles.icon, styles.icon]}
+            size={18}
+            icon={faAngleRight}
+          />
+        )}
+      </View>
+    </Pressable>
   );
 };
 
@@ -59,7 +78,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   icon: {
-    color: '#000',
+    color: '#555',
     position: 'absolute',
     right: 10,
   },

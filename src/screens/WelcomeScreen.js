@@ -29,7 +29,7 @@ const WelcomeScreen = () => {
         setUtc(utcStg);
       }
     };
-    setToday(moment().utcOffset(utc));
+    setToday(moment('2022-12-10').utcOffset(utc));
     setStart(moment([2022, 10, 21, 0, 0, 0]));
 
     setUTC();
@@ -68,7 +68,7 @@ const WelcomeScreen = () => {
           style={styles.containerPet}>
           <Image
             style={styles.logoPet}
-            source={require('../assets/ball2.png')}
+            source={require('../assets/logoIFS.png')}
           />
         </Animatable.View>
         <Animatable.View animation={'fadeInRightBig'} delay={1000}>
@@ -103,7 +103,7 @@ const WelcomeScreen = () => {
         style={styles.containerImg}>
         <Image
           style={styles.logoView}
-          source={require('../assets/logocup.png')}
+          source={require('../assets/logoTextISF.png')}
         />
       </Animatable.View>
       <Modal
@@ -122,8 +122,8 @@ const WelcomeScreen = () => {
 
 const styles = StyleSheet.create({
   logoView: {
-    height: heightScale(30),
-    width: withScale(225),
+    height: heightScale(28),
+    width: withScale(300),
   },
   logoPet: {
     height: heightScale(160),

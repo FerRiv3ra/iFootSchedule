@@ -53,11 +53,10 @@ const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(
 );
 
 const Match = ({route}) => {
-  const {match, parent} = route.params;
+  const {match, parent, editing} = route.params;
 
   const [date, setDate] = useState(moment(match.dat).utcOffset(0));
   const [loading, setLoading] = useState(true);
-  const [newGame, setNewGame] = useState(true);
   const [penalties, setPenalties] = useState(false);
   const [played, setPlayed] = useState(0);
   const [goll, setGoll] = useState(0);
@@ -67,7 +66,7 @@ const Match = ({route}) => {
   const [loaded, setLoaded] = useState(false);
 
   const navigation = useNavigation();
-  const {saveMatch, matchesPlayed, matchesPlayed_p} = useApp();
+  const {saveMatch, matchesPlayed, matchesPlayed_p, DBLoading} = useApp();
 
   useEffect(() => {
     setLoading(true);
@@ -88,7 +87,6 @@ const Match = ({route}) => {
     if (match.played === 'true') {
       setGoll(match.goll);
       setGolv(match.golv);
-      setNewGame(false);
     }
 
     getUTC();
@@ -117,7 +115,7 @@ const Match = ({route}) => {
       unsubscribeLoaded();
       unsubscribeEarned();
     };
-  }, []);
+  }, [DBLoading]);
 
   useFocusEffect(focusEffect);
 
@@ -145,36 +143,34 @@ const Match = ({route}) => {
   };
 
   const handleSave = async () => {
+    const matchSave = {
+      dat: match.dat,
+      goll,
+      golv,
+      id: match.id,
+      local: match.local,
+      penl,
+      penv,
+      played: true,
+      visit: match.visit,
+    };
+
+    if (
+      match.id > 48 &&
+      matchSave.goll === matchSave.golv &&
+      matchSave.penl === 0 &&
+      matchSave.penv === 0
+    ) {
+      setPenalties(true);
+      return;
+    }
+
     if (loaded) {
       rewardedInterstitial.show();
     }
-    if (newGame) {
-      const matchSave = {
-        dat: match.dat,
-        goll,
-        golv,
-        id: match.id,
-        local: match.local,
-        penl,
-        penv,
-        played: true,
-        visit: match.visit,
-      };
+    await saveMatch(matchSave, parent, editing);
 
-      if (
-        match.id > 48 &&
-        matchSave.goll === matchSave.golv &&
-        matchSave.penl === 0 &&
-        matchSave.penv === 0
-      ) {
-        setPenalties(true);
-        return;
-      }
-
-      await saveMatch(matchSave, parent);
-
-      navigation.goBack();
-    }
+    navigation.goBack();
   };
 
   const handleClose = () => {
@@ -196,7 +192,7 @@ const Match = ({route}) => {
               />
             </Pressable>
           </View>
-          <Text style={styles.title}>Match</Text>
+          <Text style={styles.title}>{editing && 'Editing '}Match</Text>
           <Text style={styles.date}>{date.format('lll')}</Text>
           <View style={styles.match}>
             <Text style={styles.team}>{match.local}</Text>
@@ -206,29 +202,17 @@ const Match = ({route}) => {
                 source={SECTIONS[match.local]?.file}
               />
               <View style={styles.match}>
-                <Pressable
-                  disabled={!newGame}
-                  onPress={() => handleLocal('min')}>
+                <Pressable onPress={() => handleLocal('min')}>
                   <FontAwesomeIcon
-                    style={[
-                      globalStyles.icon,
-                      styles.icon,
-                      newGame && styles.primary,
-                    ]}
+                    style={[globalStyles.icon, styles.icon]}
                     size={18}
                     icon={faMinusCircle}
                   />
                 </Pressable>
                 <Text style={styles.goals}>{goll}</Text>
-                <Pressable
-                  disabled={!newGame}
-                  onPress={() => handleLocal('add')}>
+                <Pressable onPress={() => handleLocal('add')}>
                   <FontAwesomeIcon
-                    style={[
-                      globalStyles.icon,
-                      styles.icon,
-                      newGame && styles.primary,
-                    ]}
+                    style={[globalStyles.icon, styles.icon]}
                     size={18}
                     icon={faPlusCircle}
                   />
@@ -242,29 +226,17 @@ const Match = ({route}) => {
                 source={SECTIONS[match.visit]?.file}
               />
               <View style={styles.match}>
-                <Pressable
-                  disabled={!newGame}
-                  onPress={() => handleVisit('min')}>
+                <Pressable onPress={() => handleVisit('min')}>
                   <FontAwesomeIcon
-                    style={[
-                      globalStyles.icon,
-                      styles.icon,
-                      newGame && styles.primary,
-                    ]}
+                    style={[globalStyles.icon, styles.icon]}
                     size={18}
                     icon={faMinusCircle}
                   />
                 </Pressable>
                 <Text style={styles.goals}>{golv}</Text>
-                <Pressable
-                  disabled={!newGame}
-                  onPress={() => handleVisit('add')}>
+                <Pressable onPress={() => handleVisit('add')}>
                   <FontAwesomeIcon
-                    style={[
-                      globalStyles.icon,
-                      styles.icon,
-                      newGame && styles.primary,
-                    ]}
+                    style={[globalStyles.icon, styles.icon]}
                     size={18}
                     icon={faPlusCircle}
                   />
@@ -276,23 +248,14 @@ const Match = ({route}) => {
           {!penalties && (
             <Pressable
               onPress={handleSave}
-              disabled={!newGame}
-              style={[
-                globalStyles.button,
-                styles.btn,
-                newGame && globalStyles.primary,
-              ]}>
+              style={[globalStyles.button, styles.btn]}>
               <FontAwesomeIcon
-                style={[
-                  globalStyles.icon,
-                  styles.icon,
-                  newGame && styles.primarySave,
-                ]}
+                style={[globalStyles.icon, styles.icon]}
                 size={14}
                 icon={faSave}
               />
               <Text style={styles.textStyle}>
-                {played < 48 || (played >= 48 && goll) !== golv
+                {played < 48 || (played >= 48 && goll !== golv)
                   ? 'Save'
                   : 'End full time'}
               </Text>
@@ -336,7 +299,7 @@ const styles = StyleSheet.create({
     marginVertical: '7%',
     borderBottomRightRadius: 20,
     borderTopLeftRadius: 20,
-    backgroundColor: '#EEE',
+    backgroundColor: '#5a0024',
   },
   container: {
     backgroundColor: '#FFF',
@@ -365,7 +328,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   icon: {
-    color: '#DDD',
+    color: '#5a0024',
     marginHorizontal: 5,
   },
   iconSave: {

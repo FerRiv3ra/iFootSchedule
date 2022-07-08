@@ -36,6 +36,7 @@ const Playground = () => {
   const {
     DBLoading,
     teams_p,
+    getChampion_p,
     getMatchesToday_p,
     todayMatches_p,
     getPendingMatches_p,
@@ -71,6 +72,10 @@ const Playground = () => {
   const setCurrentDay = async day => {
     await AsyncStorage.setItem('currentDay', day.toString());
     setToday(day);
+  };
+
+  const handleMatchesPlayed = () => {
+    navigation.navigate('PlayedMatches', {parent: 'Playground'});
   };
 
   const goBack = () => {
@@ -109,7 +114,7 @@ const Playground = () => {
             />
           </View>
         ) : (
-          <Champion />
+          <Champion getChampion={getChampion_p} />
         )}
         {loading ? (
           <ActivityIndicator animating={loading} />
@@ -118,7 +123,7 @@ const Playground = () => {
           matchesPlayed_p < 64 && (
             <View style={styles.match}>
               <Text style={styles.titleMatch}>Today Matches</Text>
-              <MatchesDay todayMatches_p={todayMatches_p} parent={parent} />
+              <MatchesDay matchData={todayMatches_p} parent={parent} />
             </View>
           )
         )}
@@ -128,13 +133,14 @@ const Playground = () => {
           pendingMatches_p.length > 0 && (
             <View style={styles.match}>
               <Text style={styles.titleMatch}>Pending Matches</Text>
-              <MatchesDay
-                pendingMatches_p={pendingMatches_p}
-                parent={parent}
-                pending={true}
-              />
+              <MatchesDay matchData={pendingMatches_p} parent={parent} />
             </View>
           )
+        )}
+        {matchesPlayed_p > 0 && matchesPlayed_p <= 48 && (
+          <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
+            <Text style={globalStyles.textCenter}>Matches Played</Text>
+          </Pressable>
         )}
         <Pressable
           onPress={goBack}
@@ -178,6 +184,9 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 8,
     borderRadius: 10,
+  },
+  matchesPlayed: {
+    padding: 5,
   },
   titleMatch: {
     textAlign: 'center',

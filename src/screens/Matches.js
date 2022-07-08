@@ -28,7 +28,7 @@ const adUnitId = __DEV__
 const Matches = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const parent = 'Matches';
-  const today = moment().dayOfYear();
+  const today = moment('2022-12-18').dayOfYear();
 
   const [loading, setLoading] = useState(true);
   const {
@@ -40,6 +40,7 @@ const Matches = () => {
     pendingMatches,
     getNextMatch,
     nextMatch,
+    getChampion,
     matchesPlayed,
   } = useApp();
   const navigation = useNavigation();
@@ -54,6 +55,10 @@ const Matches = () => {
 
   useFocusEffect(focusEffect);
 
+  const handleMatchesPlayed = () => {
+    navigation.navigate('PlayedMatches', {parent: 'Matches'});
+  };
+
   const goBack = () => {
     navigation.goBack();
   };
@@ -66,7 +71,7 @@ const Matches = () => {
             <Table key={index} teams={teams} group={group} />
           ))}
         </ScrollView>
-        {nextMatch.id ? (
+        {nextMatch && nextMatch.id ? (
           <View style={styles.match}>
             <Text style={styles.titleMatch}>
               {matchesPlayed < 48
@@ -89,7 +94,7 @@ const Matches = () => {
             />
           </View>
         ) : (
-          <Champion />
+          <Champion getChampion={getChampion} />
         )}
         {loading ? (
           <ActivityIndicator animating={loading} />
@@ -98,7 +103,7 @@ const Matches = () => {
           matchesPlayed < 64 && (
             <View style={styles.match}>
               <Text style={styles.titleMatch}>Today Matches</Text>
-              <MatchesDay todayMatches_p={todayMatches} parent={parent} />
+              <MatchesDay matchData={todayMatches} parent={parent} />
             </View>
           )
         )}
@@ -108,13 +113,14 @@ const Matches = () => {
           pendingMatches.length > 0 && (
             <View style={styles.match}>
               <Text style={styles.titleMatch}>Pending Matches</Text>
-              <MatchesDay
-                pendingMatches_p={pendingMatches}
-                parent={parent}
-                pending={true}
-              />
+              <MatchesDay matchData={pendingMatches} parent={parent} />
             </View>
           )
+        )}
+        {matchesPlayed > 0 && matchesPlayed <= 48 && (
+          <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
+            <Text style={globalStyles.textCenter}>Matches Played</Text>
+          </Pressable>
         )}
         <Pressable
           onPress={goBack}
@@ -158,6 +164,9 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 8,
     borderRadius: 10,
+  },
+  matchesPlayed: {
+    padding: 5,
   },
   titleMatch: {
     textAlign: 'center',

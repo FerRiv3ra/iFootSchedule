@@ -12,6 +12,7 @@ import Playground from './src/screens/Playground';
 import {AppProvider} from './src/context/AppContext';
 import {initDatabase} from './src/config/dbConfig';
 import Match from './src/screens/Match';
+import PlayedMatches from './src/screens/PlayedMatches';
 
 const Stack = createStackNavigator();
 
@@ -78,6 +79,14 @@ const App = () => {
             component={Match}
             options={{
               title: 'Match',
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="PlayedMatches"
+            component={PlayedMatches}
+            options={{
+              title: 'PlayedMatches',
               headerShown: false,
             }}
           />

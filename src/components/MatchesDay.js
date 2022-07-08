@@ -3,27 +3,19 @@ import React from 'react';
 
 import MatchDay from './MatchDay';
 
-const MatchesDay = ({
-  todayMatches_p = [],
-  pendingMatches_p = [],
-  parent,
-  pending = false,
-}) => {
+const MatchesDay = ({matchData, parent, editing = false}) => {
   return (
     <View>
-      {pending ? (
-        <View>
-          {pendingMatches_p.map((match, index) => (
-            <MatchDay key={index} match={match} parent={parent} />
-          ))}
-        </View>
-      ) : (
-        <View>
-          {todayMatches_p.map((match, index) => (
-            <MatchDay key={index} match={match} parent={parent} />
-          ))}
-        </View>
-      )}
+      <View>
+        {matchData.map((match, index) => (
+          <MatchDay
+            key={index}
+            match={match}
+            parent={parent}
+            editing={editing}
+          />
+        ))}
+      </View>
     </View>
   );
 };

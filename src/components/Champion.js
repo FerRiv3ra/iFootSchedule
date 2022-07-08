@@ -1,18 +1,16 @@
-import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
 import {heightScale, withScale} from '../helper/scale';
-import useApp from '../hooks/useApp';
 import SECTIONS from '../helper/selectImg';
 
-const Champion = () => {
-  const {getChampion_p} = useApp();
+const Champion = ({getChampion}) => {
   const [champion, setChampion] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    setChampion(getChampion_p());
+    setChampion(getChampion());
     setLoading(false);
   }, []);
 
