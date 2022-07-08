@@ -28,7 +28,7 @@ const adUnitId = __DEV__
 const Matches = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const parent = 'Matches';
-  const today = moment('2022-12-18').dayOfYear();
+  const today = moment().dayOfYear();
 
   const [loading, setLoading] = useState(true);
   const {

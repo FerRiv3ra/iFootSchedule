@@ -29,7 +29,7 @@ const WelcomeScreen = () => {
         setUtc(utcStg);
       }
     };
-    setToday(moment('2022-12-10').utcOffset(utc));
+    setToday(moment().utcOffset(utc));
     setStart(moment([2022, 10, 21, 0, 0, 0]));
 
     setUTC();

@@ -5,6 +5,7 @@ import {
   View,
   TextInput,
   Alert,
+  Keyboard,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
@@ -124,6 +125,8 @@ const ModalSettings = ({setModalVisible}) => {
     } else {
       utc += minutes;
     }
+
+    Keyboard.dismiss();
 
     await AsyncStorage.setItem('UTC', utc);
 
