@@ -148,7 +148,7 @@ const Playground = () => {
           <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>Go Home</Text>
         </Pressable>
       </ScrollView>
-      <View style={styles.ads}>
+      <View style={globalStyles.ads}>
         <BannerAd
           unitId={adUnitId}
           size={BannerAdSize.FULL_BANNER}
@@ -164,10 +164,6 @@ const Playground = () => {
 export default Playground;
 
 const styles = StyleSheet.create({
-  ads: {
-    position: 'absolute',
-    bottom: 0,
-  },
   btn: {
     marginHorizontal: '3%',
     marginVertical: '7%',

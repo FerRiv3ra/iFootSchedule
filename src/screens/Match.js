@@ -270,7 +270,7 @@ const Match = ({route}) => {
           handleSave={handleSave}
         />
       )}
-      <View style={styles.ads}>
+      <View style={globalStyles.ads}>
         <BannerAd
           unitId={adUnitId}
           size={BannerAdSize.FULL_BANNER}
@@ -286,10 +286,6 @@ const Match = ({route}) => {
 export default Match;
 
 const styles = StyleSheet.create({
-  ads: {
-    position: 'absolute',
-    bottom: 0,
-  },
   background: {
     backgroundColor: '#EEE',
     flex: 1,

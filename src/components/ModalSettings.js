@@ -221,7 +221,7 @@ const ModalSettings = ({setModalVisible}) => {
           <Text>Close</Text>
         </Pressable>
       </View>
-      <View style={styles.ads}>
+      <View style={globalStyles.ads}>
         <BannerAd
           unitId={adUnitId}
           size={BannerAdSize.FULL_BANNER}
@@ -237,10 +237,6 @@ const ModalSettings = ({setModalVisible}) => {
 export default ModalSettings;
 
 const styles = StyleSheet.create({
-  ads: {
-    position: 'absolute',
-    bottom: 0,
-  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',

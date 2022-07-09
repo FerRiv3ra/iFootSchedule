@@ -103,7 +103,7 @@ const WelcomeScreen = () => {
         style={styles.containerImg}>
         <Image
           style={styles.logoView}
-          source={require('../assets/logoTextISF.png')}
+          source={require('../assets/logoText.png')}
         />
       </Animatable.View>
       <Modal
@@ -122,8 +122,8 @@ const WelcomeScreen = () => {
 
 const styles = StyleSheet.create({
   logoView: {
-    height: heightScale(28),
-    width: withScale(300),
+    height: 82,
+    width: 260,
   },
   logoPet: {
     height: heightScale(160),
@@ -131,7 +131,6 @@ const styles = StyleSheet.create({
   },
   containerImg: {
     alignSelf: 'center',
-    padding: 10,
     position: 'absolute',
     bottom: 30,
   },

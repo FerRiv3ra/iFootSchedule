@@ -113,13 +113,15 @@ const Countdown = () => {
           </Pressable>
         </Animatable.View>
       </SafeAreaView>
-      <BannerAd
-        unitId={adUnitId}
-        size={BannerAdSize.FULL_BANNER}
-        requestOptions={{
-          requestNonPersonalizedAdsOnly: true,
-        }}
-      />
+      <View style={styles.ads}>
+        <BannerAd
+          unitId={adUnitId}
+          size={BannerAdSize.FULL_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -127,6 +129,9 @@ const Countdown = () => {
 export default Countdown;
 
 const styles = StyleSheet.create({
+  ads: {
+    alignItems: 'center',
+  },
   view: {
     flex: 1,
     justifyContent: 'space-between',

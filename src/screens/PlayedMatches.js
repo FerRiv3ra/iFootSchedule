@@ -63,11 +63,11 @@ const PlayedMatches = ({route}) => {
           <Pressable
             onPress={goBack}
             style={[globalStyles.button, globalStyles.primary, styles.btn]}>
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>Go Home</Text>
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>Go Back</Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>
-      <View style={styles.ads}>
+      <View style={globalStyles.ads}>
         <BannerAd
           unitId={adUnitId}
           size={BannerAdSize.FULL_BANNER}
@@ -83,10 +83,6 @@ const PlayedMatches = ({route}) => {
 export default PlayedMatches;
 
 const styles = StyleSheet.create({
-  ads: {
-    position: 'absolute',
-    bottom: 0,
-  },
   btn: {
     marginHorizontal: 5,
     borderBottomRightRadius: 20,

@@ -43,6 +43,11 @@ const globalStyles = StyleSheet.create({
   textCenter: {
     textAlign: 'center',
   },
+  ads: {
+    position: 'absolute',
+    bottom: 0,
+    alignSelf: 'center',
+  },
 });
 
 export default globalStyles;

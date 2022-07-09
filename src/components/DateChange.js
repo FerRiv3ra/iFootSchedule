@@ -42,19 +42,23 @@ const DateChange = ({setCurrentDay, today}) => {
   return (
     <View style={styles.container}>
       <Pressable onPress={() => handleChange('min')}>
-        <FontAwesomeIcon
-          style={[globalStyles.icon, {color: '#5a0024'}]}
-          size={18}
-          icon={faAngleLeft}
-        />
+        <View style={styles.icon}>
+          <FontAwesomeIcon
+            style={[globalStyles.icon, {color: '#5a0024'}]}
+            size={18}
+            icon={faAngleLeft}
+          />
+        </View>
       </Pressable>
       <Text style={styles.date}>{date.format('lll').slice(0, 12)}</Text>
       <Pressable onPress={() => handleChange('add')}>
-        <FontAwesomeIcon
-          style={[globalStyles.icon, {color: '#5a0024'}]}
-          size={18}
-          icon={faAngleRight}
-        />
+        <View style={styles.icon}>
+          <FontAwesomeIcon
+            style={[globalStyles.icon, {color: '#5a0024'}]}
+            size={18}
+            icon={faAngleRight}
+          />
+        </View>
       </Pressable>
     </View>
   );
@@ -74,5 +78,8 @@ const styles = StyleSheet.create({
   date: {
     textTransform: 'uppercase',
     fontWeight: '700',
+  },
+  icon: {
+    padding: 3,
   },
 });
