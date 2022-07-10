@@ -119,7 +119,7 @@ const Matches = () => {
         )}
         {matchesPlayed > 0 && matchesPlayed <= 48 && (
           <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
-            <Text style={globalStyles.textCenter}>Matches Played</Text>
+            <Text style={globalStyles.textCenter}>Edit Matches Played</Text>
           </Pressable>
         )}
         <Pressable

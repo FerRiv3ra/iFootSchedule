@@ -139,7 +139,7 @@ const Playground = () => {
         )}
         {matchesPlayed_p > 0 && matchesPlayed_p <= 48 && (
           <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
-            <Text style={globalStyles.textCenter}>Matches Played</Text>
+            <Text style={globalStyles.textCenter}>Edit Matches Played</Text>
           </Pressable>
         )}
         <Pressable

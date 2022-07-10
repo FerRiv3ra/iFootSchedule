@@ -3,6 +3,8 @@ import React, {useEffect, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from 'react-native-splash-screen';
+
 import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helper/scale';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -20,6 +22,7 @@ const WelcomeScreen = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    SplashScreen.hide();
     const setUTC = async () => {
       const utcStg = await AsyncStorage.getItem('UTC');
 
