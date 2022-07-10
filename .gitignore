@@ -62,3 +62,4 @@ buck-out/
 /ios/Pods/
 /vendor/bundle/
 android/app/debug.keystore
+android/app/iFootSchedule.keystore
