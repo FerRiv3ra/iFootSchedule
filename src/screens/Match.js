@@ -203,19 +203,23 @@ const Match = ({route}) => {
               />
               <View style={styles.match}>
                 <Pressable onPress={() => handleLocal('min')}>
-                  <FontAwesomeIcon
-                    style={[globalStyles.icon, styles.icon]}
-                    size={18}
-                    icon={faMinusCircle}
-                  />
+                  <View style={styles.btnContainer}>
+                    <FontAwesomeIcon
+                      style={[globalStyles.icon, styles.icon]}
+                      size={18}
+                      icon={faMinusCircle}
+                    />
+                  </View>
                 </Pressable>
                 <Text style={styles.goals}>{goll}</Text>
                 <Pressable onPress={() => handleLocal('add')}>
-                  <FontAwesomeIcon
-                    style={[globalStyles.icon, styles.icon]}
-                    size={18}
-                    icon={faPlusCircle}
-                  />
+                  <View style={styles.btnContainer}>
+                    <FontAwesomeIcon
+                      style={[globalStyles.icon, styles.icon]}
+                      size={18}
+                      icon={faPlusCircle}
+                    />
+                  </View>
                 </Pressable>
               </View>
             </View>
@@ -227,19 +231,23 @@ const Match = ({route}) => {
               />
               <View style={styles.match}>
                 <Pressable onPress={() => handleVisit('min')}>
-                  <FontAwesomeIcon
-                    style={[globalStyles.icon, styles.icon]}
-                    size={18}
-                    icon={faMinusCircle}
-                  />
+                  <View style={styles.btnContainer}>
+                    <FontAwesomeIcon
+                      style={[globalStyles.icon, styles.icon]}
+                      size={18}
+                      icon={faMinusCircle}
+                    />
+                  </View>
                 </Pressable>
                 <Text style={styles.goals}>{golv}</Text>
                 <Pressable onPress={() => handleVisit('add')}>
-                  <FontAwesomeIcon
-                    style={[globalStyles.icon, styles.icon]}
-                    size={18}
-                    icon={faPlusCircle}
-                  />
+                  <View style={styles.btnContainer}>
+                    <FontAwesomeIcon
+                      style={[globalStyles.icon, styles.icon]}
+                      size={18}
+                      icon={faPlusCircle}
+                    />
+                  </View>
                 </Pressable>
               </View>
             </View>
@@ -296,6 +304,9 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
     borderTopLeftRadius: 20,
     backgroundColor: '#5a0024',
+  },
+  btnContainer: {
+    padding: 5,
   },
   container: {
     backgroundColor: '#FFF',

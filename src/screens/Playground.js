@@ -166,7 +166,7 @@ export default Playground;
 const styles = StyleSheet.create({
   btn: {
     marginHorizontal: '3%',
-    marginVertical: '7%',
+    marginVertical: 30,
     borderBottomRightRadius: 20,
     borderTopLeftRadius: 20,
     bottom: 20,

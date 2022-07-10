@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     width: 260,
   },
   logoPet: {
-    height: heightScale(160),
+    height: heightScale(170),
     width: withScale(180),
   },
   containerImg: {
