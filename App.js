@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useEffect} from 'react';
+import React from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -10,7 +10,7 @@ import Matches from './src/screens/Matches';
 import Countdown from './src/screens/Countdown';
 import Playground from './src/screens/Playground';
 import {AppProvider} from './src/context/AppContext';
-import {initDatabase} from './src/config/dbConfig';
+
 import Match from './src/screens/Match';
 import PlayedMatches from './src/screens/PlayedMatches';
 

@@ -150,6 +150,21 @@ const AppProvider = ({children}) => {
   const getChampion = () => {
     const match = matches.filter(match => match.id === 64)[0];
 
+    if (!match) {
+      const dataTest = {
+        name: 'QATAR',
+        group: 'A',
+        short_name: 'QAT',
+        p: 0,
+        gf: 0,
+        ga: 0,
+        gd: 0,
+        pts: 0,
+      };
+
+      return dataTest;
+    }
+
     const {local, goll, penl, visit, golv, penv} = match;
 
     let champ_name;
@@ -166,27 +181,29 @@ const AppProvider = ({children}) => {
       champ_name = visit;
     }
 
-    const dataTest = {
-      name: 'QATAR',
-      group: 'A',
-      short_name: 'QAT',
-      p: 0,
-      gf: 0,
-      ga: 0,
-      gd: 0,
-      pts: 0,
-    };
-
     const champ = teams.filter(team => team.short_name === champ_name)[0];
 
-    console.log(champ);
-
-    return champ ? champ : dataTest;
+    return champ;
   };
 
   const getChampion_p = () => {
     const match = matches_p.filter(match => match.id === 64)[0];
 
+    if (!match) {
+      const dataTest = {
+        name: 'QATAR',
+        group: 'A',
+        short_name: 'QAT',
+        p: 0,
+        gf: 0,
+        ga: 0,
+        gd: 0,
+        pts: 0,
+      };
+
+      return dataTest;
+    }
+
     const {local, goll, penl, visit, golv, penv} = match;
 
     let champ_name;
@@ -203,20 +220,9 @@ const AppProvider = ({children}) => {
       champ_name = visit;
     }
 
-    const dataTest = {
-      name: 'QATAR',
-      group: 'A',
-      short_name: 'QAT',
-      p: 0,
-      gf: 0,
-      ga: 0,
-      gd: 0,
-      pts: 0,
-    };
-
     const champ = teams_p.filter(team => team.short_name === champ_name)[0];
 
-    return champ ? champ : dataTest;
+    return champ;
   };
 
   const saveMatch = async (match, parent, editing = false) => {

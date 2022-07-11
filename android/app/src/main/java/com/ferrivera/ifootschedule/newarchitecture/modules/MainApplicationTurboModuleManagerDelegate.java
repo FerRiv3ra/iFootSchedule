@@ -1,4 +1,5 @@
-package com.worldcup.newarchitecture.modules;
+// package com.worldcup.newarchitecture.modules;
+package com.ferrivera.ifootschedule.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

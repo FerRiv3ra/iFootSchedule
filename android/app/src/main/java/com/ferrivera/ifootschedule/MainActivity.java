@@ -1,4 +1,5 @@
-package com.worldcup;
+// package com.worldcup;
+package com.ferrivera.ifootschedule;
 
 import android.os.Bundle;
 
