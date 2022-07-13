@@ -1,6 +1,9 @@
 import moment from 'moment';
+import Realm from 'realm';
 import React, {createContext, useEffect, useState} from 'react';
-import {getDBConnection, initDatabase} from '../config/dbConfig';
+import {quickStart} from '../config/dbConfig';
+import data from '../helper/data';
+import matchData from '../helper/matchData';
 
 const AppContext = createContext();
 
@@ -21,7 +24,7 @@ const AppProvider = ({children}) => {
 
   useEffect(() => {
     const init = async () => {
-      await initDatabase();
+      await quickStart();
       await getDataTeams();
     };
 
@@ -29,83 +32,62 @@ const AppProvider = ({children}) => {
   }, []);
 
   const getDataTeams = async () => {
-    setDBLoading(true);
-    const db = await getDBConnection();
+    try {
+      setDBLoading(true);
+      const realm = await Realm.open({path: 'ifootschedule'});
 
-    const resp = await db.executeSql(
-      'SELECT * FROM teams ORDER BY pts DESC, gd DESC;',
-    );
-    const resp2 = await db.executeSql(
-      'SELECT * FROM teams_p ORDER BY pts DESC, gd DESC;',
-    );
-    const resp3 = await db.executeSql('SELECT * FROM matches;');
-    const resp4 = await db.executeSql('SELECT * FROM matches_p;');
+      const dataTeams = realm.objects('teams');
+      const dataTeamsP = realm.objects('teams_p');
 
-    const count = await db.executeSql(
-      'SELECT COUNT(*) FROM matches WHERE played = "true";',
-    );
-    const countP = await db.executeSql(
-      'SELECT COUNT(*) FROM matches_p WHERE played = "true";',
-    );
+      const dataMatches = realm.objects('matches');
+      const dataMatchesP = realm.objects('matches_p');
 
-    setMatchesPlayed(count[0].rows.item(0)['COUNT(*)']);
-    setMatchesPlayed_p(countP[0].rows.item(0)['COUNT(*)']);
+      const orderTeams = dataTeams.sorted([
+        ['pts', true],
+        ['gd', true],
+      ]);
 
-    let data = [];
-    resp.forEach(resulSet => {
-      for (let i = 0; i < resulSet.rows.length; i++) {
-        data.push(resulSet.rows.item(i));
-      }
-    });
+      const orderTeamsP = dataTeamsP.sorted([
+        ['pts', true],
+        ['gd', true],
+      ]);
 
-    let data_p = [];
-    resp2.forEach(resulSet => {
-      for (let i = 0; i < resulSet.rows.length; i++) {
-        data_p.push(resulSet.rows.item(i));
-      }
-    });
+      const countPlayed = dataMatches.filtered('played = true');
+      const countPlayedP = dataMatchesP.filtered('played = true');
 
-    let dataM = [];
-    resp3.forEach(resulSet => {
-      for (let i = 0; i < resulSet.rows.length; i++) {
-        dataM.push(resulSet.rows.item(i));
-      }
-    });
+      setTeams(JSON.parse(JSON.stringify(orderTeams)));
+      setTeams_p(JSON.parse(JSON.stringify(orderTeamsP)));
+      setMatches(JSON.parse(JSON.stringify(dataMatches)));
+      setMatches_p(JSON.parse(JSON.stringify(dataMatchesP)));
 
-    let dataM_p = [];
-    resp4.forEach(resulSet => {
-      for (let i = 0; i < resulSet.rows.length; i++) {
-        dataM_p.push(resulSet.rows.item(i));
-      }
-    });
+      setMatchesPlayed(countPlayed.length);
+      setMatchesPlayed_p(countPlayedP.length);
 
-    setTeams(data);
-    setTeams_p(data_p);
-    setMatches(dataM);
-    setMatches_p(dataM_p);
-    setDBLoading(false);
+      setDBLoading(false);
 
-    db.close();
-
+      realm.close();
+    } catch (err) {
+      console.error('Failed to open the realm', err.message);
+    }
     generateNextMatches();
     generateNextMatches_p();
   };
 
   const getNextMatch = () => {
-    const nextM = matches.filter(match => match.played === 'false');
+    const nextM = matches.filter(match => match.played === false);
 
     setNextMatch(nextM[0]);
   };
 
   const getNextMatch_p = () => {
-    const nextM = matches_p.filter(match => match.played === 'false');
+    const nextM = matches_p.filter(match => match.played === false);
 
     setNextMatch_p(nextM[0]);
   };
 
   const getMatchesToday = day => {
     const data = matches.filter(match => {
-      const date = moment(match.dat).dayOfYear();
+      const date = moment(match.date).dayOfYear();
       if (date === day) {
         return match;
       }
@@ -116,7 +98,7 @@ const AppProvider = ({children}) => {
 
   const getMatchesToday_p = day => {
     const data = matches_p.filter(match => {
-      const date = moment(match.dat).dayOfYear();
+      const date = moment(match.date).dayOfYear();
       if (date === day) {
         return match;
       }
@@ -127,8 +109,8 @@ const AppProvider = ({children}) => {
 
   const getPendingMatches = day => {
     const data = matches.filter(match => {
-      const date = moment(match.dat).dayOfYear();
-      if (date < day && match.played === 'false') {
+      const date = moment(match.date).dayOfYear();
+      if (date < day && !match.played) {
         return match;
       }
     });
@@ -138,8 +120,8 @@ const AppProvider = ({children}) => {
 
   const getPendingMatches_p = day => {
     const data = matches_p.filter(match => {
-      const date = moment(match.dat).dayOfYear();
-      if (date < day && match.played === 'false') {
+      const date = moment(match.date).dayOfYear();
+      if (date < day && !match.played) {
         return match;
       }
     });
@@ -226,181 +208,291 @@ const AppProvider = ({children}) => {
   };
 
   const saveMatch = async (match, parent, editing = false) => {
-    const db = await getDBConnection();
-
-    let queryL = 'UPDATE ';
-    let queryV = 'UPDATE ';
-    let queryM = 'UPDATE ';
-    let part =
-      match.id <= 48
-        ? 'groups'
-        : match.id <= 56
-        ? 'round16'
-        : match.id <= 60
-        ? 'quarter'
-        : 'semis';
-    let local;
-    let visit;
-
-    if (parent === 'Playground') {
-      queryM += `matches_p SET goll = ${match.goll}, golv = ${match.golv}, penl = ${match.penl}, penv = ${match.penv}, played = "${match.played}" WHERE id = ${match.id};`;
-      local = teams_p.filter(team => team.short_name === match.local)[0];
-      visit = teams_p.filter(team => team.short_name === match.visit)[0];
-      queryL += part === 'groups' ? 'teams_p SET ' : 'matches_p SET ';
-      queryV += part === 'groups' ? 'teams_p SET ' : 'matches_p SET ';
-    } else {
-      queryM += `matches SET goll = ${match.goll}, golv = ${match.golv}, penl = ${match.penl}, penv = ${match.penv}, played = "${match.played}" WHERE id = ${match.id};`;
-      local = teams.filter(team => team.short_name === match.local)[0];
-      visit = teams.filter(team => team.short_name === match.visit)[0];
-      queryL += part === 'groups' ? 'teams SET ' : 'matches SET ';
-      queryV += part === 'groups' ? 'teams SET ' : 'matches SET ';
-    }
-
-    let winner = '';
-    let looser = '';
-    if (part === 'groups') {
-      if (match.goll === match.golv) {
-        winner = 'draw';
-      } else if (match.goll > match.golv) {
-        winner = 'local';
-      } else {
-        winner = 'visit';
-      }
-    } else {
-      if (match.goll + match.penl > match.golv + match.penv) {
-        winner = 'local';
-        looser = 'visit';
-      } else {
-        winner = 'visit';
-        looser = 'local';
-      }
-    }
-
-    if (part === 'groups') {
-      queryL += `p = ${local.p + 1}, gf = ${local.gf + match.goll}, ga = ${
-        local.ga + match.golv
-      }, gd = ${local.gf + match.goll - (local.ga + match.golv)}, pts = ${
-        local.pts + (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0)
-      } WHERE id = ${local.id};`;
-
-      queryV += `p = ${visit.p + 1}, gf = ${visit.gf + match.golv}, ga = ${
-        visit.ga + match.goll
-      }, gd = ${visit.gf + match.golv - (visit.ga + match.goll)}, pts = ${
-        visit.pts + (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0)
-      } WHERE id = ${visit.id};`;
-    } else if (part === 'round16') {
-      if (match.id % 2 === 1) {
-        queryL += `local = '${match[winner]}' WHERE local = '8W${
-          match.id - 48
-        }';`;
-        queryV = '';
-      } else {
-        queryL += `visit = '${match[winner]}' WHERE visit = '8W${
-          match.id - 48
-        }';`;
-        queryV = '';
-      }
-    } else if (part === 'quarter') {
-      if (match.id % 2 === 0) {
-        queryL += `local = '${match[winner]}' WHERE local = '4W${
-          match.id - 56
-        }';`;
-        queryV = '';
-      } else {
-        queryL += `visit = '${match[winner]}' WHERE visit = '4W${
-          match.id - 56
-        }';`;
-        queryV = '';
-      }
-    } else if (part === 'semis') {
-      if (match.id % 2 === 1) {
-        queryL += `local = '${match[winner]}' WHERE local = 'SW${
-          match.id - 60
-        }';`;
-        queryV += `local = '${match[looser]}' WHERE local = 'SL${
-          match.id - 60
-        }';`;
-      } else {
-        queryL += `visit = '${match[winner]}' WHERE visit = 'SW${
-          match.id - 60
-        }';`;
-        queryV += `visit = '${match[looser]}' WHERE visit = 'SL${
-          match.id - 60
-        }';`;
-      }
-    }
-
     try {
-      await db.executeSql(queryM);
-      if (!editing) {
-        if (match.id !== 64) {
-          await db.executeSql(queryL);
+      const realm = await Realm.open({path: 'ifootschedule'});
+
+      const dataMatch = parent === 'Playground' ? 'matches_p' : 'matches';
+      const dataTeam = parent === 'Playground' ? 'teams_p' : 'teams';
+
+      let currentMatch = {};
+
+      let part =
+        match.id <= 48
+          ? 'groups'
+          : match.id <= 56
+          ? 'round16'
+          : match.id <= 60
+          ? 'quarter'
+          : 'semis';
+      let local = teams.filter(team => team.short_name === match.local)[0];
+      let visit = teams.filter(team => team.short_name === match.visit)[0];
+
+      realm.write(() => {
+        const tempMatch = realm.objectForPrimaryKey(dataMatch, match.id);
+
+        currentMatch.goll = tempMatch.goll.toString();
+        currentMatch.golv = tempMatch.golv.toString();
+
+        tempMatch.goll = match.goll;
+        tempMatch.golv = match.golv;
+        tempMatch.penl = match.penl;
+        tempMatch.penv = match.penv;
+        tempMatch.played = match.played;
+      });
+
+      if (match.id >= 63) {
+        realm.close();
+
+        await getDataTeams();
+
+        await generateNextMatches();
+        await generateNextMatches_p();
+        return;
+      }
+
+      let winner = '';
+      let looser = '';
+      if (part === 'groups') {
+        if (match.goll === match.golv) {
+          winner = 'draw';
+        } else if (match.goll > match.golv) {
+          winner = 'local';
+        } else {
+          winner = 'visit';
         }
-        if (part === 'groups' || part === 'semis') {
-          await db.executeSql(queryV);
+      } else {
+        if (match.goll + match.penl > match.golv + match.penv) {
+          winner = 'local';
+          looser = 'visit';
+        } else {
+          winner = 'visit';
+          looser = 'local';
         }
       }
 
-      db.close();
+      if (editing) {
+        let winEdit =
+          Number(currentMatch.goll) === Number(currentMatch.golv)
+            ? 'draw'
+            : Number(currentMatch.goll) > Number(currentMatch.golv)
+            ? 'local'
+            : 'visit';
+        realm.write(() => {
+          const tempTeamL = realm.objectForPrimaryKey(dataTeam, local.id);
 
+          tempTeamL.gf = tempTeamL.gf - Number(currentMatch.goll) + match.goll;
+          tempTeamL.ga = tempTeamL.ga - Number(currentMatch.golv) + match.golv;
+          tempTeamL.gd = tempTeamL.gf - tempTeamL.ga;
+          tempTeamL.pts =
+            tempTeamL.pts -
+            (winEdit === 'draw' ? 1 : winEdit === 'local' ? 3 : 0) +
+            (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0);
+
+          const tempTeamV = realm.objectForPrimaryKey(dataTeam, visit.id);
+
+          tempTeamV.gf = tempTeamV.gf - Number(currentMatch.golv) + match.golv;
+          tempTeamV.ga = tempTeamV.ga - Number(currentMatch.goll) + match.goll;
+          tempTeamV.gd = tempTeamV.gf - tempTeamV.ga;
+          tempTeamV.pts =
+            tempTeamV.pts -
+            (winEdit === 'draw' ? 1 : winEdit === 'visit' ? 3 : 0) +
+            (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0);
+        });
+
+        realm.close();
+
+        await getDataTeams();
+
+        await generateNextMatches();
+        await generateNextMatches_p();
+        return;
+      } else if (part === 'groups') {
+        realm.write(() => {
+          const tempTeamL = realm.objectForPrimaryKey(dataTeam, local.id);
+
+          tempTeamL.p += 1;
+          tempTeamL.gf += match.goll;
+          tempTeamL.ga += match.golv;
+          tempTeamL.gd = tempTeamL.gf - tempTeamL.ga;
+          tempTeamL.pts += winner === 'draw' ? 1 : winner === 'local' ? 3 : 0;
+
+          const tempTeamV = realm.objectForPrimaryKey(dataTeam, visit.id);
+
+          tempTeamV.p += 1;
+          tempTeamV.gf += match.golv;
+          tempTeamV.ga += match.goll;
+          tempTeamV.gd = tempTeamV.gf - tempTeamV.ga;
+          tempTeamV.pts += winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0;
+        });
+      } else if (part === 'round16') {
+        if (match.id % 2 === 1) {
+          realm.write(() => {
+            const local = realm
+              .objects(dataMatch)
+              .filtered(`local = '8W${match.id - 48}'`)[0];
+            local.local = `${match[winner]}`;
+          });
+        } else {
+          realm.write(() => {
+            const visit = realm
+              .objects(dataMatch)
+              .filtered(`visit = '8W${match.id - 48}'`)[0];
+            visit.visit = `${match[winner]}`;
+          });
+        }
+      } else if (part === 'quarter') {
+        if (match.id % 2 === 0) {
+          realm.write(() => {
+            const local = realm
+              .objects(dataMatch)
+              .filtered(`local = '4W${match.id - 56}'`)[0];
+            local.local = `${match[winner]}`;
+          });
+        } else {
+          realm.write(() => {
+            const visit = realm
+              .objects(dataMatch)
+              .filtered(`visit = '4W${match.id - 56}'`)[0];
+            visit.visit = `${match[winner]}`;
+          });
+        }
+      } else if (part === 'semis') {
+        if (match.id % 2 === 1) {
+          realm.write(() => {
+            const winLocal = realm
+              .objects(dataMatch)
+              .filtered(`local = 'SW${match.id - 60}'`)[0];
+            winLocal.local = `${match[winner]}`;
+
+            const loosLocal = realm
+              .objects(dataMatch)
+              .filtered(`local = 'SL${match.id - 60}'`)[0];
+            loosLocal.local = `${match[looser]}`;
+          });
+        } else {
+          realm.write(() => {
+            const winVisit = realm
+              .objects(dataMatch)
+              .filtered(`visit = 'SW${match.id - 60}'`)[0];
+            winVisit.visit = `${match[winner]}`;
+
+            const loosLocal = realm
+              .objects(dataMatch)
+              .filtered(`visit = 'SL${match.id - 60}'`)[0];
+            loosLocal.visit = `${match[looser]}`;
+          });
+        }
+      }
+
+      realm.close();
       await getDataTeams();
 
       await generateNextMatches();
       await generateNextMatches_p();
-    } catch (error) {
-      console.log('SaveMatch ' + error.message + ' ' + error);
+    } catch (err) {
+      console.error('Failed to open the realm', err.message);
     }
   };
 
   const restorePlayground = async () => {
-    const db = await getDBConnection();
+    try {
+      const realm = await Realm.open({path: 'ifootschedule'});
 
-    await db.executeSql('DROP TABLE matches_p;');
-    await db.executeSql('DROP TABLE teams_p;');
-    await db.executeSql(
-      'CREATE TABLE IF NOT EXISTS matches_p AS SELECT * FROM matches_b;',
-    );
-    await db.executeSql(
-      'CREATE TABLE IF NOT EXISTS teams_p AS SELECT * FROM teams_b;',
-    );
+      realm.write(() => {
+        data.forEach((team, index) => {
+          const tempTeam = realm.objects('teams_p')[index];
+          tempTeam.id = index + 1;
+          tempTeam.name = team.name;
+          tempTeam.group = team.group;
+          tempTeam.short_name = team.short_name;
+          tempTeam.p = 0;
+          tempTeam.gf = 0;
+          tempTeam.ga = 0;
+          tempTeam.gd = 0;
+          tempTeam.pts = 0;
+        });
 
-    db.close();
+        matchData.forEach((match, index) => {
+          const tempMatch = realm.objects('matches_p')[index];
+          tempMatch.id = index + 1;
+          tempMatch.local = match.local;
+          tempMatch.visit = match.visit;
+          tempMatch.date = match.date;
+          tempMatch.goll = 0;
+          tempMatch.penl = 0;
+          tempMatch.golv = 0;
+          tempMatch.penv = 0;
+          tempMatch.played = false;
+        });
+      });
 
+      realm.close();
+    } catch (err) {
+      console.error('Failed to open the realm', err.message);
+    }
     await getDataTeams();
     getNextMatch_p();
   };
 
   const generateNextMatches = async () => {
     if (matchesPlayed === 48) {
-      const db = await getDBConnection();
       const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      try {
+        const realm = await Realm.open({path: 'ifootschedule'});
 
-      groups.forEach(async group => {
-        const groupTeam = teams.filter(team => team.gr === group);
-        const query1 = `UPDATE matches SET local = '${groupTeam[0].short_name}' WHERE local = '1${group}';`;
-        await db.executeSql(query1);
-        await db.executeSql(
-          `UPDATE matches SET visit = '${groupTeam[1].short_name}' WHERE visit = '2${group}';`,
-        );
-      });
-      db.close();
+        groups.forEach(async group => {
+          const groupTeam = teams.filter(team => team.group === group);
+          realm.write(() => {
+            const first = realm
+              .objects('matches')
+              .filtered(`local = '1${group}'`)[0];
+
+            if (!first) return;
+
+            first.local = groupTeam[0].short_name;
+
+            const second = realm
+              .objects('matches')
+              .filtered(`visit = '2${group}'`)[0];
+            second.visit = groupTeam[1].short_name;
+          });
+        });
+
+        realm.close();
+      } catch (err) {
+        console.error('Failed to open the realm', err.message);
+      }
     }
   };
 
   const generateNextMatches_p = async () => {
     if (matchesPlayed_p === 48) {
-      const db = await getDBConnection();
       const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      try {
+        const realm = await Realm.open({path: 'ifootschedule'});
 
-      groups.forEach(async group => {
-        const groupTeam = teams_p.filter(team => team.gr === group);
-        const query1 = `UPDATE matches_p SET local = '${groupTeam[0].short_name}' WHERE local = '1${group}';`;
-        await db.executeSql(query1);
-        await db.executeSql(
-          `UPDATE matches_p SET visit = '${groupTeam[1].short_name}' WHERE visit = '2${group}';`,
-        );
-      });
-      db.close();
+        groups.forEach(async group => {
+          const groupTeam = teams_p.filter(team => team.group === group);
+          realm.write(() => {
+            const first = realm
+              .objects('matches_p')
+              .filtered(`local = '1${group}'`)[0];
+
+            if (!first) return;
+
+            first.local = groupTeam[0].short_name;
+
+            const second = realm
+              .objects('matches_p')
+              .filtered(`visit = '2${group}'`)[0];
+            second.visit = groupTeam[1].short_name;
+          });
+        });
+
+        realm.close();
+      } catch (err) {
+        console.error('Failed to open the realm', err.message);
+      }
     }
   };
 

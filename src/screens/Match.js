@@ -55,7 +55,7 @@ const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(
 const Match = ({route}) => {
   const {match, parent, editing} = route.params;
 
-  const [date, setDate] = useState(moment(match.dat).utcOffset(0));
+  const [date, setDate] = useState(moment(match.date).utcOffset(0));
   const [loading, setLoading] = useState(true);
   const [penalties, setPenalties] = useState(false);
   const [played, setPlayed] = useState(0);
@@ -74,7 +74,7 @@ const Match = ({route}) => {
       const utc = await AsyncStorage.getItem('UTC');
 
       if (utc) {
-        setDate(moment(match.dat).utcOffset(utc));
+        setDate(moment(match.date).utcOffset(utc));
       }
     };
 
@@ -84,7 +84,7 @@ const Match = ({route}) => {
       setPlayed(matchesPlayed);
     }
 
-    if (match.played === 'true') {
+    if (match.played) {
       setGoll(match.goll);
       setGolv(match.golv);
     }
@@ -144,7 +144,7 @@ const Match = ({route}) => {
 
   const handleSave = async () => {
     const matchSave = {
-      dat: match.dat,
+      date: match.date,
       goll,
       golv,
       id: match.id,

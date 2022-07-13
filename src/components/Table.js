@@ -3,7 +3,7 @@ import React from 'react';
 import TableTeam from './TableTeam';
 
 const Table = ({teams, group}) => {
-  const data = teams.filter(team => team.gr === group);
+  const data = teams.filter(team => team.group === group);
 
   return (
     <View style={styles.container}>

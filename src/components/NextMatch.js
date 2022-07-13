@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 
 const NextMatch = ({nextMatch_p, pendingMatches, todayMatches, parent}) => {
-  const [date, setDate] = useState(moment(nextMatch_p.dat));
+  const [date, setDate] = useState(moment(nextMatch_p.date));
   const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
@@ -26,7 +26,7 @@ const NextMatch = ({nextMatch_p, pendingMatches, todayMatches, parent}) => {
       const utc = await AsyncStorage.getItem('UTC');
 
       if (utc) {
-        setDate(moment(nextMatch_p.dat).utcOffset(utc));
+        setDate(moment(nextMatch_p.date).utcOffset(utc));
       }
     };
 

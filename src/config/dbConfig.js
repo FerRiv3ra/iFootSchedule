@@ -1,110 +1,158 @@
-import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
+import Realm from 'realm';
 import data from '../helper/data';
 import matchData from '../helper/matchData';
 
-enablePromise(true);
+// Realm
+const teamsSchemaConstructor = name => ({
+  name,
+  properties: {
+    id: {
+      type: 'int',
+    },
+    name: 'string',
+    group: 'string',
+    short_name: 'string',
+    p: {
+      type: 'int',
+      default: 0,
+    },
+    gf: {
+      type: 'int',
+      default: 0,
+    },
+    ga: {
+      type: 'int',
+      default: 0,
+    },
+    gd: {
+      type: 'int',
+      default: 0,
+    },
+    pts: {
+      type: 'int',
+      default: 0,
+    },
+  },
+  primaryKey: 'id',
+});
 
-const DATABASE_NAME = 'ifootschedule.db';
+const matchesSchemaConstructor = name => ({
+  name,
+  primaryKey: 'id',
+  properties: {
+    id: 'int',
+    local: 'string',
+    goll: {
+      type: 'int',
+      default: 0,
+    },
+    penl: {
+      type: 'int',
+      default: 0,
+    },
+    visit: 'string',
+    golv: {
+      type: 'int',
+      default: 0,
+    },
+    penv: {
+      type: 'int',
+      default: 0,
+    },
+    played: {
+      type: 'bool',
+      default: false,
+    },
+    date: 'string',
+  },
+});
 
-const getDBConnection = async () => {
+const teams = teamsSchemaConstructor('teams');
+const teamsP = teamsSchemaConstructor('teams_p');
+const matches = matchesSchemaConstructor('matches');
+const matchesP = matchesSchemaConstructor('matches_p');
+
+const quickStart = async () => {
   try {
-    const db = await openDatabase({
-      name: DATABASE_NAME,
-      location: 'default',
+    const realm = await Realm.open({
+      path: 'ifootschedule',
+      schema: [teams, teamsP, matches, matchesP],
     });
 
-    return db;
-  } catch (error) {
-    console.log('Get DB connection - ' + error);
+    const dataTeams = realm.objects('teams');
+    const dataMatches = realm.objects('matches');
+
+    // realm.write(() => {
+    //   const pastMatch1 = realm.objectForPrimaryKey('matches_p', 61);
+    //   pastMatch1.played = false;
+    //   const pastMatch2 = realm.objectForPrimaryKey('matches_p', 62);
+    //   pastMatch2.played = false;
+
+    // const dataMatchesP = realm.objectForPrimaryKey('matches_p', 63);
+
+    //   dataMatchesP.local = 'SL1';
+    //   dataMatchesP.goll = 0;
+    //   dataMatchesP.penl = 0;
+    //   dataMatchesP.visit = 'SL2';
+    //   dataMatchesP.golv = 0;
+    //   dataMatchesP.penv = 0;
+    // dataMatchesP.played = false;
+    //   dataMatchesP.date = '2022-12-17T15:00:00+00:00';
+
+    // const dataMatchesP2 = realm.objectForPrimaryKey('matches_p', 64);
+
+    //   dataMatchesP2.local = 'SW1';
+    //   dataMatchesP2.goll = 0;
+    //   dataMatchesP2.penl = 0;
+    //   dataMatchesP2.visit = 'SW2';
+    //   dataMatchesP2.golv = 0;
+    //   dataMatchesP2.penv = 0;
+    // dataMatchesP2.played = false;
+    //   dataMatchesP2.date = '2022-12-18T15:00:00+00:00';
+    // });
+
+    if (!dataTeams.length) {
+      data.forEach((team, index) => {
+        realm.write(() => {
+          realm.create('teams', {
+            id: index + 1,
+            name: team.name,
+            group: team.group,
+            short_name: team.short_name,
+          });
+          realm.create('teams_p', {
+            id: index + 1,
+            name: team.name,
+            group: team.group,
+            short_name: team.short_name,
+          });
+        });
+      });
+    }
+
+    if (!dataMatches.length) {
+      matchData.forEach((match, index) => {
+        realm.write(() => {
+          realm.create('matches', {
+            id: index + 1,
+            local: match.local,
+            visit: match.visit,
+            date: match.date,
+          });
+          realm.create('matches_p', {
+            id: index + 1,
+            local: match.local,
+            visit: match.visit,
+            date: match.date,
+          });
+        });
+      });
+    }
+
+    realm.close();
+  } catch (err) {
+    console.error('Failed to open the realm', err.message);
   }
 };
 
-const createTableTeams = async db => {
-  const query =
-    'CREATE TABLE IF NOT EXISTS teams(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50) NOT NULL UNIQUE, gr VARCHAR(5), short_name VARCHAR(3), p TINYINT, gf TINYINT, ga TINYINT, gd TINYINT, pts TINYINT)';
-
-  try {
-    await db.executeSql(query);
-  } catch (error) {
-    console.log(`Teams - ${error.message}`);
-  }
-};
-
-const createTableMatches = async db => {
-  const query =
-    'CREATE TABLE IF NOT EXISTS matches(id INTEGER PRIMARY KEY AUTOINCREMENT, local VARCHAR(3), goll INTEGER, penl INTEGER, visit VARCHAR(3), golv INTEGER, penv INTEGER, played BOOL, dat VARCHAR(20) )';
-
-  try {
-    await db.executeSql(query);
-  } catch (error) {
-    console.log('Create tables team - ' + error);
-  }
-};
-
-const addData = async db => {
-  let query =
-    'INSERT INTO teams (name, gr, short_name, p, gf, ga, gd, pts) VALUES ';
-
-  data.forEach(
-    team =>
-      (query += `("${team.name}", "${team.group}", "${team.short_name}", ${team.p}, ${team.gf}, ${team.ga}, ${team.gd}, ${team.pts}),`),
-  );
-
-  query = `${query.slice(0, -1)};`;
-
-  await db.executeSql(query);
-};
-
-const addDataMatches = async db => {
-  let query =
-    'INSERT INTO matches (local, goll, penl, visit, golv, penv, played, dat) VALUES ';
-
-  matchData.forEach(
-    match =>
-      (query += `("${match.local}", ${match.goll}, ${match.penl}, "${match.visit}", ${match.golv}, ${match.penv}, "${match.played}", "${match.date}"),`),
-  );
-
-  query = `${query.slice(0, -1)};`;
-
-  await db.executeSql(query);
-};
-
-const duplicateTeams = async db => {
-  const query = 'CREATE TABLE IF NOT EXISTS teams_p AS SELECT * FROM teams;';
-  const query1 = 'CREATE TABLE IF NOT EXISTS teams_b AS SELECT * FROM teams;';
-
-  await db.executeSql(query);
-  await db.executeSql(query1);
-};
-
-const duplicateMatches = async db => {
-  const query1 =
-    'CREATE TABLE IF NOT EXISTS matches_p AS SELECT * FROM matches;';
-  const query2 =
-    'CREATE TABLE IF NOT EXISTS matches_b AS SELECT * FROM matches;';
-
-  await db.executeSql(query1);
-  await db.executeSql(query2);
-};
-
-const initDatabase = async () => {
-  const db = await getDBConnection();
-  await createTableTeams(db);
-  await createTableMatches(db);
-  const res = await db.executeSql('SELECT COUNT(*) FROM teams');
-  const resM = await db.executeSql('SELECT COUNT(*) FROM matches');
-
-  if (res[0].rows.item(0)['COUNT(*)'] === 0) {
-    await addData(db);
-    await duplicateTeams(db);
-  }
-
-  if (resM[0].rows.item(0)['COUNT(*)'] === 0) {
-    await addDataMatches(db);
-    await duplicateMatches(db);
-  }
-
-  db.close();
-};
-
-export {getDBConnection, createTableTeams, createTableMatches, initDatabase};
+export {quickStart};

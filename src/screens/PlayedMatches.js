@@ -30,13 +30,9 @@ const PlayedMatches = ({route}) => {
 
   useEffect(() => {
     if (parent === 'Playground') {
-      setDataMatches(
-        matches_p.filter(match => match.id <= 48 && match.played === 'true'),
-      );
+      setDataMatches(matches_p.filter(match => match.id <= 48 && match.played));
     } else {
-      setDataMatches(
-        matches.filter(match => match.id <= 48 && match.played === 'true'),
-      );
+      setDataMatches(matches.filter(match => match.id <= 48 && match.played));
     }
   }, [DBLoading]);
 

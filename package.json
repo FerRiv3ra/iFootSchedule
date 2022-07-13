@@ -28,7 +28,8 @@
     "react-native-screens": "^3.13.1",
     "react-native-splash-screen": "^3.3.0",
     "react-native-sqlite-storage": "^6.0.1",
-    "react-native-svg": "^12.3.0"
+    "react-native-svg": "^12.3.0",
+    "realm": "^10.19.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

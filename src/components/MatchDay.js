@@ -10,7 +10,7 @@ import globalStyles from '../styles/styles';
 
 const MatchDay = ({match, parent, editing}) => {
   const [utc, setUtc] = useState('+00:00');
-  const {local, visit, dat} = match;
+  const {local, visit, date} = match;
 
   const navigator = useNavigation();
 
@@ -36,9 +36,9 @@ const MatchDay = ({match, parent, editing}) => {
         <Text style={styles.text}>{local}</Text>
         <Image style={styles.logoTeam} source={SECTIONS[local]?.file} />
         <Text style={styles.hour}>
-          {match.played === 'true'
+          {match.played
             ? `${match.goll} - ${match.golv}`
-            : `${moment(dat).utcOffset(utc).hours()}:00`}
+            : `${moment(date).utcOffset(utc).hours()}:00`}
         </Text>
         <Image style={styles.logoTeam} source={SECTIONS[visit]?.file} />
         <Text style={styles.text}>{visit}</Text>
