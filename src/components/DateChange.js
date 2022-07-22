@@ -14,7 +14,7 @@ const DateChange = ({setCurrentDay, today}) => {
   const handleChange = type => {
     let limit;
     if (matchesPlayed_p < 48) {
-      limit = 336;
+      limit = 325 + Math.floor(matchesPlayed_p / 4);
     } else if (matchesPlayed_p < 56) {
       limit = 342;
     } else if (matchesPlayed_p < 62) {

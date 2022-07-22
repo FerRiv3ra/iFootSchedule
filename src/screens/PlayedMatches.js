@@ -54,7 +54,7 @@ const PlayedMatches = ({route}) => {
           </View>
 
           <Text style={styles.info}>
-            * You can edit before playing the first round of 16 match.
+            * You can edit before distributing round of 16.
           </Text>
           <Pressable
             onPress={goBack}

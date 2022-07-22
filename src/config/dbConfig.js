@@ -82,35 +82,6 @@ const quickStart = async () => {
     const dataTeams = realm.objects('teams');
     const dataMatches = realm.objects('matches');
 
-    // realm.write(() => {
-    //   const pastMatch1 = realm.objectForPrimaryKey('matches_p', 61);
-    //   pastMatch1.played = false;
-    //   const pastMatch2 = realm.objectForPrimaryKey('matches_p', 62);
-    //   pastMatch2.played = false;
-
-    // const dataMatchesP = realm.objectForPrimaryKey('matches_p', 63);
-
-    //   dataMatchesP.local = 'SL1';
-    //   dataMatchesP.goll = 0;
-    //   dataMatchesP.penl = 0;
-    //   dataMatchesP.visit = 'SL2';
-    //   dataMatchesP.golv = 0;
-    //   dataMatchesP.penv = 0;
-    // dataMatchesP.played = false;
-    //   dataMatchesP.date = '2022-12-17T15:00:00+00:00';
-
-    // const dataMatchesP2 = realm.objectForPrimaryKey('matches_p', 64);
-
-    //   dataMatchesP2.local = 'SW1';
-    //   dataMatchesP2.goll = 0;
-    //   dataMatchesP2.penl = 0;
-    //   dataMatchesP2.visit = 'SW2';
-    //   dataMatchesP2.golv = 0;
-    //   dataMatchesP2.penv = 0;
-    // dataMatchesP2.played = false;
-    //   dataMatchesP2.date = '2022-12-18T15:00:00+00:00';
-    // });
-
     if (!dataTeams.length) {
       data.forEach((team, index) => {
         realm.write(() => {

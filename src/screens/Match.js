@@ -166,7 +166,7 @@ const Match = ({route}) => {
     }
 
     if (loaded) {
-      rewardedInterstitial.show();
+      // rewardedInterstitial.show();
     }
     await saveMatch(matchSave, parent, editing);
 
