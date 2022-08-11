@@ -20,12 +20,13 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import DateChange from '../components/DateChange';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Knockouts from '../components/Knockouts';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
   : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963~5920374428'
-  : 'ca-app-pub-3087410415589963~7233456098';
+  ? 'ca-app-pub-3087410415589963/6846729662'
+  : 'ca-app-pub-3087410415589963/7165846759';
 
 const Playground = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -44,6 +45,7 @@ const Playground = () => {
     getNextMatch_p,
     nextMatch_p,
     matchesPlayed_p,
+    matches_p,
   } = useApp();
   const navigation = useNavigation();
 
@@ -86,11 +88,26 @@ const Playground = () => {
     <SafeAreaView style={styles.container}>
       <DateChange setCurrentDay={setCurrentDay} today={today} />
       <ScrollView>
-        <ScrollView horizontal={true}>
-          {groups.map((group, index) => (
-            <Table key={index} teams={teams_p} group={group} />
-          ))}
-        </ScrollView>
+        {matchesPlayed_p >= 48 ? (
+          <View style={styles.match}>
+            <Text style={styles.titleMatch}>
+              {matchesPlayed_p < 56
+                ? 'Round of 16'
+                : matchesPlayed_p < 60
+                ? 'Quarter Final'
+                : matchesPlayed_p < 62
+                ? 'Semi Final'
+                : 'Final'}
+            </Text>
+            <Knockouts data={matches_p} matchesPlayed={matchesPlayed_p} />
+          </View>
+        ) : (
+          <ScrollView horizontal={true}>
+            {groups.map((group, index) => (
+              <Table key={index} teams={teams_p} group={group} />
+            ))}
+          </ScrollView>
+        )}
         {nextMatch_p && nextMatch_p.id ? (
           <View style={styles.match}>
             <Text style={styles.titleMatch}>

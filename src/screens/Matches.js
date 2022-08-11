@@ -18,12 +18,13 @@ import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Champion from '../components/Champion';
+import Knockouts from '../components/Knockouts';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
   : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963~5920374428'
-  : 'ca-app-pub-3087410415589963~7233456098';
+  ? 'ca-app-pub-3087410415589963/6846729662'
+  : 'ca-app-pub-3087410415589963/7165846759';
 
 const Matches = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -42,6 +43,7 @@ const Matches = () => {
     nextMatch,
     getChampion,
     matchesPlayed,
+    matches,
   } = useApp();
   const navigation = useNavigation();
 
@@ -66,11 +68,26 @@ const Matches = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <ScrollView horizontal={true}>
-          {groups.map((group, index) => (
-            <Table key={index} teams={teams} group={group} />
-          ))}
-        </ScrollView>
+        {matchesPlayed >= 48 ? (
+          <View style={styles.match}>
+            <Text style={styles.titleMatch}>
+              {matchesPlayed < 56
+                ? 'Round of 16'
+                : matchesPlayed < 60
+                ? 'Quarter Final'
+                : matchesPlayed < 62
+                ? 'Semi Final'
+                : 'Final'}
+            </Text>
+            <Knockouts data={matches} matchesPlayed={matchesPlayed} />
+          </View>
+        ) : (
+          <ScrollView horizontal={true}>
+            {groups.map((group, index) => (
+              <Table key={index} teams={teams} group={group} />
+            ))}
+          </ScrollView>
+        )}
         {nextMatch && nextMatch.id ? (
           <View style={styles.match}>
             <Text style={styles.titleMatch}>

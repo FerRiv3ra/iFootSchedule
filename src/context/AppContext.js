@@ -32,24 +32,6 @@ const AppProvider = ({children}) => {
     init();
   }, []);
 
-  useEffect(() => {
-    const generate = async () => {
-      await generateNextMatches();
-    };
-
-    generate();
-  }, [matchesPlayed]);
-
-  useEffect(() => {
-    const generate = async () => {
-      await generateNextMatches_p();
-    };
-
-    if (matchesPlayed_p === 48) {
-      generate();
-    }
-  }, [matchesPlayed_p]);
-
   const getDataTeams = async () => {
     try {
       setDBLoading(true);
@@ -374,6 +356,12 @@ const AppProvider = ({children}) => {
             visit.visit = `${match[winner]}`;
           });
         }
+
+        realm.close();
+
+        await getDataTeams();
+
+        return;
       }
 
       if (part === 'quarter') {
@@ -527,11 +515,6 @@ const AppProvider = ({children}) => {
               .objects('matches_p')
               .filtered(`local = '1${group}'`)[0];
 
-            if (!first) {
-              realm.close();
-              return;
-            }
-
             first.local = groupTeam[0].short_name;
 
             const second = realm
@@ -543,6 +526,7 @@ const AppProvider = ({children}) => {
 
         realm.close();
         setDistributingRound16(false);
+        await getDataTeams();
       } catch (err) {
         console.error('Generate matches playground ', err.message);
       }
@@ -575,6 +559,8 @@ const AppProvider = ({children}) => {
         restorePlayground,
         matchesPlayed,
         matchesPlayed_p,
+        generateNextMatches,
+        generateNextMatches_p,
       }}>
       {children}
     </AppContext.Provider>

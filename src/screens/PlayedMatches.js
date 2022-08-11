@@ -17,8 +17,8 @@ import {useNavigation} from '@react-navigation/native';
 const adUnitId = __DEV__
   ? TestIds.BANNER
   : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963~5920374428'
-  : 'ca-app-pub-3087410415589963~7233456098';
+  ? 'ca-app-pub-3087410415589963/6846729662'
+  : 'ca-app-pub-3087410415589963/7165846759';
 
 const PlayedMatches = ({route}) => {
   const {parent} = route.params;

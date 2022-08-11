@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -16,9 +16,13 @@ const DateChange = ({setCurrentDay, today}) => {
     if (matchesPlayed_p < 48) {
       limit = 325 + Math.floor(matchesPlayed_p / 4);
     } else if (matchesPlayed_p < 56) {
-      limit = 342;
+      limit = 313 + Math.floor(matchesPlayed_p / 2);
+    } else if (matchesPlayed_p < 60) {
+      limit = 315 + Math.floor(matchesPlayed_p / 2);
     } else if (matchesPlayed_p < 62) {
-      limit = 350;
+      limit = 287 + matchesPlayed_p;
+    } else if (matchesPlayed_p < 63) {
+      limit = 351;
     } else {
       limit = 352;
     }
@@ -26,6 +30,10 @@ const DateChange = ({setCurrentDay, today}) => {
     const dat = date.dayOfYear();
     if (type === 'add') {
       if (dat >= limit) {
+        Alert.alert(
+          'Error',
+          'You will be able to change the day when you have saved all the results of the current day.',
+        );
         return;
       } else {
         setCurrentDay(today + 1);

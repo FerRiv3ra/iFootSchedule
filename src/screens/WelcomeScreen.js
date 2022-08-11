@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet, Pressable, Image, Modal} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,9 +9,10 @@ import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helper/scale';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCog, faDice, faFutbol} from '@fortawesome/free-solid-svg-icons';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import moment from 'moment';
 import ModalSettings from '../components/ModalSettings';
+import useApp from '../hooks/useApp';
 
 const WelcomeScreen = () => {
   const [today, setToday] = useState(null);
@@ -19,6 +20,8 @@ const WelcomeScreen = () => {
   const [utc, setUtc] = useState('+00:00');
   const [modalVisible, setModalVisible] = useState(false);
 
+  const {generateNextMatches, generateNextMatches_p, matchesPlayed_p} =
+    useApp();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -37,6 +40,21 @@ const WelcomeScreen = () => {
 
     setUTC();
   }, []);
+
+  const [, updateState] = useState();
+  const forceUpdate = useCallback(() => updateState({}), []);
+
+  const callback = useCallback(() => {
+    forceUpdate();
+    const generate = async () => {
+      await generateNextMatches();
+      await generateNextMatches_p();
+    };
+
+    generate();
+  }, [matchesPlayed_p]);
+
+  useFocusEffect(callback);
 
   const handleMatch = () => {
     if (today >= start) {

@@ -12,8 +12,8 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
   BannerAd,
   BannerAdSize,
-  RewardedAdEventType,
-  RewardedInterstitialAd,
+  AdEventType,
+  InterstitialAd,
   TestIds,
 } from 'react-native-google-mobile-ads';
 import moment from 'moment';
@@ -29,28 +29,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SECTIONS from '../helper/selectImg';
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  StackActions,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import Penalties from '../components/Penalties';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
   : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963~5920374428'
-  : 'ca-app-pub-3087410415589963~7233456098';
+  ? 'ca-app-pub-3087410415589963/6846729662'
+  : 'ca-app-pub-3087410415589963/7165846759';
 
 const adUnitId2 = __DEV__
-  ? TestIds.REWARDED_INTERSTITIAL
+  ? TestIds.INTERSTITIAL
   : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963~5920374428'
-  : 'ca-app-pub-3087410415589963~7233456098';
+  ? 'ca-app-pub-3087410415589963/6889578805'
+  : 'ca-app-pub-3087410415589963/6150216357';
 
-const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(
-  adUnitId2,
-  {
-    requestNonPersonalizedAdsOnly: true,
-    keywords: ['sports', 'football', 'world cup'],
-  },
-);
+const interstitial = InterstitialAd.createForAdRequest(adUnitId2, {
+  requestNonPersonalizedAdsOnly: true,
+  keywords: ['football', 'world cup', 'sports'],
+});
 
 const Match = ({route}) => {
   const {match, parent, editing} = route.params;
@@ -94,27 +95,18 @@ const Match = ({route}) => {
   }, []);
 
   const focusEffect = useCallback(() => {
-    const unsubscribeLoaded = rewardedInterstitial.addAdEventListener(
-      RewardedAdEventType.LOADED,
+    const unsubscribe = interstitial.addAdEventListener(
+      AdEventType.LOADED,
       () => {
         setLoaded(true);
       },
     );
-    const unsubscribeEarned = rewardedInterstitial.addAdEventListener(
-      RewardedAdEventType.EARNED_REWARD,
-      reward => {
-        console.log('User earned reward of ', reward);
-      },
-    );
 
-    // Start loading the rewarded interstitial ad straight away
-    rewardedInterstitial.load();
+    // Start loading the interstitial straight away
+    interstitial.load();
 
     // Unsubscribe from events on unmount
-    return () => {
-      unsubscribeLoaded();
-      unsubscribeEarned();
-    };
+    return unsubscribe;
   }, [DBLoading]);
 
   useFocusEffect(focusEffect);
@@ -166,11 +158,15 @@ const Match = ({route}) => {
     }
 
     if (loaded) {
-      // rewardedInterstitial.show();
+      interstitial.show();
     }
     await saveMatch(matchSave, parent, editing);
 
-    navigation.goBack();
+    if (match.id === 48) {
+      navigation.dispatch(StackActions.replace('WelcomeScreen'));
+    } else {
+      navigation.goBack();
+    }
   };
 
   const handleClose = () => {
@@ -258,7 +254,7 @@ const Match = ({route}) => {
               onPress={handleSave}
               style={[globalStyles.button, styles.btn]}>
               <FontAwesomeIcon
-                style={[globalStyles.icon, styles.icon]}
+                style={[globalStyles.icon, styles.icon, {color: 'white'}]}
                 size={14}
                 icon={faSave}
               />
