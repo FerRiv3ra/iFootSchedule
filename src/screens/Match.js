@@ -59,6 +59,7 @@ const Match = ({route}) => {
   const [date, setDate] = useState(moment(match.date).utcOffset(0));
   const [loading, setLoading] = useState(true);
   const [penalties, setPenalties] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [played, setPlayed] = useState(0);
   const [goll, setGoll] = useState(0);
   const [golv, setGolv] = useState(0);
@@ -135,6 +136,7 @@ const Match = ({route}) => {
   };
 
   const handleSave = async () => {
+    setSaving(true);
     const matchSave = {
       date: match.date,
       goll,
@@ -154,6 +156,7 @@ const Match = ({route}) => {
       matchSave.penv === 0
     ) {
       setPenalties(true);
+      setSaving(false);
       return;
     }
 
@@ -167,6 +170,7 @@ const Match = ({route}) => {
     } else {
       navigation.goBack();
     }
+    setSaving(false);
   };
 
   const handleClose = () => {
@@ -252,17 +256,27 @@ const Match = ({route}) => {
           {!penalties && (
             <Pressable
               onPress={handleSave}
+              disabled={saving}
               style={[globalStyles.button, styles.btn]}>
-              <FontAwesomeIcon
-                style={[globalStyles.icon, styles.icon, {color: 'white'}]}
-                size={14}
-                icon={faSave}
-              />
-              <Text style={styles.textStyle}>
-                {played < 48 || (played >= 48 && goll !== golv)
-                  ? 'Save'
-                  : 'End full time'}
-              </Text>
+              {saving ? (
+                <ActivityIndicator animating={saving} />
+              ) : (
+                <View style={{flexDirection: 'row'}}>
+                  <FontAwesomeIcon
+                    style={[
+                      globalStyles.icon,
+                      {color: '#FFF', marginHorizontal: 5},
+                    ]}
+                    size={14}
+                    icon={faSave}
+                  />
+                  <Text style={styles.textStyle}>
+                    {played < 48 || editing || (played >= 48 && goll !== golv)
+                      ? 'Save'
+                      : 'End full time'}
+                  </Text>
+                </View>
+              )}
             </Pressable>
           )}
         </View>
