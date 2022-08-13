@@ -20,6 +20,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useApp from '../hooks/useApp';
+import language from '../helper/translate';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -31,8 +32,10 @@ const ModalSettings = ({setModalVisible}) => {
   const [hours, setHours] = useState('');
   const [minutes, setMinutes] = useState('');
   const [plus, setPlus] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [currentLang, setCurrentLang] = useState('');
 
-  const {restorePlayground} = useApp();
+  const {restorePlayground, lang, setLang} = useApp();
 
   useEffect(() => {
     const getUTC = async () => {
@@ -51,24 +54,30 @@ const ModalSettings = ({setModalVisible}) => {
       }
     };
 
+    setCurrentLang(lang);
+
     getUTC();
   }, []);
+
+  const handleLang = select => {
+    setCurrentLang(select);
+  };
 
   const handleSave = async () => {
     let utc = '';
 
     if ((plus && Number(hours) > 14) || (!plus && Number(hours) > 11)) {
-      Alert.alert('Error', 'Valid hours +14 | -11');
+      Alert.alert('Error', language[currentLang].validHours);
       return;
     }
 
     if (!['', '00', '30', '45'].includes(minutes)) {
-      Alert.alert('Error', 'Valid minutes 00 | 30 | 45');
+      Alert.alert('Error', language[currentLang].validMinutes);
       return;
     }
 
     if (!plus && minutes === '45') {
-      Alert.alert('Error', 'Invalid time zone');
+      Alert.alert('Error', language[currentLang].zoneError);
       return;
     }
 
@@ -77,7 +86,7 @@ const ModalSettings = ({setModalVisible}) => {
       minutes === '30' &&
       (Number(hours) !== 3 || Number(hours) !== 9)
     ) {
-      Alert.alert('Error', 'Invalid time zone');
+      Alert.alert('Error', language[currentLang].zoneError);
       return;
     }
 
@@ -87,7 +96,7 @@ const ModalSettings = ({setModalVisible}) => {
       (Number(hours) < 3 || Number(hours) > 6) &&
       (Number(hours) < 9 || Number(hours) > 10)
     ) {
-      Alert.alert('Error', 'Invalid time zone');
+      Alert.alert('Error', language[currentLang].zoneError);
       return;
     }
 
@@ -98,7 +107,7 @@ const ModalSettings = ({setModalVisible}) => {
       Number(hours) !== 8 &&
       Number(hours) !== 12
     ) {
-      Alert.alert('Error', 'Invalid time zone');
+      Alert.alert('Error', language[currentLang].zoneError);
       return;
     }
 
@@ -129,23 +138,38 @@ const ModalSettings = ({setModalVisible}) => {
     Keyboard.dismiss();
 
     await AsyncStorage.setItem('UTC', utc);
+    await AsyncStorage.setItem('lang', currentLang);
 
-    Alert.alert('Success', 'Time zone saved');
+    setLang(currentLang);
+
+    Alert.alert(
+      language[currentLang].success,
+      language[currentLang].zoneLangMgs,
+    );
   };
 
   const handleDelete = async () => {
     const restore = async () => {
+      setLoading(true);
       await restorePlayground();
 
       await AsyncStorage.setItem('currentDay', '325');
 
-      Alert.alert('Success', 'Data restored');
+      setLoading(false);
+      Alert.alert(
+        language[currentLang].success,
+        language[currentLang].successMessage,
+      );
     };
 
-    Alert.alert('Confirm', 'Are you sure you want to delete the data?', [
-      {text: 'Cancel'},
-      {text: 'Yes, delete', onPress: () => restore()},
-    ]);
+    Alert.alert(
+      language[currentLang].confirm,
+      language[currentLang].confirmMessage,
+      [
+        {text: language[currentLang].cancel},
+        {text: language[currentLang].confirmDelete, onPress: () => restore()},
+      ],
+    );
   };
 
   const handleClose = () => {
@@ -155,7 +179,27 @@ const ModalSettings = ({setModalVisible}) => {
   return (
     <View style={styles.centeredView}>
       <View style={styles.modalView}>
-        <Text style={styles.modalText}>Select your time zone</Text>
+        <Text style={styles.modalText}>{language[lang].chooseLang}</Text>
+        <View style={{flexDirection: 'row', marginTop: 5}}>
+          <Pressable
+            style={[
+              styles.button,
+              currentLang === 'EN' ? globalStyles.primary : globalStyles.gray,
+            ]}
+            onPress={() => handleLang('EN')}>
+            <Text style={styles.textStyle}>EN</Text>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.button,
+              currentLang === 'ES' ? globalStyles.primary : globalStyles.gray,
+            ]}
+            onPress={() => handleLang('ES')}>
+            <Text style={styles.textStyle}>ES</Text>
+          </Pressable>
+        </View>
+
+        <Text style={styles.modalText}>{language[lang].zoneTime}</Text>
         <View style={{flexDirection: 'row'}}>
           <Pressable
             style={{alignSelf: 'center'}}
@@ -192,21 +236,22 @@ const ModalSettings = ({setModalVisible}) => {
             size={14}
             icon={faSave}
           />
-          <Text style={styles.textStyle}>Save</Text>
+          <Text style={styles.textStyle}>{language[lang].save}</Text>
         </Pressable>
 
         <Text style={[styles.modalText, {marginTop: 10}]}>
-          Delete playground data
+          {language[lang].deletePlayground}
         </Text>
         <Pressable
           style={[styles.button, globalStyles.primary]}
+          disabled={loading}
           onPress={handleDelete}>
           <FontAwesomeIcon
             style={[globalStyles.icon, styles.icon]}
             size={14}
             icon={faTrash}
           />
-          <Text style={styles.textStyle}>Delete</Text>
+          <Text style={styles.textStyle}>{language[lang].delete}</Text>
         </Pressable>
       </View>
       <View>
@@ -218,7 +263,7 @@ const ModalSettings = ({setModalVisible}) => {
             size={14}
             icon={faClose}
           />
-          <Text>Close</Text>
+          <Text>{language[lang].close}</Text>
         </Pressable>
       </View>
       <View style={globalStyles.ads}>
@@ -263,6 +308,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
+    margin: 5,
     flexDirection: 'row',
   },
   close: {
@@ -274,7 +320,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalText: {
-    marginBottom: 15,
+    marginTop: 15,
     textAlign: 'center',
   },
   input: {

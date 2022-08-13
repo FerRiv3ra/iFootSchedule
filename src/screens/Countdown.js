@@ -16,6 +16,8 @@ import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helper/scale';
 import {useNavigation} from '@react-navigation/native';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import useApp from '../hooks/useApp';
+import language from '../helper/translate';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -35,6 +37,7 @@ const Countdown = () => {
   const [hours, setHours] = useState(diffHours);
   const [minutes, setMinutes] = useState(diffMins);
   const navigation = useNavigation();
+  const {lang} = useApp();
 
   const timerRef = useRef(diffMins);
 
@@ -77,39 +80,52 @@ const Countdown = () => {
           />
         </Animatable.View>
         <View>
+          {lang === 'ES' && (
+            <Animatable.View animation="fadeInUp" delay={2500}>
+              <Animatable.Text
+                animation="pulse"
+                easing="ease-out"
+                iterationCount="infinite"
+                style={[styles.dayCounter, {marginTop: 15, fontSize: 40}]}>
+                Faltan
+              </Animatable.Text>
+            </Animatable.View>
+          )}
           <Animatable.Text
             animation="fadeInUp"
             delay={1000}
             style={styles.dayCounter}>
-            {days} Days
+            {days} {language[lang].days}
           </Animatable.Text>
           <Animatable.Text
             animation="fadeInUp"
             delay={1500}
             style={styles.dayCounter}>
-            {Math.floor(hours)} Hours
+            {Math.floor(hours)} {language[lang].hours}
           </Animatable.Text>
           <Animatable.Text
             animation="fadeInUp"
             delay={2000}
             style={styles.dayCounter}>
-            {Math.round(minutes)} Minutes
+            {Math.round(minutes)} {language[lang].minutes}
           </Animatable.Text>
-          <Animatable.View animation="fadeInUp" delay={2500}>
-            <Animatable.Text
-              animation="pulse"
-              easing="ease-out"
-              iterationCount="infinite"
-              style={[styles.dayCounter, {marginTop: 15, fontSize: 40}]}>
-              Left
-            </Animatable.Text>
-          </Animatable.View>
+          {lang === 'EN' && (
+            <Animatable.View animation="fadeInUp" delay={2500}>
+              <Animatable.Text
+                animation="pulse"
+                easing="ease-out"
+                iterationCount="infinite"
+                style={[styles.dayCounter, {marginTop: 15, fontSize: 40}]}>
+                Left
+              </Animatable.Text>
+            </Animatable.View>
+          )}
         </View>
         <Animatable.View animation="fadeInUp" delay={3000}>
           <Pressable
             onPress={goBack}
             style={[globalStyles.button, globalStyles.white, styles.btn]}>
-            <Text style={globalStyles.textBtn}>Go Home</Text>
+            <Text style={globalStyles.textBtn}>{language[lang].goHome}</Text>
           </Pressable>
         </Animatable.View>
       </SafeAreaView>

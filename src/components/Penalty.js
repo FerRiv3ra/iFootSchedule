@@ -3,10 +3,14 @@ import React, {useState} from 'react';
 import globalStyles from '../styles/styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCircle} from '@fortawesome/free-solid-svg-icons';
+import useApp from '../hooks/useApp';
+import language from '../helper/translate';
 
 const Penalty = ({handleRounds, round}) => {
   const [penl, setPenl] = useState(0);
   const [penv, setPenv] = useState(0);
+
+  const {lang} = useApp();
 
   const handlePressL = () => {
     if (penl <= 0) {
@@ -43,7 +47,9 @@ const Penalty = ({handleRounds, round}) => {
           icon={faCircle}
         />
       </Pressable>
-      <Text>Round {round.round}</Text>
+      <Text>
+        {language[lang].round} {round.round}
+      </Text>
       <Pressable onPress={handlePressV}>
         <FontAwesomeIcon
           style={[

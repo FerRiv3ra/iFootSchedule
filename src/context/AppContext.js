@@ -4,6 +4,7 @@ import React, {createContext, useEffect, useState} from 'react';
 import {quickStart} from '../config/dbConfig';
 import data from '../helper/data';
 import matchData from '../helper/matchData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AppContext = createContext();
 
@@ -22,11 +23,16 @@ const AppProvider = ({children}) => {
   const [todayMatches_p, setTodayMatches_p] = useState([]);
   const [pendingMatches, setPendingMatches] = useState([]);
   const [pendingMatches_p, setPendingMatches_p] = useState([]);
+  const [lang, setLang] = useState('EN');
 
   useEffect(() => {
     const init = async () => {
       await quickStart();
       await getDataTeams();
+      const language = await AsyncStorage.getItem('lang');
+      if (language) {
+        setLang(language);
+      }
     };
 
     init();
@@ -561,6 +567,8 @@ const AppProvider = ({children}) => {
         matchesPlayed_p,
         generateNextMatches,
         generateNextMatches_p,
+        lang,
+        setLang,
       }}>
       {children}
     </AppContext.Provider>

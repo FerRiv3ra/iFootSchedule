@@ -11,6 +11,9 @@ const globalStyles = StyleSheet.create({
   black: {
     backgroundColor: '#000',
   },
+  gray: {
+    backgroundColor: '#BBB',
+  },
   //Components
   view: {
     marginHorizontal: 30,

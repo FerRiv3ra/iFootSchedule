@@ -3,10 +3,14 @@ import React, {useEffect, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
 import {heightScale, withScale} from '../helper/scale';
 import SECTIONS from '../helper/selectImg';
+import useApp from '../hooks/useApp';
+import language from '../helper/translate';
 
 const Champion = ({getChampion}) => {
   const [champion, setChampion] = useState({});
   const [loading, setLoading] = useState(true);
+
+  const {lang} = useApp();
 
   useEffect(() => {
     setLoading(true);
@@ -18,7 +22,7 @@ const Champion = ({getChampion}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Champion World Cup Qatar 2022</Text>
+      <Text style={styles.title}>{language[lang].championMessage}</Text>
       <Animatable.View animation="zoomIn" delay={500} duration={3000}>
         <Animatable.Image
           animation="pulse"

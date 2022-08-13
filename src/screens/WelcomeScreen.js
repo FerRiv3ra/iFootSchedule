@@ -13,6 +13,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import moment from 'moment';
 import ModalSettings from '../components/ModalSettings';
 import useApp from '../hooks/useApp';
+import language from '../helper/translate';
 
 const WelcomeScreen = () => {
   const [today, setToday] = useState(null);
@@ -20,7 +21,7 @@ const WelcomeScreen = () => {
   const [utc, setUtc] = useState('+00:00');
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {generateNextMatches, generateNextMatches_p, matchesPlayed_p} =
+  const {generateNextMatches, generateNextMatches_p, matchesPlayed_p, lang} =
     useApp();
   const navigation = useNavigation();
 
@@ -101,7 +102,7 @@ const WelcomeScreen = () => {
               size={16}
               icon={faFutbol}
             />
-            <Text style={globalStyles.textBtn}> Matches</Text>
+            <Text style={globalStyles.textBtn}> {language[lang].matches}</Text>
           </Pressable>
         </Animatable.View>
         <Animatable.View animation={'fadeInLeftBig'} delay={1000}>
@@ -113,7 +114,10 @@ const WelcomeScreen = () => {
               size={18}
               icon={faDice}
             />
-            <Text style={globalStyles.textBtn}> Playground</Text>
+            <Text style={globalStyles.textBtn}>
+              {' '}
+              {language[lang].playground}
+            </Text>
           </Pressable>
         </Animatable.View>
       </View>
@@ -132,7 +136,6 @@ const WelcomeScreen = () => {
         visible={modalVisible}
         transparent={true}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setModalVisible(!modalVisible);
         }}>
         <ModalSettings setModalVisible={setModalVisible} />

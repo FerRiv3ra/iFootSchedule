@@ -5,11 +5,12 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
+import language from '../helper/translate';
 
 const DateChange = ({setCurrentDay, today}) => {
   const date = moment('2022-01-01').add(today - 1, 'days');
 
-  const {matchesPlayed_p} = useApp();
+  const {matchesPlayed_p, lang} = useApp();
 
   const handleChange = type => {
     let limit;
@@ -30,10 +31,7 @@ const DateChange = ({setCurrentDay, today}) => {
     const dat = date.dayOfYear();
     if (type === 'add') {
       if (dat >= limit) {
-        Alert.alert(
-          'Error',
-          'You will be able to change the day when you have saved all the results of the current day.',
-        );
+        Alert.alert(language[lang].info, `${language[lang].errorChangeDay}`);
         return;
       } else {
         setCurrentDay(today + 1);

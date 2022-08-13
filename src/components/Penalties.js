@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import globalStyles from '../styles/styles';
 import {faSave} from '@fortawesome/free-solid-svg-icons';
 import Penalty from './Penalty';
+import useApp from '../hooks/useApp';
+import language from '../helper/translate';
 
 const Penalties = ({setPenl, setPenv, handleSave}) => {
   const [canSave, setCanSave] = useState(false);
@@ -34,6 +36,8 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
       visit: 'p',
     },
   ]);
+
+  const {lang} = useApp();
 
   const handleRounds = (round, type, res) => {
     setRounds(
@@ -100,7 +104,7 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Penalties</Text>
+      <Text style={styles.title}>{language[lang].penalties}</Text>
       {rounds.map(round => (
         <Penalty key={round.round} handleRounds={handleRounds} round={round} />
       ))}
@@ -117,7 +121,7 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
           size={14}
           icon={faSave}
         />
-        <Text style={styles.textStyle}>Save</Text>
+        <Text style={styles.textStyle}>{language[lang].save}</Text>
       </Pressable>
     </View>
   );

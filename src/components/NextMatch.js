@@ -12,12 +12,15 @@ import SECTIONS from '../helper/selectImg';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
+import language from '../helper/translate';
+import useApp from '../hooks/useApp';
 
 const NextMatch = ({nextMatch_p, pendingMatches, todayMatches, parent}) => {
   const [date, setDate] = useState(moment(nextMatch_p.date));
   const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
+  const {lang} = useApp();
   const matchSet = [...pendingMatches, ...todayMatches];
 
   useEffect(() => {
@@ -39,8 +42,8 @@ const NextMatch = ({nextMatch_p, pendingMatches, todayMatches, parent}) => {
       navigation.navigate('Match', {match: nextMatch_p, parent});
     } else {
       Alert.alert(
-        'Information',
-        `this match will be played on ${date.format('lll')}`,
+        language[lang].info,
+        `${language[lang].infoMessage} ${date.format('lll')}`,
       );
     }
   };

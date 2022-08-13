@@ -35,6 +35,7 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 import Penalties from '../components/Penalties';
+import language from '../helper/translate';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -68,7 +69,7 @@ const Match = ({route}) => {
   const [loaded, setLoaded] = useState(false);
 
   const navigation = useNavigation();
-  const {saveMatch, matchesPlayed, matchesPlayed_p, DBLoading} = useApp();
+  const {saveMatch, matchesPlayed, matchesPlayed_p, DBLoading, lang} = useApp();
 
   useEffect(() => {
     setLoading(true);
@@ -192,7 +193,10 @@ const Match = ({route}) => {
               />
             </Pressable>
           </View>
-          <Text style={styles.title}>{editing && 'Editing '}Match</Text>
+          <Text style={styles.title}>
+            {editing && `${language[lang].editing}`}
+            {language[lang].match}
+          </Text>
           <Text style={styles.date}>{date.format('lll')}</Text>
           <View style={styles.match}>
             <Text style={styles.team}>{match.local}</Text>
@@ -272,8 +276,8 @@ const Match = ({route}) => {
                   />
                   <Text style={styles.textStyle}>
                     {played < 48 || editing || (played >= 48 && goll !== golv)
-                      ? 'Save'
-                      : 'End full time'}
+                      ? `${language[lang].save}`
+                      : `${language[lang].endTime}`}
                   </Text>
                 </View>
               )}

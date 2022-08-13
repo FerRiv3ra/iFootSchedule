@@ -1,26 +1,32 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import TableTeam from './TableTeam';
+import useApp from '../hooks/useApp';
+import language from '../helper/translate';
 
 const Table = ({teams, group}) => {
   const data = teams.filter(team => team.group === group);
 
+  const {lang} = useApp();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Group {group}</Text>
+      <Text style={styles.title}>
+        {language[lang].group} {group}
+      </Text>
       <View style={styles.containerGroup}>
-        <Text style={styles.team}>TEAM</Text>
+        <Text style={styles.team}>{language[lang].team}</Text>
         <View style={styles.border}>
-          <Text style={styles.column}>MP</Text>
+          <Text style={styles.column}>{language[lang].mp}</Text>
         </View>
         <View style={styles.border}>
           <Text style={styles.column}>GF</Text>
         </View>
         <View style={styles.border}>
-          <Text style={styles.column}>GA</Text>
+          <Text style={styles.column}>{language[lang].ga}</Text>
         </View>
         <View style={styles.border}>
-          <Text style={styles.column}>GD</Text>
+          <Text style={styles.column}>{language[lang].gd}</Text>
         </View>
         <View style={styles.border}>
           <Text style={styles.column}>Pts</Text>

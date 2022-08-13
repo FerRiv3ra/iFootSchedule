@@ -19,6 +19,7 @@ import globalStyles from '../styles/styles';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import Knockouts from '../components/Knockouts';
+import language from '../helper/translate';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -44,6 +45,7 @@ const Matches = () => {
     getChampion,
     matchesPlayed,
     matches,
+    lang,
   } = useApp();
   const navigation = useNavigation();
 
@@ -72,9 +74,9 @@ const Matches = () => {
           <View style={styles.match}>
             <Text style={styles.titleMatch}>
               {matchesPlayed < 56
-                ? 'Round of 16'
+                ? `${language[lang].round16}`
                 : matchesPlayed < 60
-                ? 'Quarter Final'
+                ? `${language[lang].quarter}`
                 : matchesPlayed < 62
                 ? 'Semi Final'
                 : 'Final'}
@@ -92,15 +94,15 @@ const Matches = () => {
           <View style={styles.match}>
             <Text style={styles.titleMatch}>
               {matchesPlayed < 48
-                ? 'Next Match'
+                ? `${language[lang].nextMatch}`
                 : matchesPlayed < 56
-                ? 'Round of 16'
+                ? `${language[lang].round16}`
                 : matchesPlayed < 60
-                ? 'Quarter Final'
+                ? `${language[lang].quarter}`
                 : matchesPlayed < 62
                 ? 'Semi Final'
                 : matchesPlayed < 63
-                ? 'Third place'
+                ? `${language[lang].thirdPlace}`
                 : 'Final'}
             </Text>
             <NextMatch
@@ -119,7 +121,9 @@ const Matches = () => {
           todayMatches.length > 0 &&
           matchesPlayed < 64 && (
             <View style={styles.match}>
-              <Text style={styles.titleMatch}>Today Matches</Text>
+              <Text style={styles.titleMatch}>
+                {language[lang].todayMatches}
+              </Text>
               <MatchesDay matchData={todayMatches} parent={parent} />
             </View>
           )
@@ -129,20 +133,26 @@ const Matches = () => {
         ) : (
           pendingMatches.length > 0 && (
             <View style={styles.match}>
-              <Text style={styles.titleMatch}>Pending Matches</Text>
+              <Text style={styles.titleMatch}>
+                {language[lang].pendingMatches}
+              </Text>
               <MatchesDay matchData={pendingMatches} parent={parent} />
             </View>
           )
         )}
         {matchesPlayed > 0 && matchesPlayed <= 48 && (
           <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
-            <Text style={globalStyles.textCenter}>Edit Matches Played</Text>
+            <Text style={globalStyles.textCenter}>
+              {language[lang].editPlayed}
+            </Text>
           </Pressable>
         )}
         <Pressable
           onPress={goBack}
           style={[globalStyles.button, globalStyles.primary, styles.btn]}>
-          <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>Go Home</Text>
+          <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
+            {language[lang].goHome}
+          </Text>
         </Pressable>
       </ScrollView>
       <View style={globalStyles.ads}>

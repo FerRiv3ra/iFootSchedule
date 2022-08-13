@@ -13,6 +13,7 @@ import useApp from '../hooks/useApp';
 import MatchesDay from '../components/MatchesDay';
 import globalStyles from '../styles/styles';
 import {useNavigation} from '@react-navigation/native';
+import language from '../helper/translate';
 
 const adUnitId = __DEV__
   ? TestIds.BANNER
@@ -23,7 +24,7 @@ const adUnitId = __DEV__
 const PlayedMatches = ({route}) => {
   const {parent} = route.params;
 
-  const {matches, matches_p, DBLoading} = useApp();
+  const {matches, matches_p, DBLoading, lang} = useApp();
   const [dataMatches, setDataMatches] = useState([]);
 
   const navigation = useNavigation();
@@ -45,7 +46,7 @@ const PlayedMatches = ({route}) => {
       <SafeAreaView>
         <ScrollView>
           <View style={styles.container}>
-            <Text style={styles.titleMatch}>Matches Played</Text>
+            <Text style={styles.titleMatch}>{language[lang].matchPlayed}</Text>
             <MatchesDay
               matchData={dataMatches}
               parent={parent}
@@ -53,13 +54,13 @@ const PlayedMatches = ({route}) => {
             />
           </View>
 
-          <Text style={styles.info}>
-            * You can edit before distributing round of 16.
-          </Text>
+          <Text style={styles.info}>* {language[lang].matchPlayedMessage}</Text>
           <Pressable
             onPress={goBack}
             style={[globalStyles.button, globalStyles.primary, styles.btn]}>
-            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>Go Back</Text>
+            <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
+              {language[lang].goBack}
+            </Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>
