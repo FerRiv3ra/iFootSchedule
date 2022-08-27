@@ -44,7 +44,7 @@ const interstitial = InterstitialAd.createForAdRequest(adUnit('INTERSTITIAL'), {
 });
 
 const Match = ({route}) => {
-  const {match, parent, editing} = route.params;
+  const {match, parent, editing, local} = route.params;
 
   const [date, setDate] = useState(moment(match.date).utcOffset(0));
   const [loading, setLoading] = useState(true);

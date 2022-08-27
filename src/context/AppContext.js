@@ -17,17 +17,17 @@ const AppProvider = ({children}) => {
   const [DBLoading, setDBLoading] = useState(true);
   const [distributingRound16, setDistributingRound16] = useState(false);
   const [teams, setTeams] = useState([]);
+  const [teamsC, setTeamsC] = useState([]);
   const [teams_p, setTeams_p] = useState([]);
   const [matches, setMatches] = useState([]);
+  const [matchesC, setMatchesC] = useState([]);
   const [matches_p, setMatches_p] = useState([]);
   const [matchesPlayed, setMatchesPlayed] = useState(0);
+  const [matchesPlayedC, setMatchesPlayedC] = useState(0);
   const [matchesPlayed_p, setMatchesPlayed_p] = useState(0);
   const [nextMatch, setNextMatch] = useState({});
-  const [nextMatch_p, setNextMatch_p] = useState({});
   const [todayMatches, setTodayMatches] = useState([]);
-  const [todayMatches_p, setTodayMatches_p] = useState([]);
   const [pendingMatches, setPendingMatches] = useState([]);
-  const [pendingMatches_p, setPendingMatches_p] = useState([]);
   const [lang, setLang] = useState('EN');
   const [uiMode, setUiMode] = useState('WCF');
 
@@ -91,9 +91,11 @@ const AppProvider = ({children}) => {
 
       const dataTeams = realm.objects('teams');
       const dataTeamsP = realm.objects('teams_p');
+      const dataTeamsC = realm.objects('champ_teams');
 
       const dataMatches = realm.objects('matches');
       const dataMatchesP = realm.objects('matches_p');
+      const dataMatchesC = realm.objects('champ_matches');
 
       const orderTeams = dataTeams.sorted([
         ['pts', true],
@@ -105,15 +107,25 @@ const AppProvider = ({children}) => {
         ['gd', true],
       ]);
 
+      const orderTeamsC = dataTeamsC.sorted([
+        ['pts', true],
+        ['gd', true],
+      ]);
+
       const countPlayed = dataMatches.filtered('played = true');
       const countPlayedP = dataMatchesP.filtered('played = true');
+      const countPlayedC = dataMatchesC.filtered('played = true');
 
       setTeams(orderTeams.toJSON());
+      setTeamsC(orderTeamsC.toJSON());
       setTeams_p(orderTeamsP.toJSON());
+
       setMatches(dataMatches.toJSON());
+      setMatchesC(dataMatchesC.toJSON());
       setMatches_p(dataMatchesP.toJSON());
 
       setMatchesPlayed(countPlayed.length);
+      setMatchesPlayedC(countPlayedC.length);
       setMatchesPlayed_p(countPlayedP.length);
 
       setDBLoading(false);
@@ -124,76 +136,133 @@ const AppProvider = ({children}) => {
     }
   };
 
-  const getNextMatch = () => {
-    const nextM = matches.filter(match => match.played === false);
-
-    setNextMatch(nextM[0]);
+  const getNextMatch = parent => {
+    switch (parent) {
+      case 'C':
+        setNextMatch(matchesC.filter(match => match.played === false)[0]);
+        break;
+      case 'M':
+        setNextMatch(matches.filter(match => match.played === false));
+        break;
+      case 'P':
+        setNextMatch(matches_p.filter(match => match.played === false));
+        break;
+    }
   };
 
-  const getNextMatch_p = () => {
-    const nextM = matches_p.filter(match => match.played === false);
+  const getMatchesToday = (day, parent) => {
+    switch (parent) {
+      case 'C':
+        const dataC = matchesC.filter(match => {
+          const date = moment(match.date).dayOfYear();
+          if (date === day) {
+            return match;
+          }
+        });
 
-    setNextMatch_p(nextM[0]);
+        setTodayMatches(dataC);
+        break;
+      case 'M':
+        const data = matches.filter(match => {
+          const date = moment(match.date).dayOfYear();
+          if (date === day) {
+            return match;
+          }
+        });
+
+        setTodayMatches(data);
+        break;
+      case 'P':
+        const dataP = matches_p.filter(match => {
+          const date = moment(match.date).dayOfYear();
+          if (date === day) {
+            return match;
+          }
+        });
+
+        setTodayMatches(dataP);
+        break;
+    }
   };
 
-  const getMatchesToday = day => {
-    const data = matches.filter(match => {
-      const date = moment(match.date).dayOfYear();
-      if (date === day) {
-        return match;
-      }
-    });
+  const getPendingMatches = (day, parent) => {
+    switch (parent) {
+      case 'C':
+        const dataC = matchesC.filter(match => {
+          const date = moment(match.date).dayOfYear();
+          if (date < day && !match.played) {
+            return match;
+          }
+        });
 
-    setTodayMatches(data);
+        setPendingMatches(dataC);
+
+        break;
+      case 'M':
+        const dataM = matches.filter(match => {
+          const date = moment(match.date).dayOfYear();
+          if (date < day && !match.played) {
+            return match;
+          }
+        });
+
+        setPendingMatches(dataM);
+        break;
+      case 'P':
+        const dataP = matches_p.filter(match => {
+          const date = moment(match.date).dayOfYear();
+          if (date < day && !match.played) {
+            return match;
+          }
+        });
+
+        setPendingMatches(dataP);
+        break;
+    }
   };
 
-  const getMatchesToday_p = day => {
-    const data = matches_p.filter(match => {
-      const date = moment(match.date).dayOfYear();
-      if (date === day) {
-        return match;
-      }
-    });
+  const getChampion = parent => {
+    let match = {};
+    let limit = parent === 'C' ? 125 : 64;
+    switch (parent) {
+      case 'C':
+        match = matchesC.filter(match => match.id === limit)[0];
 
-    setTodayMatches_p(data);
-  };
+        break;
+      case 'M':
+        match = matches.filter(match => match.id === limit)[0];
 
-  const getPendingMatches = day => {
-    const data = matches.filter(match => {
-      const date = moment(match.date).dayOfYear();
-      if (date < day && !match.played) {
-        return match;
-      }
-    });
+        break;
+      case 'P':
+        match = matches_p.filter(match => match.id === limit)[0];
 
-    setPendingMatches(data);
-  };
-
-  const getPendingMatches_p = day => {
-    const data = matches_p.filter(match => {
-      const date = moment(match.date).dayOfYear();
-      if (date < day && !match.played) {
-        return match;
-      }
-    });
-
-    setPendingMatches_p(data);
-  };
-
-  const getChampion = () => {
-    const match = matches.filter(match => match.id === 64)[0];
+        break;
+    }
 
     if (!match) {
-      const dataTest = {
-        name: 'QATAR',
-        group: 'A',
-        short_name: 'QAT',
-        p: 0,
-        gf: 0,
-        ga: 0,
-        gd: 0,
-        pts: 0,
-      };
+      const dataTest =
+        parent === 'UCL'
+          ? {
+              name: 'Real Madrid',
+              group: 'F',
+              short_name: 'RMA',
+              stadium: 'Santiago Benabéu',
+              p: 0,
+              gf: 0,
+              ga: 0,
+              gd: 0,
+              pts: 0,
+            }
+          : {
+              name: 'QATAR',
+              group: 'A',
+              short_name: 'QAT',
+              p: 0,
+              gf: 0,
+              ga: 0,
+              gd: 0,
+              pts: 0,
+            };
 
       return dataTest;
     }
@@ -219,45 +288,6 @@ const AppProvider = ({children}) => {
     return champ;
   };
 
-  const getChampion_p = () => {
-    const match = matches_p.filter(match => match.id === 64)[0];
-
-    if (!match) {
-      const dataTest = {
-        name: 'QATAR',
-        group: 'A',
-        short_name: 'QAT',
-        p: 0,
-        gf: 0,
-        ga: 0,
-        gd: 0,
-        pts: 0,
-      };
-
-      return dataTest;
-    }
-
-    const {local, goll, penl, visit, golv, penv} = match;
-
-    let champ_name;
-
-    if (goll === golv) {
-      if (penl > penv) {
-        champ_name = local;
-      } else {
-        champ_name = visit;
-      }
-    } else if (goll > golv) {
-      champ_name = local;
-    } else {
-      champ_name = visit;
-    }
-
-    const champ = teams_p.filter(team => team.short_name === champ_name)[0];
-
-    return champ;
-  };
-
   const saveMatch = async (match, parent, editing = false) => {
     try {
       const realm = await Realm.open({path: 'ifootschedule'});
@@ -267,12 +297,17 @@ const AppProvider = ({children}) => {
 
       let currentMatch = {};
 
+      const groupsLimit = uiMode === 'UCL' ? 96 : 48;
+      const round16Limit = uiMode === 'UCL' ? 112 : 56;
+      const quarterLimit = uiMode === 'UCL' ? 120 : 60;
+      const totalLimit = uiMode === 'UCL' ? 124 : 63;
+
       let part =
-        match.id <= 48
+        match.id <= groupsLimit
           ? 'groups'
-          : match.id <= 56
+          : match.id <= round16Limit
           ? 'round16'
-          : match.id <= 60
+          : match.id <= quarterLimit
           ? 'quarter'
           : 'semis';
       let local = teams.filter(team => team.short_name === match.local)[0];
@@ -291,7 +326,7 @@ const AppProvider = ({children}) => {
         tempMatch.played = match.played;
       });
 
-      if (match.id >= 63) {
+      if (match.id >= totalLimit) {
         realm.close();
 
         await getDataTeams();
@@ -505,7 +540,7 @@ const AppProvider = ({children}) => {
 
       realm.close();
       await getDataTeams();
-      getNextMatch_p();
+      getNextMatch('P');
     } catch (err) {
       console.error('Failed to open the realm', err.message);
     }
@@ -583,27 +618,23 @@ const AppProvider = ({children}) => {
     <AppContext.Provider
       value={{
         matches,
+        matchesC,
         matches_p,
         DBLoading,
         teams,
+        teamsC,
         teams_p,
         getNextMatch,
-        getNextMatch_p,
         nextMatch,
-        nextMatch_p,
         getMatchesToday,
-        getMatchesToday_p,
         todayMatches,
-        todayMatches_p,
         getPendingMatches,
-        getPendingMatches_p,
         pendingMatches,
-        pendingMatches_p,
         getChampion,
-        getChampion_p,
         saveMatch,
         restorePlayground,
         matchesPlayed,
+        matchesPlayedC,
         matchesPlayed_p,
         generateNextMatches,
         generateNextMatches_p,

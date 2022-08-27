@@ -32,13 +32,12 @@ const Playground = () => {
   const {
     DBLoading,
     teams_p,
-    getChampion_p,
-    getMatchesToday_p,
-    todayMatches_p,
-    getPendingMatches_p,
-    pendingMatches_p,
-    getNextMatch_p,
-    nextMatch_p,
+    getMatchesToday,
+    todayMatches,
+    getPendingMatches,
+    pendingMatches,
+    getNextMatch,
+    nextMatch,
     matchesPlayed_p,
     matches_p,
     lang,
@@ -60,9 +59,9 @@ const Playground = () => {
 
   const focusEffect = useCallback(() => {
     setLoading(true);
-    getNextMatch_p();
-    getPendingMatches_p(today);
-    getMatchesToday_p(today);
+    getNextMatch('P');
+    getPendingMatches(today, 'P');
+    getMatchesToday(today, 'P');
     setLoading(false);
   }, [today, DBLoading]);
 
@@ -105,7 +104,7 @@ const Playground = () => {
             ))}
           </ScrollView>
         )}
-        {nextMatch_p && nextMatch_p.id ? (
+        {nextMatch && nextMatch.id ? (
           <View style={styles.match}>
             <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
               {matchesPlayed_p < 48
@@ -121,37 +120,37 @@ const Playground = () => {
                 : 'Final'}
             </Text>
             <NextMatch
-              nextMatch_p={nextMatch_p}
-              pendingMatches={pendingMatches_p}
-              todayMatches={todayMatches_p}
+              nextMatch={nextMatch}
+              pendingMatches={pendingMatches}
+              todayMatches={todayMatches}
               parent={parent}
             />
           </View>
         ) : (
-          <Champion getChampion={getChampion_p} />
+          <Champion parent={'P'} />
         )}
         {loading ? (
           <ActivityIndicator animating={loading} />
         ) : (
-          todayMatches_p.length > 0 &&
+          todayMatches.length > 0 &&
           matchesPlayed_p < 64 && (
             <View style={styles.match}>
               <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
                 {language[lang].todayMatches}
               </Text>
-              <MatchesDay matchData={todayMatches_p} parent={parent} />
+              <MatchesDay matchData={todayMatches} parent={parent} />
             </View>
           )
         )}
         {loading ? (
           <ActivityIndicator animating={loading} />
         ) : (
-          pendingMatches_p.length > 0 && (
+          pendingMatches.length > 0 && (
             <View style={styles.match}>
               <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
                 {language[lang].pendingMatches}
               </Text>
-              <MatchesDay matchData={pendingMatches_p} parent={parent} />
+              <MatchesDay matchData={pendingMatches} parent={parent} />
             </View>
           )
         )}

@@ -7,15 +7,15 @@ import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import globalStyles from '../styles/styles';
 
-const Champion = ({getChampion}) => {
+const Champion = ({parent}) => {
   const [champion, setChampion] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const {lang, uiMode} = useApp();
+  const {lang, uiMode, getChampion} = useApp();
 
   useEffect(() => {
     setLoading(true);
-    setChampion(getChampion());
+    setChampion(getChampion(parent));
     setLoading(false);
   }, []);
 

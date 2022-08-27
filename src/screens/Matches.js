@@ -24,21 +24,23 @@ import {adUnit} from '../helper/adUnit';
 const Matches = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const parent = 'Matches';
-  const today = moment().dayOfYear();
+  const today = moment('2022-09-07').dayOfYear();
 
   const [loading, setLoading] = useState(true);
   const {
     DBLoading,
     teams,
+    teamsC,
     getMatchesToday,
     todayMatches,
     getPendingMatches,
     pendingMatches,
     getNextMatch,
     nextMatch,
-    getChampion,
     matchesPlayed,
+    matchesPlayedC,
     matches,
+    matchesC,
     lang,
     uiMode,
   } = useApp();
@@ -52,9 +54,9 @@ const Matches = () => {
 
   const focusEffect = useCallback(() => {
     setLoading(true);
-    getNextMatch();
-    getPendingMatches(today);
-    getMatchesToday(today);
+    getNextMatch(uiMode === 'UCL' ? 'C' : 'M');
+    getPendingMatches(today, uiMode === 'UCL' ? 'C' : 'M');
+    getMatchesToday(today, uiMode === 'UCL' ? 'C' : 'M');
     setLoading(false);
   }, [DBLoading]);
 
@@ -82,12 +84,19 @@ const Matches = () => {
                 ? 'Semi Final'
                 : 'Final'}
             </Text>
-            <Knockouts data={matches} matchesPlayed={matchesPlayed} />
+            <Knockouts
+              data={uiMode === 'UCL' ? matchesC : matches}
+              matchesPlayed={uiMode === 'UCL' ? matchesPlayedC : matchesPlayed}
+            />
           </View>
         ) : (
           <ScrollView horizontal={true}>
             {groups.map((group, index) => (
-              <Table key={index} teams={teams} group={group} />
+              <Table
+                key={index}
+                teams={uiMode === 'UCL' ? teamsC : teams}
+                group={group}
+              />
             ))}
           </ScrollView>
         )}
@@ -107,14 +116,14 @@ const Matches = () => {
                 : 'Final'}
             </Text>
             <NextMatch
-              nextMatch_p={nextMatch}
+              nextMatch={nextMatch}
               pendingMatches={pendingMatches}
               todayMatches={todayMatches}
               parent={parent}
             />
           </View>
         ) : (
-          <Champion getChampion={getChampion} />
+          <Champion parent={uiMode === 'UCL' ? 'C' : 'M'} />
         )}
         {loading ? (
           <ActivityIndicator animating={loading} />
