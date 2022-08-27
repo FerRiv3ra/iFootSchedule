@@ -7,24 +7,19 @@ import {
   Pressable,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 
 import useApp from '../hooks/useApp';
 import MatchesDay from '../components/MatchesDay';
 import globalStyles from '../styles/styles';
 import {useNavigation} from '@react-navigation/native';
 import language from '../helper/translate';
-
-const adUnitId = __DEV__
-  ? TestIds.BANNER
-  : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963/6846729662'
-  : 'ca-app-pub-3087410415589963/7165846759';
+import {adUnit} from '../helper/adUnit';
 
 const PlayedMatches = ({route}) => {
   const {parent} = route.params;
 
-  const {matches, matches_p, DBLoading, lang} = useApp();
+  const {matches, matches_p, DBLoading, lang, uiMode} = useApp();
   const [dataMatches, setDataMatches] = useState([]);
 
   const navigation = useNavigation();
@@ -46,7 +41,9 @@ const PlayedMatches = ({route}) => {
       <SafeAreaView>
         <ScrollView>
           <View style={styles.container}>
-            <Text style={styles.titleMatch}>{language[lang].matchPlayed}</Text>
+            <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+              {language[lang].matchPlayed}
+            </Text>
             <MatchesDay
               matchData={dataMatches}
               parent={parent}
@@ -57,7 +54,11 @@ const PlayedMatches = ({route}) => {
           <Text style={styles.info}>* {language[lang].matchPlayedMessage}</Text>
           <Pressable
             onPress={goBack}
-            style={[globalStyles.button, globalStyles.primary, styles.btn]}>
+            style={[
+              globalStyles.button,
+              globalStyles[`bg-${uiMode}`],
+              styles.btn,
+            ]}>
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
               {language[lang].goBack}
             </Text>
@@ -66,7 +67,7 @@ const PlayedMatches = ({route}) => {
       </SafeAreaView>
       <View style={globalStyles.ads}>
         <BannerAd
-          unitId={adUnitId}
+          unitId={adUnit()}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
@@ -105,7 +106,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     fontWeight: '900',
-    color: '#5a0024',
     fontSize: 18,
     padding: 5,
   },

@@ -2,6 +2,18 @@ import {StyleSheet} from 'react-native';
 
 const globalStyles = StyleSheet.create({
   //Colors
+  'bg-WCF': {
+    backgroundColor: '#5a0024',
+  },
+  'bg-UCL': {
+    backgroundColor: '#180056',
+  },
+  'text-WCF': {
+    color: '#5a0024',
+  },
+  'text-UCL': {
+    color: '#180056',
+  },
   primary: {
     backgroundColor: '#5a0024',
   },

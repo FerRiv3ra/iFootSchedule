@@ -5,12 +5,13 @@ import {heightScale, withScale} from '../helper/scale';
 import SECTIONS from '../helper/selectImg';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
+import globalStyles from '../styles/styles';
 
 const Champion = ({getChampion}) => {
   const [champion, setChampion] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const {lang} = useApp();
+  const {lang, uiMode} = useApp();
 
   useEffect(() => {
     setLoading(true);
@@ -22,7 +23,9 @@ const Champion = ({getChampion}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{language[lang].championMessage}</Text>
+      <Text style={[styles.title, globalStyles[`text-${uiMode}`]]}>
+        {language[lang].championMessage}
+      </Text>
       <Animatable.View animation="zoomIn" delay={500} duration={3000}>
         <Animatable.Image
           animation="pulse"
@@ -47,7 +50,7 @@ const Champion = ({getChampion}) => {
         animation={'rubberBand'}
         duration={3000}
         iterationCount="infinite"
-        style={[styles.title, styles.name]}>
+        style={[styles.title, globalStyles[`text-${uiMode}`], styles.name]}>
         {champion.name}
       </Animatable.Text>
     </View>
@@ -80,7 +83,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     fontWeight: '700',
-    color: '#5a0024',
   },
   name: {
     fontSize: 22,

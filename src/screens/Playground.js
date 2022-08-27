@@ -6,7 +6,6 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import useApp from '../hooks/useApp';
@@ -14,7 +13,7 @@ import Table from '../components/Table';
 import NextMatch from '../components/NextMatch';
 import moment from 'moment';
 import MatchesDay from '../components/MatchesDay';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Champion from '../components/Champion';
@@ -22,12 +21,7 @@ import DateChange from '../components/DateChange';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Knockouts from '../components/Knockouts';
 import language from '../helper/translate';
-
-const adUnitId = __DEV__
-  ? TestIds.BANNER
-  : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963/6846729662'
-  : 'ca-app-pub-3087410415589963/7165846759';
+import {adUnit} from '../helper/adUnit';
 
 const Playground = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -48,6 +42,7 @@ const Playground = () => {
     matchesPlayed_p,
     matches_p,
     lang,
+    uiMode,
   } = useApp();
   const navigation = useNavigation();
 
@@ -92,7 +87,7 @@ const Playground = () => {
       <ScrollView>
         {matchesPlayed_p >= 48 ? (
           <View style={styles.match}>
-            <Text style={styles.titleMatch}>
+            <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
               {matchesPlayed_p < 56
                 ? `${language[lang].round16}`
                 : matchesPlayed_p < 60
@@ -112,7 +107,7 @@ const Playground = () => {
         )}
         {nextMatch_p && nextMatch_p.id ? (
           <View style={styles.match}>
-            <Text style={styles.titleMatch}>
+            <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
               {matchesPlayed_p < 48
                 ? `${language[lang].nextMatch}`
                 : matchesPlayed_p < 56
@@ -141,7 +136,7 @@ const Playground = () => {
           todayMatches_p.length > 0 &&
           matchesPlayed_p < 64 && (
             <View style={styles.match}>
-              <Text style={styles.titleMatch}>
+              <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
                 {language[lang].todayMatches}
               </Text>
               <MatchesDay matchData={todayMatches_p} parent={parent} />
@@ -153,7 +148,7 @@ const Playground = () => {
         ) : (
           pendingMatches_p.length > 0 && (
             <View style={styles.match}>
-              <Text style={styles.titleMatch}>
+              <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
                 {language[lang].pendingMatches}
               </Text>
               <MatchesDay matchData={pendingMatches_p} parent={parent} />
@@ -169,7 +164,11 @@ const Playground = () => {
         )}
         <Pressable
           onPress={goBack}
-          style={[globalStyles.button, globalStyles.primary, styles.btn]}>
+          style={[
+            globalStyles.button,
+            globalStyles[`bg-${uiMode}`],
+            styles.btn,
+          ]}>
           <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
             {language[lang].goHome}
           </Text>
@@ -177,7 +176,7 @@ const Playground = () => {
       </ScrollView>
       <View style={globalStyles.ads}>
         <BannerAd
-          unitId={adUnitId}
+          unitId={adUnit()}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
@@ -215,7 +214,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     fontWeight: '900',
-    color: '#5a0024',
     fontSize: 18,
   },
 });

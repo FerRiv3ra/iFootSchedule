@@ -6,9 +6,10 @@ import {
   TextInput,
   Alert,
   Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -21,21 +22,19 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
-
-const adUnitId = __DEV__
-  ? TestIds.BANNER
-  : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963/6846729662'
-  : 'ca-app-pub-3087410415589963/7165846759';
+import SegmentedControl from './SegmentedControl';
+import {adUnit} from '../helper/adUnit';
 
 const ModalSettings = ({setModalVisible}) => {
   const [hours, setHours] = useState('');
   const [minutes, setMinutes] = useState('');
   const [plus, setPlus] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentLang, setCurrentLang] = useState('');
+  const [mode, setMode] = useState('');
 
-  const {restorePlayground, lang, setLang} = useApp();
+  const {restorePlayground, lang, setLang, uiMode, setUiMode} = useApp();
 
   useEffect(() => {
     const getUTC = async () => {
@@ -55,13 +54,11 @@ const ModalSettings = ({setModalVisible}) => {
     };
 
     setCurrentLang(lang);
+    setMode(uiMode);
 
     getUTC();
+    setIsLoading(false);
   }, []);
-
-  const handleLang = select => {
-    setCurrentLang(select);
-  };
 
   const handleSave = async () => {
     let utc = '';
@@ -139,8 +136,10 @@ const ModalSettings = ({setModalVisible}) => {
 
     await AsyncStorage.setItem('UTC', utc);
     await AsyncStorage.setItem('lang', currentLang);
+    await AsyncStorage.setItem('uiMode', mode);
 
     setLang(currentLang);
+    setUiMode(mode);
 
     Alert.alert(
       language[currentLang].success,
@@ -176,28 +175,29 @@ const ModalSettings = ({setModalVisible}) => {
     setModalVisible(false);
   };
 
+  if (isLoading) return <ActivityIndicator animating={isLoading} />;
+
   return (
     <View style={styles.centeredView}>
       <View style={styles.modalView}>
+        <Text style={styles.modalText}>{language[lang].chooseMode}</Text>
+        <SegmentedControl
+          values={[
+            {key: 'World Cup', value: 'WCF'},
+            {key: 'Champios League', value: 'UCL'},
+          ]}
+          onChange={setMode}
+          selectedIndex={mode === 'WCF' ? 0 : 1}
+        />
         <Text style={styles.modalText}>{language[lang].chooseLang}</Text>
-        <View style={{flexDirection: 'row', marginTop: 5}}>
-          <Pressable
-            style={[
-              styles.button,
-              currentLang === 'EN' ? globalStyles.primary : globalStyles.gray,
-            ]}
-            onPress={() => handleLang('EN')}>
-            <Text style={styles.textStyle}>EN</Text>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.button,
-              currentLang === 'ES' ? globalStyles.primary : globalStyles.gray,
-            ]}
-            onPress={() => handleLang('ES')}>
-            <Text style={styles.textStyle}>ES</Text>
-          </Pressable>
-        </View>
+        <SegmentedControl
+          values={[
+            {key: language[lang].english, value: 'EN'},
+            {key: language[lang].spanish, value: 'ES'},
+          ]}
+          onChange={setCurrentLang}
+          selectedIndex={currentLang === 'EN' ? 0 : 1}
+        />
 
         <Text style={styles.modalText}>{language[lang].zoneTime}</Text>
         <View style={{flexDirection: 'row'}}>
@@ -229,7 +229,7 @@ const ModalSettings = ({setModalVisible}) => {
           />
         </View>
         <Pressable
-          style={[styles.button, globalStyles.primary]}
+          style={[styles.button, globalStyles[`bg-${mode}`]]}
           onPress={handleSave}>
           <FontAwesomeIcon
             style={[globalStyles.icon, styles.icon]}
@@ -243,7 +243,7 @@ const ModalSettings = ({setModalVisible}) => {
           {language[lang].deletePlayground}
         </Text>
         <Pressable
-          style={[styles.button, globalStyles.primary]}
+          style={[styles.button, globalStyles[`bg-${mode}`]]}
           disabled={loading}
           onPress={handleDelete}>
           <FontAwesomeIcon
@@ -256,7 +256,7 @@ const ModalSettings = ({setModalVisible}) => {
       </View>
       <View>
         <Pressable
-          style={[styles.button, globalStyles.primary, styles.close]}
+          style={[styles.button, globalStyles[`bg-${mode}`], styles.close]}
           onPress={handleClose}>
           <FontAwesomeIcon
             style={[globalStyles.icon]}
@@ -268,7 +268,7 @@ const ModalSettings = ({setModalVisible}) => {
       </View>
       <View style={globalStyles.ads}>
         <BannerAd
-          unitId={adUnitId}
+          unitId={adUnit()}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,

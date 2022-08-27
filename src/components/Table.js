@@ -3,15 +3,16 @@ import React from 'react';
 import TableTeam from './TableTeam';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
+import globalStyles from '../styles/styles';
 
 const Table = ({teams, group}) => {
   const data = teams.filter(team => team.group === group);
 
-  const {lang} = useApp();
+  const {lang, uiMode} = useApp();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
+      <Text style={[styles.title, globalStyles[`text-${uiMode}`]]}>
         {language[lang].group} {group}
       </Text>
       <View style={styles.containerGroup}>
@@ -71,7 +72,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     fontWeight: '900',
-    color: '#5a0024',
     fontSize: 18,
   },
   team: {

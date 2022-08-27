@@ -15,15 +15,10 @@ import moment from 'moment';
 import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helper/scale';
 import {useNavigation} from '@react-navigation/native';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
-
-const adUnitId = __DEV__
-  ? TestIds.BANNER
-  : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963/6846729662'
-  : 'ca-app-pub-3087410415589963/7165846759';
+import {adUnit} from '../helper/adUnit';
 
 const Countdown = () => {
   const today = moment();
@@ -131,7 +126,7 @@ const Countdown = () => {
       </SafeAreaView>
       <View style={styles.ads}>
         <BannerAd
-          unitId={adUnitId}
+          unitId={adUnit()}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,

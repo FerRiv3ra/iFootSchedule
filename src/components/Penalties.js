@@ -37,7 +37,7 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
     },
   ]);
 
-  const {lang} = useApp();
+  const {lang, uiMode} = useApp();
 
   const handleRounds = (round, type, res) => {
     setRounds(
@@ -104,7 +104,9 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{language[lang].penalties}</Text>
+      <Text style={[styles.title, globalStyles[`text-${uiMode}`]]}>
+        {language[lang].penalties}
+      </Text>
       {rounds.map(round => (
         <Penalty key={round.round} handleRounds={handleRounds} round={round} />
       ))}
@@ -114,7 +116,7 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
         style={[
           globalStyles.button,
           styles.btn,
-          canSave && globalStyles.primary,
+          canSave && globalStyles[`bg-${uiMode}`],
         ]}>
         <FontAwesomeIcon
           style={[globalStyles.icon, styles.icon]}
@@ -155,7 +157,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   title: {
-    color: '#5a0024',
     alignSelf: 'center',
     fontSize: 18,
     fontWeight: '700',

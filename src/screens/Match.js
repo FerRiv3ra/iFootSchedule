@@ -6,7 +6,6 @@ import {
   Image,
   ActivityIndicator,
   Pressable,
-  Platform,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
@@ -14,7 +13,6 @@ import {
   BannerAdSize,
   AdEventType,
   InterstitialAd,
-  TestIds,
 } from 'react-native-google-mobile-ads';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -27,6 +25,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import SECTIONS from '../helper/selectImg';
+import CHAMPS from '../helper/selectChamp';
+
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
 import {
@@ -36,20 +36,9 @@ import {
 } from '@react-navigation/native';
 import Penalties from '../components/Penalties';
 import language from '../helper/translate';
+import {adUnit} from '../helper/adUnit';
 
-const adUnitId = __DEV__
-  ? TestIds.BANNER
-  : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963/6846729662'
-  : 'ca-app-pub-3087410415589963/7165846759';
-
-const adUnitId2 = __DEV__
-  ? TestIds.INTERSTITIAL
-  : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963/6889578805'
-  : 'ca-app-pub-3087410415589963/6150216357';
-
-const interstitial = InterstitialAd.createForAdRequest(adUnitId2, {
+const interstitial = InterstitialAd.createForAdRequest(adUnit('INTERSTITIAL'), {
   requestNonPersonalizedAdsOnly: true,
   keywords: ['football', 'world cup', 'sports'],
 });
@@ -69,7 +58,8 @@ const Match = ({route}) => {
   const [loaded, setLoaded] = useState(false);
 
   const navigation = useNavigation();
-  const {saveMatch, matchesPlayed, matchesPlayed_p, DBLoading, lang} = useApp();
+  const {saveMatch, matchesPlayed, matchesPlayed_p, DBLoading, lang, uiMode} =
+    useApp();
 
   useEffect(() => {
     setLoading(true);
@@ -187,29 +177,39 @@ const Match = ({route}) => {
           <View style={styles.close}>
             <Pressable onPress={handleClose}>
               <FontAwesomeIcon
-                style={[globalStyles.icon, styles.primary]}
+                style={[globalStyles.icon, globalStyles[`text-${uiMode}`]]}
                 size={18}
                 icon={faClose}
               />
             </Pressable>
           </View>
-          <Text style={styles.title}>
+          <Text style={[styles.title, globalStyles[`text-${uiMode}`]]}>
             {editing && `${language[lang].editing}`}
             {language[lang].match}
           </Text>
           <Text style={styles.date}>{date.format('lll')}</Text>
+          {uiMode === 'UCL' && (
+            <Text style={styles.stadium}>{local && local.stadium}</Text>
+          )}
           <View style={styles.match}>
             <Text style={styles.team}>{match.local}</Text>
             <View>
               <Image
                 style={styles.logoTeam}
-                source={SECTIONS[match.local]?.file}
+                source={
+                  uiMode === 'UCL'
+                    ? CHAMPS[match.local]?.file
+                    : SECTIONS[match.local]?.file
+                }
               />
               <View style={styles.match}>
                 <Pressable onPress={() => handleLocal('min')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[globalStyles.icon, styles.icon]}
+                      style={[
+                        globalStyles.icon,
+                        globalStyles[`text-${uiMode}`],
+                      ]}
                       size={18}
                       icon={faMinusCircle}
                     />
@@ -219,7 +219,10 @@ const Match = ({route}) => {
                 <Pressable onPress={() => handleLocal('add')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[globalStyles.icon, styles.icon]}
+                      style={[
+                        globalStyles.icon,
+                        globalStyles[`text-${uiMode}`],
+                      ]}
                       size={18}
                       icon={faPlusCircle}
                     />
@@ -231,13 +234,20 @@ const Match = ({route}) => {
             <View>
               <Image
                 style={styles.logoTeam}
-                source={SECTIONS[match.visit]?.file}
+                source={
+                  uiMode === 'UCL'
+                    ? CHAMPS[match.visit]?.file
+                    : SECTIONS[match.visit]?.file
+                }
               />
               <View style={styles.match}>
                 <Pressable onPress={() => handleVisit('min')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[globalStyles.icon, styles.icon]}
+                      style={[
+                        globalStyles.icon,
+                        globalStyles[`text-${uiMode}`],
+                      ]}
                       size={18}
                       icon={faMinusCircle}
                     />
@@ -247,7 +257,10 @@ const Match = ({route}) => {
                 <Pressable onPress={() => handleVisit('add')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[globalStyles.icon, styles.icon]}
+                      style={[
+                        globalStyles.icon,
+                        globalStyles[`text-${uiMode}`],
+                      ]}
                       size={18}
                       icon={faPlusCircle}
                     />
@@ -261,7 +274,11 @@ const Match = ({route}) => {
             <Pressable
               onPress={handleSave}
               disabled={saving}
-              style={[globalStyles.button, styles.btn]}>
+              style={[
+                globalStyles.button,
+                styles.btn,
+                globalStyles[`bg-${uiMode}`],
+              ]}>
               {saving ? (
                 <ActivityIndicator animating={saving} />
               ) : (
@@ -294,7 +311,7 @@ const Match = ({route}) => {
       )}
       <View style={globalStyles.ads}>
         <BannerAd
-          unitId={adUnitId}
+          unitId={adUnit()}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
@@ -317,7 +334,6 @@ const styles = StyleSheet.create({
     marginVertical: '7%',
     borderBottomRightRadius: 20,
     borderTopLeftRadius: 20,
-    backgroundColor: '#5a0024',
   },
   btnContainer: {
     padding: 5,
@@ -342,6 +358,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
   },
+  stadium: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: 'blue',
+  },
   goals: {
     borderColor: '#EEE',
     borderWidth: 1,
@@ -349,7 +370,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   icon: {
-    color: '#5a0024',
     marginHorizontal: 5,
   },
   iconSave: {
@@ -367,9 +387,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-  primary: {
-    color: '#5a0024',
-  },
   team: {
     fontSize: 16,
     fontWeight: '600',
@@ -381,7 +398,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   title: {
-    color: '#5a0024',
     position: 'absolute',
     alignSelf: 'center',
     fontSize: 18,

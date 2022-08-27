@@ -6,7 +6,6 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import useApp from '../hooks/useApp';
@@ -14,18 +13,13 @@ import Table from '../components/Table';
 import NextMatch from '../components/NextMatch';
 import moment from 'moment';
 import MatchesDay from '../components/MatchesDay';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import Knockouts from '../components/Knockouts';
 import language from '../helper/translate';
-
-const adUnitId = __DEV__
-  ? TestIds.BANNER
-  : Platform.OS === 'ios'
-  ? 'ca-app-pub-3087410415589963/6846729662'
-  : 'ca-app-pub-3087410415589963/7165846759';
+import {adUnit} from '../helper/adUnit';
 
 const Matches = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -46,8 +40,15 @@ const Matches = () => {
     matchesPlayed,
     matches,
     lang,
+    uiMode,
   } = useApp();
   const navigation = useNavigation();
+
+  const limitGroups = uiMode === 'UCL' ? 96 : 48;
+  const limitRound16 = uiMode === 'UCL' ? 112 : 56;
+  const limitQuarter = uiMode === 'UCL' ? 120 : 60;
+  const limitSemis = uiMode === 'UCL' ? 124 : 62;
+  const totalMatches = uiMode === 'UCL' ? 125 : 64;
 
   const focusEffect = useCallback(() => {
     setLoading(true);
@@ -70,14 +71,14 @@ const Matches = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {matchesPlayed >= 48 ? (
+        {matchesPlayed >= limitGroups ? (
           <View style={styles.match}>
-            <Text style={styles.titleMatch}>
-              {matchesPlayed < 56
+            <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+              {matchesPlayed < limitRound16
                 ? `${language[lang].round16}`
-                : matchesPlayed < 60
+                : matchesPlayed < limitQuarter
                 ? `${language[lang].quarter}`
-                : matchesPlayed < 62
+                : matchesPlayed < limitSemis
                 ? 'Semi Final'
                 : 'Final'}
             </Text>
@@ -92,14 +93,14 @@ const Matches = () => {
         )}
         {nextMatch && nextMatch.id ? (
           <View style={styles.match}>
-            <Text style={styles.titleMatch}>
-              {matchesPlayed < 48
+            <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+              {matchesPlayed < limitGroups
                 ? `${language[lang].nextMatch}`
-                : matchesPlayed < 56
+                : matchesPlayed < limitRound16
                 ? `${language[lang].round16}`
-                : matchesPlayed < 60
+                : matchesPlayed < limitQuarter
                 ? `${language[lang].quarter}`
-                : matchesPlayed < 62
+                : matchesPlayed < limitSemis
                 ? 'Semi Final'
                 : matchesPlayed < 63
                 ? `${language[lang].thirdPlace}`
@@ -119,9 +120,9 @@ const Matches = () => {
           <ActivityIndicator animating={loading} />
         ) : (
           todayMatches.length > 0 &&
-          matchesPlayed < 64 && (
+          matchesPlayed < totalMatches && (
             <View style={styles.match}>
-              <Text style={styles.titleMatch}>
+              <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
                 {language[lang].todayMatches}
               </Text>
               <MatchesDay matchData={todayMatches} parent={parent} />
@@ -133,14 +134,14 @@ const Matches = () => {
         ) : (
           pendingMatches.length > 0 && (
             <View style={styles.match}>
-              <Text style={styles.titleMatch}>
+              <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
                 {language[lang].pendingMatches}
               </Text>
               <MatchesDay matchData={pendingMatches} parent={parent} />
             </View>
           )
         )}
-        {matchesPlayed > 0 && matchesPlayed <= 48 && (
+        {matchesPlayed > 0 && matchesPlayed < limitGroups && (
           <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
             <Text style={globalStyles.textCenter}>
               {language[lang].editPlayed}
@@ -149,7 +150,11 @@ const Matches = () => {
         )}
         <Pressable
           onPress={goBack}
-          style={[globalStyles.button, globalStyles.primary, styles.btn]}>
+          style={[
+            globalStyles.button,
+            globalStyles[`bg-${uiMode}`],
+            styles.btn,
+          ]}>
           <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
             {language[lang].goHome}
           </Text>
@@ -157,7 +162,7 @@ const Matches = () => {
       </ScrollView>
       <View style={globalStyles.ads}>
         <BannerAd
-          unitId={adUnitId}
+          unitId={adUnit()}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
@@ -195,7 +200,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     fontWeight: '900',
-    color: '#5a0024',
     fontSize: 18,
   },
 });

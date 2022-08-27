@@ -10,7 +10,7 @@ import language from '../helper/translate';
 const DateChange = ({setCurrentDay, today}) => {
   const date = moment('2022-01-01').add(today - 1, 'days');
 
-  const {matchesPlayed_p, lang} = useApp();
+  const {matchesPlayed_p, lang, uiMode} = useApp();
 
   const handleChange = type => {
     let limit;
@@ -50,7 +50,7 @@ const DateChange = ({setCurrentDay, today}) => {
       <Pressable onPress={() => handleChange('min')}>
         <View style={styles.icon}>
           <FontAwesomeIcon
-            style={[globalStyles.icon, {color: '#5a0024'}]}
+            style={[globalStyles.icon, globalStyles[`text-${uiMode}`]]}
             size={18}
             icon={faAngleLeft}
           />
@@ -60,7 +60,7 @@ const DateChange = ({setCurrentDay, today}) => {
       <Pressable onPress={() => handleChange('add')}>
         <View style={styles.icon}>
           <FontAwesomeIcon
-            style={[globalStyles.icon, {color: '#5a0024'}]}
+            style={[globalStyles.icon, globalStyles[`text-${uiMode}`]]}
             size={18}
             icon={faAngleRight}
           />
