@@ -1,9 +1,16 @@
-import {View, Text, StyleSheet, Pressable, Image, Modal} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Image,
+  Modal,
+  Alert,
+} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import SplashScreen from 'react-native-splash-screen';
 
 import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helper/scale';
@@ -14,6 +21,7 @@ import moment from 'moment';
 import ModalSettings from '../components/ModalSettings';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
+import gradientSelector from '../helper/gradientSelector';
 
 const WelcomeScreen = () => {
   const [today, setToday] = useState(null);
@@ -21,12 +29,16 @@ const WelcomeScreen = () => {
   const [utc, setUtc] = useState('+00:00');
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {generateNextMatches, generateNextMatches_p, matchesPlayed_p, lang} =
-    useApp();
+  const {
+    generateNextMatches,
+    generateNextMatches_p,
+    matchesPlayed_p,
+    lang,
+    uiMode,
+  } = useApp();
   const navigation = useNavigation();
 
   useEffect(() => {
-    SplashScreen.hide();
     const setUTC = async () => {
       const utcStg = await AsyncStorage.getItem('UTC');
 
@@ -58,20 +70,28 @@ const WelcomeScreen = () => {
   useFocusEffect(callback);
 
   const handleMatch = () => {
-    if (today >= start) {
-      navigation.navigate('Matches');
+    if (uiMode === 'WCF') {
+      if (today >= start) {
+        navigation.navigate('Matches');
+      } else {
+        navigation.navigate('Countdown');
+      }
     } else {
-      navigation.navigate('Countdown');
+      navigation.navigate('Matches');
     }
   };
 
   const goToPlayGround = () => {
+    if (uiMode === 'UCL') {
+      Alert.alert(language[lang].info, language[lang].msgPlayground);
+      return;
+    }
     navigation.navigate('Playground');
   };
 
   return (
     <LinearGradient
-      colors={['#5a0024', '#5a0024', '#5a0024', '#000']}
+      colors={gradientSelector(uiMode)}
       style={globalStyles.flex}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}>

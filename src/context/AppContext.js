@@ -5,6 +5,11 @@ import {quickStart} from '../config/dbConfig';
 import data from '../helper/data';
 import matchData from '../helper/matchData';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from 'react-native-splash-screen';
+import MobileAds, {
+  AdsConsent,
+  AdsConsentStatus,
+} from 'react-native-google-mobile-ads';
 
 const AppContext = createContext();
 
@@ -24,6 +29,25 @@ const AppProvider = ({children}) => {
   const [pendingMatches, setPendingMatches] = useState([]);
   const [pendingMatches_p, setPendingMatches_p] = useState([]);
   const [lang, setLang] = useState('EN');
+  const [uiMode, setUiMode] = useState('WCF');
+
+  useEffect(() => {
+    const loadAdsEngine = async () => {
+      const consentInfo = await AdsConsent.requestInfoUpdate();
+      if (
+        consentInfo.isConsentFormAvailable &&
+        consentInfo.status === AdsConsentStatus.REQUIRED
+      ) {
+        const {status} = await AdsConsent.showForm();
+
+        await AsyncStorage.setItem('adsStatus', status);
+      }
+
+      MobileAds().initialize().then(console.log);
+    };
+
+    loadAdsEngine();
+  }, []);
 
   useEffect(() => {
     const init = async () => {
@@ -33,10 +57,26 @@ const AppProvider = ({children}) => {
       if (language) {
         setLang(language);
       }
+      const mode = await AsyncStorage.getItem('uiMode');
+      if (mode) {
+        setUiMode(mode);
+      }
+      SplashScreen.hide();
     };
 
     init();
   }, []);
+
+  // useEffect(() => {
+  //   setDBLoading(true);
+  //   const generate = async () => {
+  //     await getDataTeams();
+  //     await generateNextMatches();
+  //     setDBLoading(false);
+  //   };
+
+  //   generate();
+  // }, [uiMode]);
 
   const getDataTeams = async () => {
     try {
@@ -569,6 +609,8 @@ const AppProvider = ({children}) => {
         generateNextMatches_p,
         lang,
         setLang,
+        uiMode,
+        setUiMode,
       }}>
       {children}
     </AppContext.Provider>

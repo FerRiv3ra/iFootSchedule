@@ -3,6 +3,7 @@ const language = {
     cancel: 'Cancel',
     championMessage: 'Champion world cup Qatar 2022',
     chooseLang: 'Choose your language',
+    chooseMode: 'Choose mode',
     close: 'Close',
     confirm: 'Confirm',
     confirmDelete: 'Yes, delete',
@@ -13,6 +14,7 @@ const language = {
     editing: 'Editing ',
     editPlayed: 'Edit Matches Played',
     endTime: 'End full time',
+    english: 'English',
     errorChangeDay:
       'You will be able to change the day when you have saved all the results of the current day.',
     ga: 'GA',
@@ -30,6 +32,7 @@ const language = {
     matchPlayedMessage: 'You can edit before distributing round of 16.',
     minutes: 'Minutes',
     mp: 'MP',
+    msgPlayground: 'The playground is not available in Champions League mode',
     nextMatch: 'Next match',
     penalties: 'Penalties',
     pendingMatches: 'Pending Matches',
@@ -38,6 +41,7 @@ const language = {
     round: 'Round',
     round16: 'Round of 16',
     save: 'Save',
+    spanish: 'Spanish',
     success: 'Success',
     successMessage: 'Data restored',
     team: 'TEAM',
@@ -47,12 +51,13 @@ const language = {
     validMinutes: 'Valid minutes 00 | 30 | 45',
     zoneError: 'Invalid time zone',
     zoneTime: 'Select your time zone',
-    zoneLangMgs: 'Time zone and language saved',
+    zoneLangMgs: 'Mode, time zone and language saved',
   },
   ES: {
     cancel: 'Cancelar',
     championMessage: 'Campeón del mundial de Qatar 2022',
     chooseLang: 'Selecciona tu idioma',
+    chooseMode: 'Selecciona el modo',
     close: 'Cerrar',
     confirm: 'Confirmar',
     confirmDelete: 'Si, borrar',
@@ -63,6 +68,7 @@ const language = {
     editing: 'Editando ',
     editPlayed: 'Editar Juegos Jugados',
     endTime: 'Tiempo terminado',
+    english: 'Inglés',
     errorChangeDay:
       'Podrás cambiar el día cuando hayas guardado todos los resultados del día actual.',
     ga: 'GC',
@@ -80,7 +86,9 @@ const language = {
     matchPlayedMessage:
       'Podrás editar antes de distribuir los octavos de final.',
     minutes: 'Minutos',
-    mp: 'JJ',
+    mp: 'PJ',
+    msgPlayground:
+      'El modo simulación no está disponible en modo Champions League',
     nextMatch: 'Siguiente partido',
     penalties: 'Penales',
     pendingMatches: 'Partidos pendientes',
@@ -89,6 +97,7 @@ const language = {
     round: 'Ronda',
     round16: 'Octavos de final',
     save: 'Guardar',
+    spanish: 'Español',
     success: 'Éxito',
     successMessage: 'Datos restaurados',
     team: 'SELECCIÓN',
@@ -98,7 +107,7 @@ const language = {
     validMinutes: 'Minutos válidos 00 | 30 | 45',
     zoneError: 'Zona horaria no válida',
     zoneTime: 'Seleciona tu zona horaria',
-    zoneLangMgs: 'Idioma y zona horaria guardados',
+    zoneLangMgs: 'Modo, idioma y zona horaria guardados',
   },
 };
 

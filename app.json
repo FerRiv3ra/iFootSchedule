@@ -3,6 +3,8 @@
   "displayName": "WorldCup",
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-3087410415589963~7233456098",
-    "ios_app_id": "ca-app-pub-3940256099942544~1458002511"
+    "ios_app_id": "ca-app-pub-3087410415589963~5920374428",
+    "delay_app_measurement_init": true,
+    "user_tracking_usage_description": "This identifier will be used to deliver personalized ads to you."
   }
 }
