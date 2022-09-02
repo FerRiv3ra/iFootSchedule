@@ -263,7 +263,7 @@ const ModalSettings = ({setModalVisible}) => {
             size={14}
             icon={faClose}
           />
-          <Text>{language[lang].close}</Text>
+          <Text style={{color: '#111111'}}>{language[lang].close}</Text>
         </Pressable>
       </View>
       <View style={globalStyles.ads}>
@@ -322,6 +322,7 @@ const styles = StyleSheet.create({
   modalText: {
     marginTop: 15,
     textAlign: 'center',
+    color: '#111111',
   },
   input: {
     height: 40,
@@ -331,10 +332,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderBottomRightRadius: 10,
     padding: 10,
+    color: '#111111',
   },
   points: {
     alignSelf: 'center',
     fontSize: 18,
+    color: '#111111',
   },
   icon: {
     color: '#FFF',

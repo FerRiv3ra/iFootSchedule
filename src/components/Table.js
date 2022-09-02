@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     width: 35,
     textAlign: 'center',
+    color: '#111111',
   },
   title: {
     textAlign: 'center',
@@ -79,5 +80,6 @@ const styles = StyleSheet.create({
     height: 'auto',
     marginTop: 2,
     width: 150,
+    color: '#111111',
   },
 });

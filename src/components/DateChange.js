@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
   date: {
     textTransform: 'uppercase',
     fontWeight: '700',
+    color: '#111111',
   },
   icon: {
     padding: 3,

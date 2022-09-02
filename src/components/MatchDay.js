@@ -47,7 +47,9 @@ const MatchDay = ({match, parent, editing}) => {
         <Text style={styles.hour}>
           {match.played
             ? `${match.goll} - ${match.golv}`
-            : `${moment(date).utcOffset(utc).hours()}:00`}
+            : `${moment(date).utcOffset(utc).hours()}:${
+                moment(date).utcOffset(utc).minutes() || '00'
+              }`}
         </Text>
         <Image
           style={styles.logoTeam}
@@ -86,10 +88,12 @@ const styles = StyleSheet.create({
   hour: {
     textAlign: 'center',
     width: 80,
+    color: '#111111',
   },
   text: {
     width: 40,
     marginHorizontal: 5,
+    color: '#111111',
   },
   icon: {
     color: '#555',

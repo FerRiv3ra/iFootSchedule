@@ -65,7 +65,7 @@ const Knockouts = ({data, matchesPlayed}) => {
               style={styles.logoTeam}
               source={SECTIONS[finalMatch.local]?.file}
             />
-            <Text>VRS</Text>
+            <Text style={{color: '#111111'}}>VRS</Text>
             <Image
               style={styles.logoTeam}
               source={SECTIONS[finalMatch.visit]?.file}
@@ -114,9 +114,11 @@ const styles = StyleSheet.create({
   team: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#111111',
   },
   date: {
     textAlign: 'center',
     fontSize: 16,
+    color: '#111111',
   },
 });

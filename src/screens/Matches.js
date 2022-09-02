@@ -20,13 +20,15 @@ import Champion from '../components/Champion';
 import Knockouts from '../components/Knockouts';
 import language from '../helper/translate';
 import {adUnit} from '../helper/adUnit';
+import WaitingDraw from './WaitingDraw';
 
 const Matches = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const parent = 'Matches';
-  const today = moment('2022-09-07').dayOfYear();
+  const today = moment().dayOfYear();
 
   const [loading, setLoading] = useState(true);
+  const [playedGames, setPlayedGames] = useState(0);
   const {
     DBLoading,
     teams,
@@ -57,6 +59,11 @@ const Matches = () => {
     getNextMatch(uiMode === 'UCL' ? 'C' : 'M');
     getPendingMatches(today, uiMode === 'UCL' ? 'C' : 'M');
     getMatchesToday(today, uiMode === 'UCL' ? 'C' : 'M');
+    if (uiMode === 'UCL') {
+      setPlayedGames(matchesPlayedC);
+    } else {
+      setPlayedGames(matchesPlayed);
+    }
     setLoading(false);
   }, [DBLoading]);
 
@@ -73,22 +80,24 @@ const Matches = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {matchesPlayed >= limitGroups ? (
-          <View style={styles.match}>
-            <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
-              {matchesPlayed < limitRound16
-                ? `${language[lang].round16}`
-                : matchesPlayed < limitQuarter
-                ? `${language[lang].quarter}`
-                : matchesPlayed < limitSemis
-                ? 'Semi Final'
-                : 'Final'}
-            </Text>
-            <Knockouts
-              data={uiMode === 'UCL' ? matchesC : matches}
-              matchesPlayed={uiMode === 'UCL' ? matchesPlayedC : matchesPlayed}
-            />
-          </View>
+        {playedGames >= limitGroups ? (
+          uiMode === 'WCF' && (
+            <View style={styles.match}>
+              <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+                {playedGames < limitRound16
+                  ? `${language[lang].round16}`
+                  : playedGames < limitQuarter
+                  ? `${language[lang].quarter}`
+                  : playedGames < limitSemis
+                  ? 'Semi Final'
+                  : 'Final'}
+              </Text>
+              <Knockouts
+                data={uiMode === 'UCL' ? matchesC : matches}
+                matchesPlayed={playedGames}
+              />
+            </View>
+          )
         ) : (
           <ScrollView horizontal={true}>
             {groups.map((group, index) => (
@@ -103,15 +112,15 @@ const Matches = () => {
         {nextMatch && nextMatch.id ? (
           <View style={styles.match}>
             <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
-              {matchesPlayed < limitGroups
+              {playedGames < limitGroups
                 ? `${language[lang].nextMatch}`
-                : matchesPlayed < limitRound16
+                : playedGames < limitRound16
                 ? `${language[lang].round16}`
-                : matchesPlayed < limitQuarter
+                : playedGames < limitQuarter
                 ? `${language[lang].quarter}`
-                : matchesPlayed < limitSemis
+                : playedGames < limitSemis
                 ? 'Semi Final'
-                : matchesPlayed < 63
+                : playedGames < 63
                 ? `${language[lang].thirdPlace}`
                 : 'Final'}
             </Text>
@@ -122,6 +131,17 @@ const Matches = () => {
               parent={parent}
             />
           </View>
+        ) : uiMode === 'UCL' && playedGames === 96 ? (
+          loading ? (
+            <ActivityIndicator animating={loading} />
+          ) : (
+            <View style={styles.match}>
+              <Text style={[styles.waiting, globalStyles[`text-${uiMode}`]]}>
+                {language[lang].waitingDraw}
+              </Text>
+              <WaitingDraw />
+            </View>
+          )
         ) : (
           <Champion parent={uiMode === 'UCL' ? 'C' : 'M'} />
         )}
@@ -129,7 +149,7 @@ const Matches = () => {
           <ActivityIndicator animating={loading} />
         ) : (
           todayMatches.length > 0 &&
-          matchesPlayed < totalMatches && (
+          playedGames < totalMatches && (
             <View style={styles.match}>
               <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
                 {language[lang].todayMatches}
@@ -150,9 +170,9 @@ const Matches = () => {
             </View>
           )
         )}
-        {matchesPlayed > 0 && matchesPlayed < limitGroups && (
+        {playedGames > 0 && playedGames < limitGroups && (
           <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
-            <Text style={globalStyles.textCenter}>
+            <Text style={[globalStyles.textCenter, {color: '#111111'}]}>
               {language[lang].editPlayed}
             </Text>
           </Pressable>
@@ -210,5 +230,11 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontWeight: '900',
     fontSize: 18,
+  },
+  waiting: {
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    fontWeight: '500',
+    fontSize: 14,
   },
 });

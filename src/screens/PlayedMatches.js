@@ -19,7 +19,7 @@ import {adUnit} from '../helper/adUnit';
 const PlayedMatches = ({route}) => {
   const {parent} = route.params;
 
-  const {matches, matches_p, DBLoading, lang, uiMode} = useApp();
+  const {matches, matchesC, matches_p, DBLoading, lang, uiMode} = useApp();
   const [dataMatches, setDataMatches] = useState([]);
 
   const navigation = useNavigation();
@@ -28,7 +28,13 @@ const PlayedMatches = ({route}) => {
     if (parent === 'Playground') {
       setDataMatches(matches_p.filter(match => match.id <= 48 && match.played));
     } else {
-      setDataMatches(matches.filter(match => match.id <= 48 && match.played));
+      if (uiMode === 'UCL') {
+        setDataMatches(
+          matchesC.filter(match => match.id <= 96 && match.played),
+        );
+      } else {
+        setDataMatches(matches.filter(match => match.id <= 48 && match.played));
+      }
     }
   }, [DBLoading]);
 

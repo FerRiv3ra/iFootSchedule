@@ -128,6 +128,7 @@ const Match = ({route}) => {
 
   const handleSave = async () => {
     setSaving(true);
+    const limit = uiMode === 'UCL' ? 96 : 48;
     const matchSave = {
       date: match.date,
       goll,
@@ -141,7 +142,7 @@ const Match = ({route}) => {
     };
 
     if (
-      match.id > 48 &&
+      match.id > limit &&
       matchSave.goll === matchSave.golv &&
       matchSave.penl === 0 &&
       matchSave.penv === 0
@@ -156,7 +157,7 @@ const Match = ({route}) => {
     }
     await saveMatch(matchSave, parent, editing);
 
-    if (match.id === 48) {
+    if (match.id === limit) {
       navigation.dispatch(StackActions.replace('WelcomeScreen'));
     } else {
       navigation.goBack();
@@ -230,7 +231,7 @@ const Match = ({route}) => {
                 </Pressable>
               </View>
             </View>
-            <Text>VRS</Text>
+            <Text style={{color: '#111111'}}>VRS</Text>
             <View>
               <Image
                 style={styles.logoTeam}
@@ -357,6 +358,7 @@ const styles = StyleSheet.create({
   date: {
     textAlign: 'center',
     fontSize: 12,
+    color: '#111111',
   },
   stadium: {
     textAlign: 'center',
@@ -368,6 +370,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 5,
     marginHorizontal: 5,
+    color: '#111111',
   },
   icon: {
     marginHorizontal: 5,
@@ -390,6 +393,7 @@ const styles = StyleSheet.create({
   team: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#111111',
   },
   textStyle: {
     color: 'white',

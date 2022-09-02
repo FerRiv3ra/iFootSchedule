@@ -156,7 +156,7 @@ const Playground = () => {
         )}
         {matchesPlayed_p > 0 && matchesPlayed_p < 48 && (
           <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
-            <Text style={globalStyles.textCenter}>
+            <Text style={[globalStyles.textCenter, {color: '#111111'}]}>
               {language[lang].editPlayed}
             </Text>
           </Pressable>

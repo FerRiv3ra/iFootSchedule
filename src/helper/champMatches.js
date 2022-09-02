@@ -330,7 +330,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-04T17:45:00+00:00',
+    date: '2022-10-04T16:45:00+00:00',
   },
   {
     local: 'MAR',
@@ -340,7 +340,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-04T17:45:00+00:00',
+    date: '2022-10-04T16:45:00+00:00',
   },
   {
     local: 'POR',
@@ -350,7 +350,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-04T20:00:00+00:00',
+    date: '2022-10-04T19:00:00+00:00',
   },
   {
     local: 'BRU',
@@ -360,7 +360,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-04T20:00:00+00:00',
+    date: '2022-10-04T19:00:00+00:00',
   },
   {
     local: 'AJX',
@@ -370,7 +370,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-04T20:00:00+00:00',
+    date: '2022-10-04T19:00:00+00:00',
   },
   {
     local: 'FRA',
@@ -380,7 +380,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-04T20:00:00+00:00',
+    date: '2022-10-04T19:00:00+00:00',
   },
   {
     local: 'INT',
@@ -390,7 +390,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-04T20:00:00+00:00',
+    date: '2022-10-04T19:00:00+00:00',
   },
   {
     local: 'LIV',
@@ -400,7 +400,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-04T20:00:00+00:00',
+    date: '2022-10-04T19:00:00+00:00',
   },
   {
     local: 'SAL',
@@ -410,7 +410,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-05T17:45:00+00:00',
+    date: '2022-10-05T16:45:00+00:00',
   },
   {
     local: 'LEI',
@@ -420,7 +420,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-05T17:45:00+00:00',
+    date: '2022-10-05T16:45:00+00:00',
   },
   {
     local: 'CHE',
@@ -430,17 +430,17 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-05T20:00:00+00:00',
+    date: '2022-10-05T19:00:00+00:00',
   },
   {
     local: 'JUV',
     goll: 0,
     penl: 0,
-    visit: 'MHA',
+    visit: 'MAH',
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-05T20:00:00+00:00',
+    date: '2022-10-05T19:00:00+00:00',
   },
   {
     local: 'RMA',
@@ -450,7 +450,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-05T20:00:00+00:00',
+    date: '2022-10-05T19:00:00+00:00',
   },
   {
     local: 'SEV',
@@ -460,7 +460,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-05T20:00:00+00:00',
+    date: '2022-10-05T19:00:00+00:00',
   },
   {
     local: 'BEN',
@@ -470,7 +470,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-05T20:00:00+00:00',
+    date: '2022-10-05T19:00:00+00:00',
   },
   {
     local: 'MCI',
@@ -480,18 +480,18 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-05T20:00:00+00:00',
+    date: '2022-10-05T19:00:00+00:00',
   },
   // ** Match 4 **
   {
-    local: 'MHA',
+    local: 'MAH',
     goll: 0,
     penl: 0,
     visit: 'JUV',
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-11T17:45:00+00:00',
+    date: '2022-10-11T16:45:00+00:00',
   },
   {
     local: 'COP',
@@ -501,7 +501,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-11T17:45:00+00:00',
+    date: '2022-10-11T16:45:00+00:00',
   },
   {
     local: 'PSG',
@@ -511,7 +511,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-11T20:00:00+00:00',
+    date: '2022-10-11T19:00:00+00:00',
   },
   {
     local: 'DIN',
@@ -521,7 +521,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-11T20:00:00+00:00',
+    date: '2022-10-11T19:00:00+00:00',
   },
   {
     local: 'BVB',
@@ -531,7 +531,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-11T20:00:00+00:00',
+    date: '2022-10-11T19:00:00+00:00',
   },
   {
     local: 'ACM',
@@ -541,7 +541,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-11T20:00:00+00:00',
+    date: '2022-10-11T19:00:00+00:00',
   },
   {
     local: 'SHA',
@@ -551,7 +551,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-11T20:00:00+00:00',
+    date: '2022-10-11T19:00:00+00:00',
   },
   {
     local: 'CEL',
@@ -561,7 +561,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-11T20:00:00+00:00',
+    date: '2022-10-11T19:00:00+00:00',
   },
   {
     local: 'NAP',
@@ -571,7 +571,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-12T17:45:00+00:00',
+    date: '2022-10-12T16:45:00+00:00',
   },
   {
     local: 'ATL',
@@ -581,7 +581,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-12T17:45:00+00:00',
+    date: '2022-10-12T16:45:00+00:00',
   },
   {
     local: 'LEV',
@@ -591,7 +591,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-12T20:00:00+00:00',
+    date: '2022-10-12T19:00:00+00:00',
   },
   {
     local: 'RAN',
@@ -601,7 +601,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-12T20:00:00+00:00',
+    date: '2022-10-12T19:00:00+00:00',
   },
   {
     local: 'FCB',
@@ -611,7 +611,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-12T20:00:00+00:00',
+    date: '2022-10-12T19:00:00+00:00',
   },
   {
     local: 'PLZ',
@@ -621,7 +621,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-12T20:00:00+00:00',
+    date: '2022-10-12T19:00:00+00:00',
   },
   {
     local: 'TOT',
@@ -631,7 +631,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-12T20:00:00+00:00',
+    date: '2022-10-12T19:00:00+00:00',
   },
   {
     local: 'LIS',
@@ -641,7 +641,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-12T20:00:00+00:00',
+    date: '2022-10-12T19:00:00+00:00',
   },
   // ** Match 5 **
   {
@@ -652,7 +652,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-25T17:45:00+00:00',
+    date: '2022-10-25T16:45:00+00:00',
   },
   {
     local: 'SEV',
@@ -662,17 +662,17 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-25T17:45:00+00:00',
+    date: '2022-10-25T16:45:00+00:00',
   },
   {
     local: 'PSG',
     goll: 0,
     penl: 0,
-    visit: 'MHA',
+    visit: 'MAH',
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-25T20:00:00+00:00',
+    date: '2022-10-25T19:00:00+00:00',
   },
   {
     local: 'BVB',
@@ -682,7 +682,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-25T20:00:00+00:00',
+    date: '2022-10-25T19:00:00+00:00',
   },
   {
     local: 'DIN',
@@ -692,7 +692,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-25T20:00:00+00:00',
+    date: '2022-10-25T19:00:00+00:00',
   },
   {
     local: 'BEN',
@@ -702,17 +702,17 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-25T20:00:00+00:00',
+    date: '2022-10-25T19:00:00+00:00',
   },
   {
     local: 'CEL',
     goll: 0,
     penl: 0,
-    visit: 'SAH',
+    visit: 'SHA',
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-25T20:00:00+00:00',
+    date: '2022-10-25T19:00:00+00:00',
   },
   {
     local: 'LEI',
@@ -722,7 +722,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-25T20:00:00+00:00',
+    date: '2022-10-25T19:00:00+00:00',
   },
   {
     local: 'INT',
@@ -732,7 +732,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-26T17:45:00+00:00',
+    date: '2022-10-26T16:45:00+00:00',
   },
   {
     local: 'BRU',
@@ -742,7 +742,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-26T17:45:00+00:00',
+    date: '2022-10-26T16:45:00+00:00',
   },
   {
     local: 'FRA',
@@ -752,7 +752,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-26T20:00:00+00:00',
+    date: '2022-10-26T19:00:00+00:00',
   },
   {
     local: 'FCB',
@@ -762,7 +762,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-26T20:00:00+00:00',
+    date: '2022-10-26T19:00:00+00:00',
   },
   {
     local: 'AJX',
@@ -772,7 +772,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-26T20:00:00+00:00',
+    date: '2022-10-26T19:00:00+00:00',
   },
   {
     local: 'ATL',
@@ -782,7 +782,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-26T20:00:00+00:00',
+    date: '2022-10-26T19:00:00+00:00',
   },
   {
     local: 'TOT',
@@ -792,7 +792,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-26T20:00:00+00:00',
+    date: '2022-10-26T19:00:00+00:00',
   },
   {
     local: 'NAP',
@@ -802,7 +802,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2022-10-26T20:00:00+00:00',
+    date: '2022-10-26T19:00:00+00:00',
   },
   // ** Match 6 **
   {
@@ -916,7 +916,7 @@ const champMatches = [
     date: '2022-11-02T20:00:00+00:00',
   },
   {
-    local: 'MHA',
+    local: 'MAH',
     goll: 0,
     penl: 0,
     visit: 'BEN',

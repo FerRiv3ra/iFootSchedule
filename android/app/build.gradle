@@ -137,8 +137,8 @@ android {
         applicationId "com.ferrivera.ifootschedule"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5
-        versionName "1.1.2"
+        versionCode 6
+        versionName "1.2.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -267,6 +267,10 @@ dependencies {
     implementation project(':react-native-splash-screen')
     
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    // Google ADS
+    implementation 'com.google.android.gms:play-services-ads:21.0.0'
+    implementation 'com.google.android.ump:user-messaging-platform:2.0.0'
 
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

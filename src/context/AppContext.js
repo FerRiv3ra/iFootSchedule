@@ -15,7 +15,6 @@ const AppContext = createContext();
 
 const AppProvider = ({children}) => {
   const [DBLoading, setDBLoading] = useState(true);
-  const [distributingRound16, setDistributingRound16] = useState(false);
   const [teams, setTeams] = useState([]);
   const [teamsC, setTeamsC] = useState([]);
   const [teams_p, setTeams_p] = useState([]);
@@ -67,26 +66,15 @@ const AppProvider = ({children}) => {
     init();
   }, []);
 
-  // useEffect(() => {
-  //   setDBLoading(true);
-  //   const generate = async () => {
-  //     await getDataTeams();
-  //     await generateNextMatches();
-  //     setDBLoading(false);
-  //   };
-
-  //   generate();
-  // }, [uiMode]);
-
   const getDataTeams = async () => {
     try {
       setDBLoading(true);
       const realm = await Realm.open({path: 'ifootschedule'});
 
       // realm.write(() => {
-      //   const m = realm.objectForPrimaryKey('matches_p', 48);
+      //   const m = realm.objectForPrimaryKey('champ_matches', 92);
 
-      //   m.played = false;
+      //   m.local = 'MAH';
       // });
 
       const dataTeams = realm.objects('teams');
@@ -142,10 +130,10 @@ const AppProvider = ({children}) => {
         setNextMatch(matchesC.filter(match => match.played === false)[0]);
         break;
       case 'M':
-        setNextMatch(matches.filter(match => match.played === false));
+        setNextMatch(matches.filter(match => match.played === false)[0]);
         break;
       case 'P':
-        setNextMatch(matches_p.filter(match => match.played === false));
+        setNextMatch(matches_p.filter(match => match.played === false)[0]);
         break;
     }
   };
@@ -292,8 +280,18 @@ const AppProvider = ({children}) => {
     try {
       const realm = await Realm.open({path: 'ifootschedule'});
 
-      const dataMatch = parent === 'Playground' ? 'matches_p' : 'matches';
-      const dataTeam = parent === 'Playground' ? 'teams_p' : 'teams';
+      const dataMatch =
+        parent === 'Playground'
+          ? 'matches_p'
+          : uiMode === 'UCL'
+          ? 'champ_matches'
+          : 'matches';
+      const dataTeam =
+        parent === 'Playground'
+          ? 'teams_p'
+          : uiMode === 'UCL'
+          ? 'champ_teams'
+          : 'teams';
 
       let currentMatch = {};
 
@@ -310,8 +308,14 @@ const AppProvider = ({children}) => {
           : match.id <= quarterLimit
           ? 'quarter'
           : 'semis';
-      let local = teams.filter(team => team.short_name === match.local)[0];
-      let visit = teams.filter(team => team.short_name === match.visit)[0];
+      let local =
+        uiMode === 'UCL'
+          ? teamsC.filter(team => team.short_name === match.local)[0]
+          : teams.filter(team => team.short_name === match.local)[0];
+      let visit =
+        uiMode === 'UCL'
+          ? teamsC.filter(team => team.short_name === match.visit)[0]
+          : teams.filter(team => team.short_name === match.visit)[0];
 
       realm.write(() => {
         const tempMatch = realm.objectForPrimaryKey(dataMatch, match.id);
@@ -550,7 +554,6 @@ const AppProvider = ({children}) => {
     const match49 = matches.filter(match => match.id === 49)[0];
 
     if (matchesPlayed === 48 && match49 && match49.local === '1A') {
-      setDistributingRound16(true);
       const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
       try {
         const realm = await Realm.open({path: 'ifootschedule'});
@@ -572,7 +575,6 @@ const AppProvider = ({children}) => {
         });
 
         realm.close();
-        setDistributingRound16(false);
       } catch (err) {
         console.error('Generate matches ', err.message);
       }
@@ -583,7 +585,6 @@ const AppProvider = ({children}) => {
     const match49 = matches_p.filter(match => match.id === 49)[0];
 
     if (matchesPlayed_p === 48 && match49 && match49.local === '1A') {
-      setDistributingRound16(true);
       const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
       try {
         const realm = await Realm.open({path: 'ifootschedule'});
@@ -606,7 +607,6 @@ const AppProvider = ({children}) => {
         });
 
         realm.close();
-        setDistributingRound16(false);
         await getDataTeams();
       } catch (err) {
         console.error('Generate matches playground ', err.message);

@@ -122,6 +122,11 @@ const quickStart = async () => {
     const dataTeamsChamps = realm.objects('champ_teams');
     const dataMatchesChamp = realm.objects('champ_matches');
 
+    // realm.write(() => {
+    //   realm.delete(dataMatchesChamp);
+    //   realm.delete(dataTeamsChamps);
+    // });
+
     if (!dataTeams.length) {
       data.forEach((team, index) => {
         realm.write(() => {

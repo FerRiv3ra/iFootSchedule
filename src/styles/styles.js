@@ -41,6 +41,7 @@ const globalStyles = StyleSheet.create({
     textTransform: 'uppercase',
     fontWeight: '700',
     fontSize: 16,
+    color: '#111111',
   },
   // Single
   flex: {
