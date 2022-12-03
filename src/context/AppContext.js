@@ -71,12 +71,6 @@ const AppProvider = ({children}) => {
       setDBLoading(true);
       const realm = await Realm.open({path: 'ifootschedule'});
 
-      // realm.write(() => {
-      //   const m = realm.objectForPrimaryKey('champ_matches', 92);
-
-      //   m.local = 'MAH';
-      // });
-
       const dataTeams = realm.objects('teams');
       const dataTeamsP = realm.objects('teams_p');
       const dataTeamsC = realm.objects('champ_teams');
@@ -88,16 +82,19 @@ const AppProvider = ({children}) => {
       const orderTeams = dataTeams.sorted([
         ['pts', true],
         ['gd', true],
+        ['gf', true],
       ]);
 
       const orderTeamsP = dataTeamsP.sorted([
         ['pts', true],
         ['gd', true],
+        ['gf', true],
       ]);
 
       const orderTeamsC = dataTeamsC.sorted([
         ['pts', true],
         ['gd', true],
+        ['gf', true],
       ]);
 
       const countPlayed = dataMatches.filtered('played = true');

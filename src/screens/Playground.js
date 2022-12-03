@@ -26,7 +26,7 @@ import {adUnit} from '../helper/adUnit';
 const Playground = () => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const parent = 'Playground';
-  const [today, setToday] = useState(moment('2022-11-21').dayOfYear());
+  const [today, setToday] = useState(moment('2022-11-20').dayOfYear());
 
   const [loading, setLoading] = useState(true);
   const {

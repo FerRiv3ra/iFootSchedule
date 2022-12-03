@@ -49,7 +49,7 @@ const WelcomeScreen = () => {
       }
     };
     setToday(moment().utcOffset(utc));
-    setStart(moment([2022, 10, 21, 0, 0, 0]));
+    setStart(moment([2022, 10, 20, 10, 0, 0]).utcOffset('00:00'));
 
     setUTC();
   }, []);

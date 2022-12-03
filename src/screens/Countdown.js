@@ -4,7 +4,6 @@ import {
   View,
   Image,
   Pressable,
-  Platform,
   SafeAreaView,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
@@ -22,7 +21,7 @@ import {adUnit} from '../helper/adUnit';
 
 const Countdown = () => {
   const today = moment();
-  const start = moment([2022, 10, 21, 0, 0, 0]);
+  const start = moment([2022, 10, 20, 16, 0, 0]).utcOffset('00:00');
   const diffDays = start.diff(today, 'days');
   const diffHours = start.diff(today, 'hours', true) % 24;
   const diffMins =

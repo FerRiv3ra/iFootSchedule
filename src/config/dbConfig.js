@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Realm from 'realm';
 import champData from '../helper/champData';
 import champMatches from '../helper/champMatches';
@@ -118,14 +119,25 @@ const quickStart = async () => {
     });
 
     const dataTeams = realm.objects('teams');
+    const dataTeamsP = realm.objects('teams_p');
     const dataMatches = realm.objects('matches');
+    const dataMatchesP = realm.objects('matches_p');
     const dataTeamsChamps = realm.objects('champ_teams');
     const dataMatchesChamp = realm.objects('champ_matches');
 
-    // realm.write(() => {
-    //   realm.delete(dataMatchesChamp);
-    //   realm.delete(dataTeamsChamps);
-    // });
+    const newConfig = await AsyncStorage.getItem('newConfig16');
+
+    // await AsyncStorage.removeItem('newConfig16');
+
+    if (!newConfig) {
+      realm.write(() => {
+        realm.delete(dataMatches);
+        realm.delete(dataTeams);
+      });
+
+      await AsyncStorage.setItem('currentDay', '324');
+      await AsyncStorage.setItem('newConfig16', 'true');
+    }
 
     if (!dataTeams.length) {
       data.forEach((team, index) => {
@@ -135,7 +147,19 @@ const quickStart = async () => {
             name: team.name,
             group: team.group,
             short_name: team.short_name,
+            p: team.p,
+            gf: team.gf,
+            ga: team.ga,
+            gd: team.gd,
+            pts: team.pts,
           });
+        });
+      });
+    }
+
+    if (!dataTeamsP.length) {
+      data.forEach((team, index) => {
+        realm.write(() => {
           realm.create('teams_p', {
             id: index + 1,
             name: team.name,
@@ -168,7 +192,17 @@ const quickStart = async () => {
             local: match.local,
             visit: match.visit,
             date: match.date,
+            goll: match.goll,
+            golv: match.golv,
+            played: match.played,
           });
+        });
+      });
+    }
+
+    if (!dataMatchesP.length) {
+      matchData.forEach((match, index) => {
+        realm.write(() => {
           realm.create('matches_p', {
             id: index + 1,
             local: match.local,

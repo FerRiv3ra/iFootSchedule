@@ -63,10 +63,10 @@ const KnockoutLeft = ({match, utc}) => {
         ) : (
           <View style={styles.badge}>
             <Text style={styles.textDate}>
-              {moment(match.dat).utc(utc).toLocaleString().slice(4, 10)}
+              {moment(match.date).utc(utc).toLocaleString().slice(4, 10)}
             </Text>
             <Text style={styles.textDate}>
-              {moment(match.dat).utc(utc).toLocaleString().slice(16, 21)}
+              {moment(match.date).utc(utc).toLocaleString().slice(16, 21)}
             </Text>
           </View>
         )}

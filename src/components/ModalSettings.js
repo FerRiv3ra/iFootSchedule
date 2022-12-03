@@ -26,8 +26,8 @@ import SegmentedControl from './SegmentedControl';
 import {adUnit} from '../helper/adUnit';
 
 const ModalSettings = ({setModalVisible}) => {
-  const [hours, setHours] = useState('');
-  const [minutes, setMinutes] = useState('');
+  const [hours, setHours] = useState('00');
+  const [minutes, setMinutes] = useState('00');
   const [plus, setPlus] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -152,7 +152,7 @@ const ModalSettings = ({setModalVisible}) => {
       setLoading(true);
       await restorePlayground();
 
-      await AsyncStorage.setItem('currentDay', '325');
+      await AsyncStorage.setItem('currentDay', '324');
 
       setLoading(false);
       Alert.alert(
@@ -192,8 +192,8 @@ const ModalSettings = ({setModalVisible}) => {
         <Text style={styles.modalText}>{language[lang].chooseLang}</Text>
         <SegmentedControl
           values={[
-            {key: language[lang].english, value: 'EN'},
-            {key: language[lang].spanish, value: 'ES'},
+            {key: `🇬🇧 ${language[lang].english}`, value: 'EN'},
+            {key: `🇪🇸 ${language[lang].spanish}`, value: 'ES'},
           ]}
           onChange={setCurrentLang}
           selectedIndex={currentLang === 'EN' ? 0 : 1}

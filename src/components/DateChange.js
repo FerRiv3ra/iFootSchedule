@@ -37,7 +37,7 @@ const DateChange = ({setCurrentDay, today}) => {
         setCurrentDay(today + 1);
       }
     } else {
-      if (dat <= 325) {
+      if (dat <= 324) {
         return;
       } else {
         setCurrentDay(today - 1);
