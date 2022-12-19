@@ -29,12 +29,11 @@ const ModalSettings = ({setModalVisible}) => {
   const [hours, setHours] = useState('00');
   const [minutes, setMinutes] = useState('00');
   const [plus, setPlus] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentLang, setCurrentLang] = useState('');
   const [mode, setMode] = useState('');
 
-  const {restorePlayground, lang, setLang, uiMode, setUiMode} = useApp();
+  const {lang, setLang, uiMode, setUiMode} = useApp();
 
   useEffect(() => {
     const getUTC = async () => {
@@ -147,30 +146,6 @@ const ModalSettings = ({setModalVisible}) => {
     );
   };
 
-  const handleDelete = async () => {
-    const restore = async () => {
-      setLoading(true);
-      await restorePlayground();
-
-      await AsyncStorage.setItem('currentDay', '324');
-
-      setLoading(false);
-      Alert.alert(
-        language[currentLang].success,
-        language[currentLang].successMessage,
-      );
-    };
-
-    Alert.alert(
-      language[currentLang].confirm,
-      language[currentLang].confirmMessage,
-      [
-        {text: language[currentLang].cancel},
-        {text: language[currentLang].confirmDelete, onPress: () => restore()},
-      ],
-    );
-  };
-
   const handleClose = () => {
     setModalVisible(false);
   };
@@ -180,15 +155,6 @@ const ModalSettings = ({setModalVisible}) => {
   return (
     <View style={styles.centeredView}>
       <View style={styles.modalView}>
-        <Text style={styles.modalText}>{language[lang].chooseMode}</Text>
-        <SegmentedControl
-          values={[
-            {key: 'World Cup', value: 'WCF'},
-            {key: 'Champios League', value: 'UCL'},
-          ]}
-          onChange={setMode}
-          selectedIndex={mode === 'WCF' ? 0 : 1}
-        />
         <Text style={styles.modalText}>{language[lang].chooseLang}</Text>
         <SegmentedControl
           values={[
@@ -237,21 +203,6 @@ const ModalSettings = ({setModalVisible}) => {
             icon={faSave}
           />
           <Text style={styles.textStyle}>{language[lang].save}</Text>
-        </Pressable>
-
-        <Text style={[styles.modalText, {marginTop: 10}]}>
-          {language[lang].deletePlayground}
-        </Text>
-        <Pressable
-          style={[styles.button, globalStyles[`bg-${mode}`]]}
-          disabled={loading}
-          onPress={handleDelete}>
-          <FontAwesomeIcon
-            style={[globalStyles.icon, styles.icon]}
-            size={14}
-            icon={faTrash}
-          />
-          <Text style={styles.textStyle}>{language[lang].delete}</Text>
         </Pressable>
       </View>
       <View>

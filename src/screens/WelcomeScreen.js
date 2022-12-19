@@ -5,117 +5,84 @@ import {
   Pressable,
   Image,
   Modal,
-  Alert,
+  Dimensions,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helper/scale';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faCog, faDice, faFutbol} from '@fortawesome/free-solid-svg-icons';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import moment from 'moment';
+import {faCog, faFutbol} from '@fortawesome/free-solid-svg-icons';
+import {useFocusEffect} from '@react-navigation/native';
+
 import ModalSettings from '../components/ModalSettings';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import gradientSelector from '../helper/gradientSelector';
+import Carousel from 'react-native-snap-carousel';
+import {leaguesData} from '../data/leaguesData';
+import CardLeague from '../components/CardLeague';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-const WelcomeScreen = () => {
-  const [today, setToday] = useState(null);
-  const [start, setStart] = useState(null);
-  const [utc, setUtc] = useState('+00:00');
+const WelcomeScreen = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [gradient, setGradient] = useState([
+    '#ff00ff',
+    '#180056',
+    '#180056',
+    '#180056',
+    '#180056',
+    '#4400ff',
+  ]);
 
-  const {
-    generateNextMatches,
-    generateNextMatches_p,
-    matchesPlayed_p,
-    lang,
-    uiMode,
-  } = useApp();
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    const setUTC = async () => {
-      const utcStg = await AsyncStorage.getItem('UTC');
-
-      if (!utcStg) {
-        await AsyncStorage.setItem('UTC', '+00:00');
-      } else {
-        setUtc(utcStg);
-      }
-    };
-    setToday(moment().utcOffset(utc));
-    setStart(moment([2022, 10, 20, 10, 0, 0]).utcOffset('00:00'));
-
-    setUTC();
-  }, []);
-
-  const [, updateState] = useState();
-  const forceUpdate = useCallback(() => updateState({}), []);
+  const {generateNextMatches, lang} = useApp();
+  const {top} = useSafeAreaInsets();
+  const {width} = Dimensions.get('window');
 
   const callback = useCallback(() => {
-    forceUpdate();
-    const generate = async () => {
-      await generateNextMatches();
-      await generateNextMatches_p();
-    };
-
     generate();
-  }, [matchesPlayed_p]);
+  }, []);
 
   useFocusEffect(callback);
 
-  const handleMatch = () => {
-    if (uiMode === 'WCF') {
-      if (today >= start) {
-        navigation.navigate('Matches');
-      } else {
-        navigation.navigate('Countdown');
-      }
-    } else {
-      navigation.navigate('Matches');
-    }
+  const generate = async () => {
+    await generateNextMatches();
   };
 
-  const goToPlayGround = () => {
-    if (uiMode === 'UCL') {
-      Alert.alert(language[lang].info, language[lang].msgPlayground);
-      return;
-    }
-    navigation.navigate('Playground');
+  const selectGradient = index => {
+    setGradient(gradientSelector(leaguesData[index].id));
   };
 
   return (
     <LinearGradient
-      colors={gradientSelector(uiMode)}
+      colors={gradient}
       style={globalStyles.flex}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}>
-      <View style={[globalStyles.flex, globalStyles.center]}>
+      <View style={[globalStyles.flex]}>
         <Pressable onPress={() => setModalVisible(true)} style={styles.icon}>
           <FontAwesomeIcon
-            style={[globalStyles.icon, {color: '#FFF'}]}
+            style={[globalStyles.icon, {color: '#FFF', zIndex: 99}]}
             size={26}
             icon={faCog}
           />
         </Pressable>
-        <Animatable.View
-          animation="pulse"
-          easing="ease-out"
-          iterationCount="infinite"
-          style={styles.containerPet}>
-          <Image
-            style={styles.logoPet}
-            source={require('../assets/logoIFS.png')}
+        <View style={{...styles.containerPet, marginTop: top + 50}}>
+          <Carousel
+            data={leaguesData}
+            renderItem={({item}) => <CardLeague item={item} />}
+            sliderWidth={width < 500 ? width : 500}
+            itemWidth={width < 500 ? width - 110 : 490}
+            inactiveSlideOpacity={0.9}
+            onSnapToItem={selectGradient}
           />
-        </Animatable.View>
-        <Animatable.View animation={'fadeInRightBig'} delay={1000}>
+        </View>
+
+        <Animatable.View animation={'fadeInUpBig'} delay={1000}>
           <Pressable
-            onPress={handleMatch}
+            onPress={() => navigation.navigate('Matches')}
             style={[globalStyles.button, globalStyles.white, styles.btnUp]}>
             <FontAwesomeIcon
               style={[globalStyles.icon, {color: '#000'}]}
@@ -123,21 +90,6 @@ const WelcomeScreen = () => {
               icon={faFutbol}
             />
             <Text style={globalStyles.textBtn}> {language[lang].matches}</Text>
-          </Pressable>
-        </Animatable.View>
-        <Animatable.View animation={'fadeInLeftBig'} delay={1000}>
-          <Pressable
-            onPress={goToPlayGround}
-            style={[globalStyles.button, globalStyles.white, styles.btnDown]}>
-            <FontAwesomeIcon
-              style={[globalStyles.icon, {color: '#000'}]}
-              size={18}
-              icon={faDice}
-            />
-            <Text style={globalStyles.textBtn}>
-              {' '}
-              {language[lang].playground}
-            </Text>
           </Pressable>
         </Animatable.View>
       </View>
@@ -178,20 +130,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 30,
   },
-  containerPet: {
-    alignSelf: 'center',
-    padding: 10,
-    position: 'absolute',
-    top: 30,
-  },
   btnUp: {
     marginHorizontal: '3%',
-    marginBottom: 2,
+    marginTop: 40,
     borderTopLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   btnDown: {
-    marginHorizontal: '3%',
     borderBottomRightRadius: 20,
+    marginHorizontal: '3%',
   },
   icon: {
     position: 'absolute',

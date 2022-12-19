@@ -17,13 +17,10 @@ const AppProvider = ({children}) => {
   const [DBLoading, setDBLoading] = useState(true);
   const [teams, setTeams] = useState([]);
   const [teamsC, setTeamsC] = useState([]);
-  const [teams_p, setTeams_p] = useState([]);
   const [matches, setMatches] = useState([]);
   const [matchesC, setMatchesC] = useState([]);
-  const [matches_p, setMatches_p] = useState([]);
   const [matchesPlayed, setMatchesPlayed] = useState(0);
   const [matchesPlayedC, setMatchesPlayedC] = useState(0);
-  const [matchesPlayed_p, setMatchesPlayed_p] = useState(0);
   const [nextMatch, setNextMatch] = useState({});
   const [todayMatches, setTodayMatches] = useState([]);
   const [pendingMatches, setPendingMatches] = useState([]);
@@ -72,20 +69,12 @@ const AppProvider = ({children}) => {
       const realm = await Realm.open({path: 'ifootschedule'});
 
       const dataTeams = realm.objects('teams');
-      const dataTeamsP = realm.objects('teams_p');
       const dataTeamsC = realm.objects('champ_teams');
 
       const dataMatches = realm.objects('matches');
-      const dataMatchesP = realm.objects('matches_p');
       const dataMatchesC = realm.objects('champ_matches');
 
       const orderTeams = dataTeams.sorted([
-        ['pts', true],
-        ['gd', true],
-        ['gf', true],
-      ]);
-
-      const orderTeamsP = dataTeamsP.sorted([
         ['pts', true],
         ['gd', true],
         ['gf', true],
@@ -98,20 +87,16 @@ const AppProvider = ({children}) => {
       ]);
 
       const countPlayed = dataMatches.filtered('played = true');
-      const countPlayedP = dataMatchesP.filtered('played = true');
       const countPlayedC = dataMatchesC.filtered('played = true');
 
       setTeams(orderTeams.toJSON());
       setTeamsC(orderTeamsC.toJSON());
-      setTeams_p(orderTeamsP.toJSON());
 
       setMatches(dataMatches.toJSON());
       setMatchesC(dataMatchesC.toJSON());
-      setMatches_p(dataMatchesP.toJSON());
 
       setMatchesPlayed(countPlayed.length);
       setMatchesPlayedC(countPlayedC.length);
-      setMatchesPlayed_p(countPlayedP.length);
 
       setDBLoading(false);
 
@@ -128,9 +113,6 @@ const AppProvider = ({children}) => {
         break;
       case 'M':
         setNextMatch(matches.filter(match => match.played === false)[0]);
-        break;
-      case 'P':
-        setNextMatch(matches_p.filter(match => match.played === false)[0]);
         break;
     }
   };
@@ -156,16 +138,6 @@ const AppProvider = ({children}) => {
         });
 
         setTodayMatches(data);
-        break;
-      case 'P':
-        const dataP = matches_p.filter(match => {
-          const date = moment(match.date).dayOfYear();
-          if (date === day) {
-            return match;
-          }
-        });
-
-        setTodayMatches(dataP);
         break;
     }
   };
@@ -193,16 +165,6 @@ const AppProvider = ({children}) => {
 
         setPendingMatches(dataM);
         break;
-      case 'P':
-        const dataP = matches_p.filter(match => {
-          const date = moment(match.date).dayOfYear();
-          if (date < day && !match.played) {
-            return match;
-          }
-        });
-
-        setPendingMatches(dataP);
-        break;
     }
   };
 
@@ -216,10 +178,6 @@ const AppProvider = ({children}) => {
         break;
       case 'M':
         match = matches.filter(match => match.id === limit)[0];
-
-        break;
-      case 'P':
-        match = matches_p.filter(match => match.id === limit)[0];
 
         break;
     }
@@ -507,46 +465,6 @@ const AppProvider = ({children}) => {
     }
   };
 
-  const restorePlayground = async () => {
-    try {
-      const realm = await Realm.open({path: 'ifootschedule'});
-
-      realm.write(() => {
-        data.forEach((team, index) => {
-          const tempTeam = realm.objects('teams_p')[index];
-          tempTeam.id = index + 1;
-          tempTeam.name = team.name;
-          tempTeam.group = team.group;
-          tempTeam.short_name = team.short_name;
-          tempTeam.p = 0;
-          tempTeam.gf = 0;
-          tempTeam.ga = 0;
-          tempTeam.gd = 0;
-          tempTeam.pts = 0;
-        });
-
-        matchData.forEach((match, index) => {
-          const tempMatch = realm.objects('matches_p')[index];
-          tempMatch.id = index + 1;
-          tempMatch.local = match.local;
-          tempMatch.visit = match.visit;
-          tempMatch.date = match.date;
-          tempMatch.goll = 0;
-          tempMatch.penl = 0;
-          tempMatch.golv = 0;
-          tempMatch.penv = 0;
-          tempMatch.played = false;
-        });
-      });
-
-      realm.close();
-      await getDataTeams();
-      getNextMatch('P');
-    } catch (err) {
-      console.error('Failed to open the realm', err.message);
-    }
-  };
-
   const generateNextMatches = async () => {
     const match49 = matches.filter(match => match.id === 49)[0];
 
@@ -578,49 +496,14 @@ const AppProvider = ({children}) => {
     }
   };
 
-  const generateNextMatches_p = async () => {
-    const match49 = matches_p.filter(match => match.id === 49)[0];
-
-    if (matchesPlayed_p === 48 && match49 && match49.local === '1A') {
-      const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-      try {
-        const realm = await Realm.open({path: 'ifootschedule'});
-
-        realm.write(() => {
-          groups.forEach(group => {
-            const groupTeam = teams_p.filter(team => team.group === group);
-
-            const first = realm
-              .objects('matches_p')
-              .filtered(`local = '1${group}'`)[0];
-
-            first.local = groupTeam[0].short_name;
-
-            const second = realm
-              .objects('matches_p')
-              .filtered(`visit = '2${group}'`)[0];
-            second.visit = groupTeam[1].short_name;
-          });
-        });
-
-        realm.close();
-        await getDataTeams();
-      } catch (err) {
-        console.error('Generate matches playground ', err.message);
-      }
-    }
-  };
-
   return (
     <AppContext.Provider
       value={{
         matches,
         matchesC,
-        matches_p,
         DBLoading,
         teams,
         teamsC,
-        teams_p,
         getNextMatch,
         nextMatch,
         getMatchesToday,
@@ -629,12 +512,9 @@ const AppProvider = ({children}) => {
         pendingMatches,
         getChampion,
         saveMatch,
-        restorePlayground,
         matchesPlayed,
         matchesPlayedC,
-        matchesPlayed_p,
         generateNextMatches,
-        generateNextMatches_p,
         lang,
         setLang,
         uiMode,

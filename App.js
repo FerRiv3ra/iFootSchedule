@@ -3,12 +3,9 @@ import React from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import mobileAds, {MaxAdContentRating} from 'react-native-google-mobile-ads';
 
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import Matches from './src/screens/Matches';
-import Countdown from './src/screens/Countdown';
-import Playground from './src/screens/Playground';
 import {AppProvider} from './src/context/AppContext';
 
 import Match from './src/screens/Match';
@@ -34,22 +31,6 @@ const App = () => {
             component={Matches}
             options={{
               title: 'Matches',
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="Countdown"
-            component={Countdown}
-            options={{
-              title: 'Countdown',
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="Playground"
-            component={Playground}
-            options={{
-              title: 'Playground',
               headerShown: false,
             }}
           />
