@@ -8,7 +8,7 @@ import {
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -24,6 +24,7 @@ import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import SegmentedControl from './SegmentedControl';
 import {adUnit} from '../helper/adUnit';
+import ThemeContext from '../context/ThemeContext';
 
 const ModalSettings = ({setModalVisible}) => {
   const [hours, setHours] = useState('00');
@@ -31,9 +32,9 @@ const ModalSettings = ({setModalVisible}) => {
   const [plus, setPlus] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [currentLang, setCurrentLang] = useState('');
-  const [mode, setMode] = useState('');
 
-  const {lang, setLang, uiMode, setUiMode} = useApp();
+  const {lang, setLang} = useApp();
+  const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
     const getUTC = async () => {
@@ -53,7 +54,6 @@ const ModalSettings = ({setModalVisible}) => {
     };
 
     setCurrentLang(lang);
-    setMode(uiMode);
 
     getUTC();
     setIsLoading(false);
@@ -135,10 +135,8 @@ const ModalSettings = ({setModalVisible}) => {
 
     await AsyncStorage.setItem('UTC', utc);
     await AsyncStorage.setItem('lang', currentLang);
-    await AsyncStorage.setItem('uiMode', mode);
 
     setLang(currentLang);
-    setUiMode(mode);
 
     Alert.alert(
       language[currentLang].success,

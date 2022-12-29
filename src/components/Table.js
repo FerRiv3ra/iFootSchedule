@@ -1,18 +1,20 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import TableTeam from './TableTeam';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import globalStyles from '../styles/styles';
+import ThemeContext from '../context/ThemeContext';
 
 const Table = ({teams, group}) => {
   const data = teams.filter(team => team.group === group);
 
-  const {lang, uiMode} = useApp();
+  const {lang} = useApp();
+  const {mode} = useContext(ThemeContext);
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, globalStyles[`text-${uiMode}`]]}>
+      <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
         {language[lang].group} {group}
       </Text>
       <View style={styles.containerGroup}>

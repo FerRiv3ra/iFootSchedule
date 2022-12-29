@@ -7,8 +7,7 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
-import LinearGradient from 'react-native-linear-gradient';
+import React, {useCallback, useContext, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
 
 import globalStyles from '../styles/styles';
@@ -25,19 +24,14 @@ import Carousel from 'react-native-snap-carousel';
 import {leaguesData} from '../data/leaguesData';
 import CardLeague from '../components/CardLeague';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import GradientBackground from '../components/GradientBackground';
+import ThemeContext from '../context/ThemeContext';
 
 const WelcomeScreen = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [gradient, setGradient] = useState([
-    '#ff00ff',
-    '#180056',
-    '#180056',
-    '#180056',
-    '#180056',
-    '#4400ff',
-  ]);
 
   const {generateNextMatches, lang} = useApp();
+  const {setMainColors, setMode, mode} = useContext(ThemeContext);
   const {top} = useSafeAreaInsets();
   const {width} = Dimensions.get('window');
 
@@ -52,47 +46,47 @@ const WelcomeScreen = ({navigation}) => {
   };
 
   const selectGradient = index => {
-    setGradient(gradientSelector(leaguesData[index].id));
+    setMainColors(gradientSelector(leaguesData[index].id));
+    setMode(leaguesData[index].id);
+  };
+
+  const navigate = () => {
+    navigation.navigate(mode === 'FWC' ? 'Countdown' : 'Matches');
   };
 
   return (
-    <LinearGradient
-      colors={gradient}
-      style={globalStyles.flex}
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 1}}>
-      <View style={[globalStyles.flex]}>
-        <Pressable onPress={() => setModalVisible(true)} style={styles.icon}>
-          <FontAwesomeIcon
-            style={[globalStyles.icon, {color: '#FFF', zIndex: 99}]}
-            size={26}
-            icon={faCog}
-          />
-        </Pressable>
-        <View style={{...styles.containerPet, marginTop: top + 50}}>
-          <Carousel
-            data={leaguesData}
-            renderItem={({item}) => <CardLeague item={item} />}
-            sliderWidth={width < 500 ? width : 500}
-            itemWidth={width < 500 ? width - 110 : 490}
-            inactiveSlideOpacity={0.9}
-            onSnapToItem={selectGradient}
-          />
-        </View>
-
-        <Animatable.View animation={'fadeInUpBig'} delay={1000}>
-          <Pressable
-            onPress={() => navigation.navigate('Matches')}
-            style={[globalStyles.button, globalStyles.white, styles.btnUp]}>
-            <FontAwesomeIcon
-              style={[globalStyles.icon, {color: '#000'}]}
-              size={16}
-              icon={faFutbol}
-            />
-            <Text style={globalStyles.textBtn}> {language[lang].matches}</Text>
-          </Pressable>
-        </Animatable.View>
+    <GradientBackground>
+      <Pressable onPress={() => setModalVisible(true)} style={styles.icon}>
+        <FontAwesomeIcon
+          style={[globalStyles.icon, {color: '#FFF', zIndex: 99}]}
+          size={26}
+          icon={faCog}
+        />
+      </Pressable>
+      <View style={{...styles.containerPet, marginTop: top + 50}}>
+        <Carousel
+          data={leaguesData}
+          renderItem={({item}) => <CardLeague item={item} />}
+          sliderWidth={width < 500 ? width : 500}
+          itemWidth={width < 500 ? width - 110 : 490}
+          inactiveSlideOpacity={0.9}
+          onSnapToItem={selectGradient}
+        />
       </View>
+
+      <Animatable.View animation={'fadeInUpBig'} delay={1000}>
+        <Pressable
+          onPress={navigate}
+          style={[globalStyles.button, globalStyles.white, styles.btnUp]}>
+          <FontAwesomeIcon
+            style={[globalStyles.icon, {color: '#000'}]}
+            size={16}
+            icon={faFutbol}
+          />
+          <Text style={globalStyles.textBtn}> {language[lang].matches}</Text>
+        </Pressable>
+      </Animatable.View>
+
       <Animatable.View
         animation={'rubberBand'}
         duration={3000}
@@ -112,7 +106,7 @@ const WelcomeScreen = ({navigation}) => {
         }}>
         <ModalSettings setModalVisible={setModalVisible} />
       </Modal>
-    </LinearGradient>
+    </GradientBackground>
   );
 };
 

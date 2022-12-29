@@ -2,8 +2,7 @@ import moment from 'moment';
 import Realm from 'realm';
 import React, {createContext, useEffect, useState} from 'react';
 import {quickStart} from '../config/dbConfig';
-import data from '../helper/data';
-import matchData from '../helper/matchData';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
 import MobileAds, {
@@ -28,53 +27,54 @@ const AppProvider = ({children}) => {
   const [uiMode, setUiMode] = useState('WCF');
 
   useEffect(() => {
-    const loadAdsEngine = async () => {
-      const consentInfo = await AdsConsent.requestInfoUpdate();
-      if (
-        consentInfo.isConsentFormAvailable &&
-        consentInfo.status === AdsConsentStatus.REQUIRED
-      ) {
-        const {status} = await AdsConsent.showForm();
-
-        await AsyncStorage.setItem('adsStatus', status);
-      }
-
-      MobileAds().initialize().then(console.log);
-    };
-
     loadAdsEngine();
   }, []);
 
   useEffect(() => {
-    const init = async () => {
-      await quickStart();
-      await getDataTeams();
-      const language = await AsyncStorage.getItem('lang');
-      if (language) {
-        setLang(language);
-      }
-      const mode = await AsyncStorage.getItem('uiMode');
-      if (mode) {
-        setUiMode(mode);
-      }
-      SplashScreen.hide();
-    };
-
     init();
   }, []);
+
+  const loadAdsEngine = async () => {
+    const consentInfo = await AdsConsent.requestInfoUpdate();
+    if (
+      consentInfo.isConsentFormAvailable &&
+      consentInfo.status === AdsConsentStatus.REQUIRED
+    ) {
+      const {status} = await AdsConsent.showForm();
+
+      await AsyncStorage.setItem('adsStatus', status);
+    }
+
+    MobileAds().initialize().then(console.log);
+  };
+
+  const init = async () => {
+    await quickStart();
+    await getDataTeams();
+    const language = await AsyncStorage.getItem('lang');
+    if (language) {
+      setLang(language);
+    }
+    const mode = await AsyncStorage.getItem('uiMode');
+    if (mode) {
+      setUiMode(mode);
+    }
+    SplashScreen.hide();
+  };
 
   const getDataTeams = async () => {
     try {
       setDBLoading(true);
       const realm = await Realm.open({path: 'ifootschedule'});
 
-      const dataTeams = realm.objects('teams');
-      const dataTeamsC = realm.objects('champ_teams');
+      const laLiga = realm.objects('laLiga');
+      const premier = realm.objects('premier');
+      const dataTeamsC = realm.objects('uclTeams');
 
-      const dataMatches = realm.objects('matches');
-      const dataMatchesC = realm.objects('champ_matches');
+      // const dataMatches = realm.objects('matches');
+      const dataMatchesC = realm.objects('uclMatches');
 
-      const orderTeams = dataTeams.sorted([
+      const orderTeams = laLiga.sorted([
         ['pts', true],
         ['gd', true],
         ['gf', true],
@@ -86,16 +86,16 @@ const AppProvider = ({children}) => {
         ['gf', true],
       ]);
 
-      const countPlayed = dataMatches.filtered('played = true');
+      // const countPlayed = dataMatches.filtered('played = true');
       const countPlayedC = dataMatchesC.filtered('played = true');
 
       setTeams(orderTeams.toJSON());
       setTeamsC(orderTeamsC.toJSON());
 
-      setMatches(dataMatches.toJSON());
+      // setMatches(dataMatches.toJSON());
       setMatchesC(dataMatchesC.toJSON());
 
-      setMatchesPlayed(countPlayed.length);
+      // setMatchesPlayed(countPlayed.length);
       setMatchesPlayedC(countPlayedC.length);
 
       setDBLoading(false);
@@ -142,28 +142,20 @@ const AppProvider = ({children}) => {
     }
   };
 
-  const getPendingMatches = (day, parent) => {
+  const getPendingMatches = parent => {
+    const today = moment();
+
     switch (parent) {
       case 'C':
         const dataC = matchesC.filter(match => {
-          const date = moment(match.date).dayOfYear();
-          if (date < day && !match.played) {
+          const date = moment(match.date);
+          if (date.isBefore(today) && !match.played) {
             return match;
           }
         });
 
         setPendingMatches(dataC);
 
-        break;
-      case 'M':
-        const dataM = matches.filter(match => {
-          const date = moment(match.date).dayOfYear();
-          if (date < day && !match.played) {
-            return match;
-          }
-        });
-
-        setPendingMatches(dataM);
         break;
     }
   };

@@ -8,7 +8,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -19,7 +18,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -30,7 +28,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -41,7 +38,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   // ** Group B **
@@ -53,7 +49,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -64,7 +59,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -75,7 +69,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -86,7 +79,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   // ** Group C **
@@ -98,7 +90,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -109,7 +100,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -120,7 +110,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -131,7 +120,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   // ** Group D **
@@ -143,7 +131,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -154,7 +141,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -165,7 +151,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -176,7 +161,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   // ** Group E **
@@ -188,7 +172,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -199,7 +182,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -210,7 +192,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -221,7 +202,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   // ** Group F **
@@ -233,7 +213,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -244,7 +223,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -255,7 +233,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -266,7 +243,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   // ** Group G **
@@ -278,7 +254,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -289,7 +264,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -300,7 +274,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -311,7 +284,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   // ** Group G **
@@ -323,7 +295,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -334,7 +305,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -345,7 +315,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
   {
@@ -356,7 +325,6 @@ const champData = [
     p: 0,
     gf: 0,
     ga: 0,
-    gd: 0,
     pts: 0,
   },
 ];

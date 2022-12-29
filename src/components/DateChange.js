@@ -1,16 +1,18 @@
 import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
+import ThemeContext from '../context/ThemeContext';
 
 const DateChange = ({setCurrentDay, today}) => {
   const date = moment('2022-01-01').add(today - 1, 'days');
 
-  const {matchesPlayed_p, lang, uiMode} = useApp();
+  const {matchesPlayed_p, lang} = useApp();
+  const {mode} = useContext(ThemeContext);
 
   const handleChange = type => {
     let limit;
@@ -50,7 +52,7 @@ const DateChange = ({setCurrentDay, today}) => {
       <Pressable onPress={() => handleChange('min')}>
         <View style={styles.icon}>
           <FontAwesomeIcon
-            style={[globalStyles.icon, globalStyles[`text-${uiMode}`]]}
+            style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
             size={18}
             icon={faAngleLeft}
           />
@@ -60,7 +62,7 @@ const DateChange = ({setCurrentDay, today}) => {
       <Pressable onPress={() => handleChange('add')}>
         <View style={styles.icon}>
           <FontAwesomeIcon
-            style={[globalStyles.icon, globalStyles[`text-${uiMode}`]]}
+            style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
             size={18}
             icon={faAngleRight}
           />

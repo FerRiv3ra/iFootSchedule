@@ -43,7 +43,7 @@ const Knockouts = ({data, matchesPlayed}) => {
       setMinG2(62);
       setMaxG2(62);
     } else {
-      setFinalMatch(data.filter(match => match.id === 64)[0]);
+      setFinalMatch(data.filter(match => match._id === 64)[0]);
       setFinal(true);
     }
 
@@ -51,8 +51,12 @@ const Knockouts = ({data, matchesPlayed}) => {
   }, [matchesPlayed, data]);
 
   useEffect(() => {
-    setMatchesP1(data.filter(match => match.id >= minG1 && match.id <= maxG1));
-    setMatchesP2(data.filter(match => match.id >= minG2 && match.id <= maxG2));
+    setMatchesP1(
+      data.filter(match => match._id >= minG1 && match._id <= maxG1),
+    );
+    setMatchesP2(
+      data.filter(match => match._id >= minG2 && match._id <= maxG2),
+    );
   }, [maxG2, data]);
 
   return (
@@ -80,12 +84,12 @@ const Knockouts = ({data, matchesPlayed}) => {
         <View style={styles.container}>
           <View style={globalStyles.flex}>
             {matchesP1.map(match => (
-              <KnockoutLeft key={match.id} match={match} utc={utc} />
+              <KnockoutLeft key={match._id} match={match} utc={utc} />
             ))}
           </View>
           <View style={globalStyles.flex}>
             {matchesP2.map(match => (
-              <KnockoutRight key={match.id} match={match} utc={utc} />
+              <KnockoutRight key={match._id} match={match} utc={utc} />
             ))}
           </View>
         </View>

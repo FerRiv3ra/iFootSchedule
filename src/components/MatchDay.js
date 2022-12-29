@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, View, Pressable} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
 import CHAMPS from '../helper/selectChamp';
 
@@ -9,13 +9,13 @@ import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
-import useApp from '../hooks/useApp';
+import ThemeContext from '../context/ThemeContext';
 
 const MatchDay = ({match, parent, editing}) => {
   const [utc, setUtc] = useState('+00:00');
   const {local, visit, date} = match;
 
-  const {uiMode} = useApp();
+  const {mode} = useContext(ThemeContext);
   const navigator = useNavigation();
 
   useEffect(() => {
@@ -40,9 +40,7 @@ const MatchDay = ({match, parent, editing}) => {
         <Text style={styles.text}>{local}</Text>
         <Image
           style={styles.logoTeam}
-          source={
-            uiMode === 'UCL' ? CHAMPS[local]?.file : SECTIONS[local]?.file
-          }
+          source={mode === 'UCL' ? CHAMPS[local]?.file : SECTIONS[local]?.file}
         />
         <Text style={styles.hour}>
           {match.played
@@ -53,9 +51,7 @@ const MatchDay = ({match, parent, editing}) => {
         </Text>
         <Image
           style={styles.logoTeam}
-          source={
-            uiMode === 'UCL' ? CHAMPS[visit]?.file : SECTIONS[visit]?.file
-          }
+          source={mode === 'UCL' ? CHAMPS[visit]?.file : SECTIONS[visit]?.file}
         />
         <Text style={styles.text}>{visit}</Text>
         {editing && (

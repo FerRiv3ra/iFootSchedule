@@ -14,4 +14,9 @@ export const leaguesData = [
     name: 'Premier League',
     img: require('../assets/premierLeague.png'),
   },
+  {
+    id: 'FWC',
+    name: 'FIFA World Cup',
+    img: require('../assets/FWC26.png'),
+  },
 ];

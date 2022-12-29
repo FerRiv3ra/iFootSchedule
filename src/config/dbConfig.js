@@ -1,223 +1,175 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Realm from 'realm';
-import champData from '../helper/champData';
-import champMatches from '../helper/champMatches';
-import data from '../helper/data';
-import matchData from '../helper/matchData';
+import {v4 as uuid} from 'uuid';
+
+import {laLigaData} from '../data/laLiga';
+import {premierLeagueData} from '../data/premierLeague';
+import champData from '../data/champData';
+import {matchesProps, teamsChampProps, teamsProperties} from './dbProperties';
+import champMatches from '../data/champMatches';
 
 // Realm
 const teamsSchemaConstructor = name => ({
   name,
-  properties: {
-    id: {
-      type: 'int',
-    },
-    name: 'string',
-    group: 'string',
-    short_name: 'string',
-    p: {
-      type: 'int',
-      default: 0,
-    },
-    gf: {
-      type: 'int',
-      default: 0,
-    },
-    ga: {
-      type: 'int',
-      default: 0,
-    },
-    gd: {
-      type: 'int',
-      default: 0,
-    },
-    pts: {
-      type: 'int',
-      default: 0,
-    },
-  },
-  primaryKey: 'id',
+  properties: teamsProperties,
+  primaryKey: '_id',
 });
 
 const teamsSchemaChampions = name => ({
   name,
-  properties: {
-    id: {
-      type: 'int',
-    },
-    name: 'string',
-    group: 'string',
-    short_name: 'string',
-    stadium: 'string',
-    p: {
-      type: 'int',
-      default: 0,
-    },
-    gf: {
-      type: 'int',
-      default: 0,
-    },
-    ga: {
-      type: 'int',
-      default: 0,
-    },
-    gd: {
-      type: 'int',
-      default: 0,
-    },
-    pts: {
-      type: 'int',
-      default: 0,
-    },
-  },
-  primaryKey: 'id',
+  properties: teamsChampProps,
+  primaryKey: '_id',
 });
 
 const matchesSchemaConstructor = name => ({
   name,
-  primaryKey: 'id',
-  properties: {
-    id: 'int',
-    local: 'string',
-    goll: {
-      type: 'int',
-      default: 0,
-    },
-    penl: {
-      type: 'int',
-      default: 0,
-    },
-    visit: 'string',
-    golv: {
-      type: 'int',
-      default: 0,
-    },
-    penv: {
-      type: 'int',
-      default: 0,
-    },
-    played: {
-      type: 'bool',
-      default: false,
-    },
-    date: 'string',
-  },
+  primaryKey: '_id',
+  properties: matchesProps,
 });
 
-const teams = teamsSchemaConstructor('teams');
-const teamsP = teamsSchemaConstructor('teams_p');
-const matches = matchesSchemaConstructor('matches');
-const matchesP = matchesSchemaConstructor('matches_p');
-const champTeams = teamsSchemaChampions('champ_teams');
-const champDataMatches = matchesSchemaConstructor('champ_matches');
+const laLiga = teamsSchemaConstructor('laLiga');
+const premier = teamsSchemaConstructor('premier');
+const laLigaMatches = matchesSchemaConstructor('laLigaMatches');
+const premierMatches = matchesSchemaConstructor('premierMatches');
+const uclTeams = teamsSchemaChampions('uclTeams');
+const uclMatches = matchesSchemaConstructor('uclMatches');
 
 const quickStart = async () => {
   try {
     const realm = await Realm.open({
       path: 'ifootschedule',
-      schema: [teams, teamsP, matches, matchesP, champTeams, champDataMatches],
+      schema: [
+        laLiga,
+        premier,
+        laLigaMatches,
+        premierMatches,
+        uclTeams,
+        uclMatches,
+      ],
+      deleteRealmIfMigrationNeeded: true,
     });
 
-    const dataTeams = realm.objects('teams');
-    const dataTeamsP = realm.objects('teams_p');
-    const dataMatches = realm.objects('matches');
-    const dataMatchesP = realm.objects('matches_p');
-    const dataTeamsChamps = realm.objects('champ_teams');
-    const dataMatchesChamp = realm.objects('champ_matches');
+    const dbLaLiga = realm.objects('laLiga');
+    const dbPremier = realm.objects('premier');
+    const dbUclTeams = realm.objects('uclTeams');
+    const dbLaLigaMatches = realm.objects('laLigaMatches');
+    const dbPremierMatches = realm.objects('premierMatches');
+    const dbUclMatches = realm.objects('uclMatches');
 
-    const newConfig = await AsyncStorage.getItem('newConfig16');
+    // await AsyncStorage.removeItem('newVersion');
+    const asKeys = await AsyncStorage.getAllKeys();
 
-    // await AsyncStorage.removeItem('newConfig16');
-
-    if (!newConfig) {
+    if (!asKeys.includes('newVersion')) {
       realm.write(() => {
-        realm.delete(dataMatches);
-        realm.delete(dataTeams);
+        realm.deleteAll();
       });
 
+      if (asKeys.includes('newConfig16')) {
+        await AsyncStorage.removeItem('newConfig16');
+      }
+      if (asKeys.includes('newConfig')) {
+        await AsyncStorage.removeItem('newConfig');
+      }
+
       await AsyncStorage.setItem('currentDay', '324');
-      await AsyncStorage.setItem('newConfig16', 'true');
+      await AsyncStorage.setItem('newVersion', 'true');
     }
 
-    if (!dataTeams.length) {
-      data.forEach((team, index) => {
+    if (!dbLaLiga.length) {
+      laLigaData.forEach(team => {
         realm.write(() => {
-          realm.create('teams', {
-            id: index + 1,
+          realm.create('laLiga', {
+            _id: uuid(),
             name: team.name,
-            group: team.group,
             short_name: team.short_name,
+            stadium: team.stadium,
             p: team.p,
+            win: team.win,
+            draw: team.draw,
+            lost: team.lost,
             gf: team.gf,
             ga: team.ga,
-            gd: team.gd,
+            gd: team.gf - team.ga,
             pts: team.pts,
           });
         });
       });
     }
 
-    if (!dataTeamsP.length) {
-      data.forEach((team, index) => {
+    if (!dbPremier.length) {
+      premierLeagueData.forEach(team => {
         realm.write(() => {
-          realm.create('teams_p', {
-            id: index + 1,
+          realm.create('premier', {
+            _id: uuid(),
             name: team.name,
-            group: team.group,
-            short_name: team.short_name,
-          });
-        });
-      });
-    }
-
-    if (!dataTeamsChamps.length) {
-      champData.forEach((team, index) => {
-        realm.write(() => {
-          realm.create('champ_teams', {
-            id: index + 1,
-            name: team.name,
-            group: team.group,
             short_name: team.short_name,
             stadium: team.stadium,
+            p: team.p,
+            win: team.win,
+            draw: team.draw,
+            lost: team.lost,
+            gf: team.gf,
+            ga: team.ga,
+            gd: team.gf - team.ga,
+            pts: team.pts,
           });
         });
       });
     }
 
-    if (!dataMatches.length) {
-      matchData.forEach((match, index) => {
+    if (!dbUclTeams.length) {
+      champData.forEach(team => {
         realm.write(() => {
-          realm.create('matches', {
-            id: index + 1,
-            local: match.local,
-            visit: match.visit,
-            date: match.date,
-            goll: match.goll,
-            golv: match.golv,
-            played: match.played,
+          realm.create('uclTeams', {
+            _id: uuid(),
+            name: team.name,
+            short_name: team.short_name,
+            stadium: team.stadium,
+            group: team.group,
+            p: team.p,
+            gf: team.gf,
+            gd: team.gd,
+            gd: team.gf - team.ga,
+            pts: team.pts,
           });
         });
       });
     }
 
-    if (!dataMatchesP.length) {
-      matchData.forEach((match, index) => {
-        realm.write(() => {
-          realm.create('matches_p', {
-            id: index + 1,
-            local: match.local,
-            visit: match.visit,
-            date: match.date,
-          });
-        });
-      });
-    }
+    // if (!dataMatches.length) {
+    //   matchData.forEach((match, index) => {
+    //     realm.write(() => {
+    //       realm.create('matches', {
+    //         id: index + 1,
+    //         local: match.local,
+    //         visit: match.visit,
+    //         date: match.date,
+    //         goll: match.goll,
+    //         golv: match.golv,
+    //         played: match.played,
+    //       });
+    //     });
+    //   });
+    // }
 
-    if (!dataMatchesChamp.length) {
-      champMatches.forEach((match, index) => {
+    // if (!dataMatchesP.length) {
+    //   matchData.forEach((match, index) => {
+    //     realm.write(() => {
+    //       realm.create('matches_p', {
+    //         id: index + 1,
+    //         local: match.local,
+    //         visit: match.visit,
+    //         date: match.date,
+    //       });
+    //     });
+    //   });
+    // }
+
+    if (!dbUclMatches.length) {
+      champMatches.forEach(match => {
         realm.write(() => {
-          realm.create('champ_matches', {
-            id: index + 1,
+          realm.create('uclMatches', {
+            _id: uuid(),
             local: match.local,
             visit: match.visit,
             date: match.date,

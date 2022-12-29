@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
 import CHAMPS from '../helper/selectChamp';
 
@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import language from '../helper/translate';
 import useApp from '../hooks/useApp';
+import ThemeContext from '../context/ThemeContext';
 
 const NextMatch = ({nextMatch, pendingMatches, todayMatches, parent}) => {
   const [date, setDate] = useState(moment(nextMatch.date));
@@ -23,7 +24,9 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches, parent}) => {
   const [local, setLocal] = useState({});
 
   const navigation = useNavigation();
-  const {lang, uiMode, teamsC} = useApp();
+  const {lang, teamsC} = useApp();
+  const {mode} = useContext(ThemeContext);
+
   const matchSet = [...pendingMatches, ...todayMatches];
 
   useEffect(() => {
@@ -63,7 +66,7 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches, parent}) => {
             <Image
               style={styles.logoTeam}
               source={
-                uiMode === 'UCL'
+                mode === 'UCL'
                   ? CHAMPS[nextMatch.local]?.file
                   : SECTIONS[nextMatch.local]?.file
               }
@@ -72,14 +75,14 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches, parent}) => {
             <Image
               style={styles.logoTeam}
               source={
-                uiMode === 'UCL'
+                mode === 'UCL'
                   ? CHAMPS[nextMatch.visit]?.file
                   : SECTIONS[nextMatch.visit]?.file
               }
             />
             <Text style={styles.team}>{nextMatch.visit}</Text>
           </View>
-          {uiMode === 'UCL' && (
+          {mode === 'UCL' && (
             <Text style={styles.stadium}>{local && local.stadium}</Text>
           )}
           <Text style={styles.date}>{date.format('lll')}</Text>

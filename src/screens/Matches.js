@@ -7,7 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import useApp from '../hooks/useApp';
 import Table from '../components/Table';
 import NextMatch from '../components/NextMatch';
@@ -15,16 +15,18 @@ import moment from 'moment';
 import MatchesDay from '../components/MatchesDay';
 import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import Knockouts from '../components/Knockouts';
 import language from '../helper/translate';
 import {adUnit} from '../helper/adUnit';
 import WaitingDraw from './WaitingDraw';
+import ThemeContext from '../context/ThemeContext';
 
-const Matches = () => {
+const Matches = ({navigation, route}) => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const parent = 'Matches';
+
   const today = moment().dayOfYear();
 
   const [loading, setLoading] = useState(true);
@@ -44,22 +46,21 @@ const Matches = () => {
     matches,
     matchesC,
     lang,
-    uiMode,
   } = useApp();
-  const navigation = useNavigation();
+  const {mode} = useContext(ThemeContext);
 
-  const limitGroups = uiMode === 'UCL' ? 96 : 48;
-  const limitRound16 = uiMode === 'UCL' ? 112 : 56;
-  const limitQuarter = uiMode === 'UCL' ? 120 : 60;
-  const limitSemis = uiMode === 'UCL' ? 124 : 62;
-  const totalMatches = uiMode === 'UCL' ? 125 : 64;
+  const limitGroups = mode === 'UCL' ? 96 : 48;
+  const limitRound16 = mode === 'UCL' ? 112 : 56;
+  const limitQuarter = mode === 'UCL' ? 120 : 60;
+  const limitSemis = mode === 'UCL' ? 124 : 62;
+  const totalMatches = mode === 'UCL' ? 125 : 64;
 
   const focusEffect = useCallback(() => {
     setLoading(true);
-    getNextMatch(uiMode === 'UCL' ? 'C' : 'M');
-    getPendingMatches(today, uiMode === 'UCL' ? 'C' : 'M');
-    getMatchesToday(today, uiMode === 'UCL' ? 'C' : 'M');
-    if (uiMode === 'UCL') {
+    getNextMatch(mode === 'UCL' ? 'C' : 'M');
+    getPendingMatches(today, mode === 'UCL' ? 'C' : 'M');
+    getMatchesToday(today, mode === 'UCL' ? 'C' : 'M');
+    if (mode === 'UCL') {
       setPlayedGames(matchesPlayedC);
     } else {
       setPlayedGames(matchesPlayed);
@@ -81,9 +82,9 @@ const Matches = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         {playedGames >= limitGroups ? (
-          uiMode === 'WCF' && (
+          mode === 'WCF' && (
             <View style={styles.match}>
-              <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+              <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
                 {playedGames < limitRound16
                   ? `${language[lang].round16}`
                   : playedGames < limitQuarter
@@ -93,7 +94,7 @@ const Matches = () => {
                   : 'Final'}
               </Text>
               <Knockouts
-                data={uiMode === 'UCL' ? matchesC : matches}
+                data={mode === 'UCL' ? matchesC : matches}
                 matchesPlayed={playedGames}
               />
             </View>
@@ -103,15 +104,15 @@ const Matches = () => {
             {groups.map((group, index) => (
               <Table
                 key={index}
-                teams={uiMode === 'UCL' ? teamsC : teams}
+                teams={mode === 'UCL' ? teamsC : teams}
                 group={group}
               />
             ))}
           </ScrollView>
         )}
-        {nextMatch && nextMatch.id ? (
+        {nextMatch && nextMatch._id ? (
           <View style={styles.match}>
-            <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+            <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
               {playedGames < limitGroups
                 ? `${language[lang].nextMatch}`
                 : playedGames < limitRound16
@@ -131,19 +132,19 @@ const Matches = () => {
               parent={parent}
             />
           </View>
-        ) : uiMode === 'UCL' && playedGames === 96 ? (
+        ) : mode === 'UCL' && playedGames === 96 ? (
           loading ? (
             <ActivityIndicator animating={loading} />
           ) : (
             <View style={styles.match}>
-              <Text style={[styles.waiting, globalStyles[`text-${uiMode}`]]}>
+              <Text style={[styles.waiting, globalStyles[`text-${mode}`]]}>
                 {language[lang].waitingDraw}
               </Text>
               <WaitingDraw />
             </View>
           )
         ) : (
-          <Champion parent={uiMode === 'UCL' ? 'C' : 'M'} />
+          <Champion parent={mode === 'UCL' ? 'C' : 'M'} />
         )}
         {loading ? (
           <ActivityIndicator animating={loading} />
@@ -151,7 +152,7 @@ const Matches = () => {
           todayMatches.length > 0 &&
           playedGames < totalMatches && (
             <View style={styles.match}>
-              <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+              <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
                 {language[lang].todayMatches}
               </Text>
               <MatchesDay matchData={todayMatches} parent={parent} />
@@ -163,7 +164,7 @@ const Matches = () => {
         ) : (
           pendingMatches.length > 0 && (
             <View style={styles.match}>
-              <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+              <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
                 {language[lang].pendingMatches}
               </Text>
               <MatchesDay matchData={pendingMatches} parent={parent} />
@@ -179,11 +180,7 @@ const Matches = () => {
         )}
         <Pressable
           onPress={goBack}
-          style={[
-            globalStyles.button,
-            globalStyles[`bg-${uiMode}`],
-            styles.btn,
-          ]}>
+          style={[globalStyles.button, globalStyles[`bg-${mode}`], styles.btn]}>
           <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
             {language[lang].goHome}
           </Text>

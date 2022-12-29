@@ -18,10 +18,11 @@ import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import {adUnit} from '../helper/adUnit';
+import GradientBackground from '../components/GradientBackground';
 
 const Countdown = () => {
   const today = moment();
-  const start = moment([2022, 10, 20, 16, 0, 0]).utcOffset('00:00');
+  const start = moment([2026, 6, 8, 16, 0, 0]).utcOffset('00:00');
   const diffDays = start.diff(today, 'days');
   const diffHours = start.diff(today, 'hours', true) % 24;
   const diffMins =
@@ -61,17 +62,10 @@ const Countdown = () => {
   };
 
   return (
-    <LinearGradient
-      colors={['#5a0024', '#5a0024', '#5a0024', '#000']}
-      style={globalStyles.flex}
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 1}}>
+    <GradientBackground>
       <SafeAreaView style={styles.view}>
         <Animatable.View animation="zoomIn" delay={500} duration={3000}>
-          <Image
-            style={styles.logo}
-            source={require('../assets/logoWcup.png')}
-          />
+          <Image style={styles.logo} source={require('../assets/FWC26.png')} />
         </Animatable.View>
         <View>
           {lang === 'ES' && (
@@ -132,7 +126,7 @@ const Countdown = () => {
           }}
         />
       </View>
-    </LinearGradient>
+    </GradientBackground>
   );
 };
 

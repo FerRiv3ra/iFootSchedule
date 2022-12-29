@@ -1,17 +1,19 @@
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
 import {heightScale, withScale} from '../helper/scale';
 import SECTIONS from '../helper/selectImg';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import globalStyles from '../styles/styles';
+import ThemeContext from '../context/ThemeContext';
 
 const Champion = ({parent}) => {
   const [champion, setChampion] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const {lang, uiMode, getChampion} = useApp();
+  const {lang, getChampion} = useApp();
+  const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
     setLoading(true);
@@ -23,7 +25,7 @@ const Champion = ({parent}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, globalStyles[`text-${uiMode}`]]}>
+      <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
         {language[lang].championMessage}
       </Text>
       <Animatable.View animation="zoomIn" delay={500} duration={3000}>
@@ -50,7 +52,7 @@ const Champion = ({parent}) => {
         animation={'rubberBand'}
         duration={3000}
         iterationCount="infinite"
-        style={[styles.title, globalStyles[`text-${uiMode}`], styles.name]}>
+        style={[styles.title, globalStyles[`text-${mode}`], styles.name]}>
         {champion.name}
       </Animatable.Text>
     </View>

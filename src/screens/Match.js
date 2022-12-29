@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   Pressable,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
   BannerAd,
   BannerAdSize,
@@ -37,6 +37,7 @@ import {
 import Penalties from '../components/Penalties';
 import language from '../helper/translate';
 import {adUnit} from '../helper/adUnit';
+import ThemeContext from '../context/ThemeContext';
 
 const interstitial = InterstitialAd.createForAdRequest(adUnit('INTERSTITIAL'), {
   requestNonPersonalizedAdsOnly: true,
@@ -58,8 +59,8 @@ const Match = ({route}) => {
   const [loaded, setLoaded] = useState(false);
 
   const navigation = useNavigation();
-  const {saveMatch, matchesPlayed, matchesPlayed_p, DBLoading, lang, uiMode} =
-    useApp();
+  const {saveMatch, matchesPlayed, matchesPlayed_p, DBLoading, lang} = useApp();
+  const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
     setLoading(true);
@@ -128,7 +129,7 @@ const Match = ({route}) => {
 
   const handleSave = async () => {
     setSaving(true);
-    const limit = uiMode === 'UCL' ? 96 : 48;
+    const limit = mode === 'UCL' ? 96 : 48;
     const matchSave = {
       date: match.date,
       goll,
@@ -178,18 +179,18 @@ const Match = ({route}) => {
           <View style={styles.close}>
             <Pressable onPress={handleClose}>
               <FontAwesomeIcon
-                style={[globalStyles.icon, globalStyles[`text-${uiMode}`]]}
+                style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
                 size={18}
                 icon={faClose}
               />
             </Pressable>
           </View>
-          <Text style={[styles.title, globalStyles[`text-${uiMode}`]]}>
+          <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
             {editing && `${language[lang].editing}`}
             {language[lang].match}
           </Text>
           <Text style={styles.date}>{date.format('lll')}</Text>
-          {uiMode === 'UCL' && (
+          {mode === 'UCL' && (
             <Text style={styles.stadium}>{local && local.stadium}</Text>
           )}
           <View style={styles.match}>
@@ -198,7 +199,7 @@ const Match = ({route}) => {
               <Image
                 style={styles.logoTeam}
                 source={
-                  uiMode === 'UCL'
+                  mode === 'UCL'
                     ? CHAMPS[match.local]?.file
                     : SECTIONS[match.local]?.file
                 }
@@ -207,10 +208,7 @@ const Match = ({route}) => {
                 <Pressable onPress={() => handleLocal('min')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[
-                        globalStyles.icon,
-                        globalStyles[`text-${uiMode}`],
-                      ]}
+                      style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
                       size={18}
                       icon={faMinusCircle}
                     />
@@ -220,10 +218,7 @@ const Match = ({route}) => {
                 <Pressable onPress={() => handleLocal('add')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[
-                        globalStyles.icon,
-                        globalStyles[`text-${uiMode}`],
-                      ]}
+                      style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
                       size={18}
                       icon={faPlusCircle}
                     />
@@ -236,7 +231,7 @@ const Match = ({route}) => {
               <Image
                 style={styles.logoTeam}
                 source={
-                  uiMode === 'UCL'
+                  mode === 'UCL'
                     ? CHAMPS[match.visit]?.file
                     : SECTIONS[match.visit]?.file
                 }
@@ -245,10 +240,7 @@ const Match = ({route}) => {
                 <Pressable onPress={() => handleVisit('min')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[
-                        globalStyles.icon,
-                        globalStyles[`text-${uiMode}`],
-                      ]}
+                      style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
                       size={18}
                       icon={faMinusCircle}
                     />
@@ -258,10 +250,7 @@ const Match = ({route}) => {
                 <Pressable onPress={() => handleVisit('add')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[
-                        globalStyles.icon,
-                        globalStyles[`text-${uiMode}`],
-                      ]}
+                      style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
                       size={18}
                       icon={faPlusCircle}
                     />
@@ -278,7 +267,7 @@ const Match = ({route}) => {
               style={[
                 globalStyles.button,
                 styles.btn,
-                globalStyles[`bg-${uiMode}`],
+                globalStyles[`bg-${mode}`],
               ]}>
               {saving ? (
                 <ActivityIndicator animating={saving} />

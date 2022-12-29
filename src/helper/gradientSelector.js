@@ -20,7 +20,16 @@ const gradientSelector = mode => {
         'rgb(0,255,120)',
       ];
       break;
+    case 'FWC':
+      gradient = [
+        'rgb(222,0,90)',
+        'rgb(138,0,40)',
+        'rgb(33,81,246)',
+        'rgb(0,208,71)',
+      ];
+      break;
     default:
+      gradient = ['#ff00ff', '#180056', '#180056', '#180056', '#4400ff'];
       break;
   }
 

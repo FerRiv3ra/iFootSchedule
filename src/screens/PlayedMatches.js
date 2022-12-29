@@ -6,7 +6,7 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 
 import useApp from '../hooks/useApp';
@@ -15,12 +15,15 @@ import globalStyles from '../styles/styles';
 import {useNavigation} from '@react-navigation/native';
 import language from '../helper/translate';
 import {adUnit} from '../helper/adUnit';
+import ThemeContext from '../context/ThemeContext';
 
 const PlayedMatches = ({route}) => {
   const {parent} = route.params;
 
-  const {matches, matchesC, matches_p, DBLoading, lang, uiMode} = useApp();
   const [dataMatches, setDataMatches] = useState([]);
+
+  const {matches, matchesC, matches_p, DBLoading, lang} = useApp();
+  const {mode} = useContext(ThemeContext);
 
   const navigation = useNavigation();
 
@@ -28,7 +31,7 @@ const PlayedMatches = ({route}) => {
     if (parent === 'Playground') {
       setDataMatches(matches_p.filter(match => match.id <= 48 && match.played));
     } else {
-      if (uiMode === 'UCL') {
+      if (mode === 'UCL') {
         setDataMatches(
           matchesC.filter(match => match.id <= 96 && match.played),
         );
@@ -47,7 +50,7 @@ const PlayedMatches = ({route}) => {
       <SafeAreaView>
         <ScrollView>
           <View style={styles.container}>
-            <Text style={[styles.titleMatch, globalStyles[`text-${uiMode}`]]}>
+            <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
               {language[lang].matchPlayed}
             </Text>
             <MatchesDay
@@ -62,7 +65,7 @@ const PlayedMatches = ({route}) => {
             onPress={goBack}
             style={[
               globalStyles.button,
-              globalStyles[`bg-${uiMode}`],
+              globalStyles[`bg-${mode}`],
               styles.btn,
             ]}>
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>

@@ -1,11 +1,12 @@
 import {StyleSheet, Text, View, Pressable} from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import globalStyles from '../styles/styles';
 import {faSave} from '@fortawesome/free-solid-svg-icons';
 import Penalty from './Penalty';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
+import ThemeContext from '../context/ThemeContext';
 
 const Penalties = ({setPenl, setPenv, handleSave}) => {
   const [canSave, setCanSave] = useState(false);
@@ -37,7 +38,8 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
     },
   ]);
 
-  const {lang, uiMode} = useApp();
+  const {lang} = useApp();
+  const {mode} = useContext(ThemeContext);
 
   const handleRounds = (round, type, res) => {
     setRounds(
@@ -104,7 +106,7 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, globalStyles[`text-${uiMode}`]]}>
+      <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
         {language[lang].penalties}
       </Text>
       {rounds.map(round => (
@@ -116,7 +118,7 @@ const Penalties = ({setPenl, setPenv, handleSave}) => {
         style={[
           globalStyles.button,
           styles.btn,
-          canSave && globalStyles[`bg-${uiMode}`],
+          canSave && globalStyles[`bg-${mode}`],
         ]}>
         <FontAwesomeIcon
           style={[globalStyles.icon, styles.icon]}
