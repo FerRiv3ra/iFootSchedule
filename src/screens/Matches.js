@@ -23,7 +23,7 @@ import {adUnit} from '../helper/adUnit';
 import WaitingDraw from './WaitingDraw';
 import ThemeContext from '../context/ThemeContext';
 
-const Matches = ({navigation, route}) => {
+const Matches = ({navigation}) => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const parent = 'Matches';
 
@@ -33,8 +33,6 @@ const Matches = ({navigation, route}) => {
   const [playedGames, setPlayedGames] = useState(0);
   const {
     DBLoading,
-    teams,
-    teamsC,
     getMatchesToday,
     todayMatches,
     getPendingMatches,
@@ -57,9 +55,9 @@ const Matches = ({navigation, route}) => {
 
   const focusEffect = useCallback(() => {
     setLoading(true);
-    getNextMatch(mode === 'UCL' ? 'C' : 'M');
-    getPendingMatches(today, mode === 'UCL' ? 'C' : 'M');
-    getMatchesToday(today, mode === 'UCL' ? 'C' : 'M');
+    getNextMatch(mode);
+    getPendingMatches(mode);
+    getMatchesToday(mode);
     if (mode === 'UCL') {
       setPlayedGames(matchesPlayedC);
     } else {
@@ -101,13 +99,11 @@ const Matches = ({navigation, route}) => {
           )
         ) : (
           <ScrollView horizontal={true}>
-            {groups.map((group, index) => (
-              <Table
-                key={index}
-                teams={mode === 'UCL' ? teamsC : teams}
-                group={group}
-              />
-            ))}
+            {mode === 'UCL' ? (
+              groups.map((group, index) => <Table key={index} group={group} />)
+            ) : (
+              <Table group={mode} />
+            )}
           </ScrollView>
         )}
         {nextMatch && nextMatch._id ? (
@@ -129,7 +125,7 @@ const Matches = ({navigation, route}) => {
               nextMatch={nextMatch}
               pendingMatches={pendingMatches}
               todayMatches={todayMatches}
-              parent={parent}
+              parent={mode}
             />
           </View>
         ) : mode === 'UCL' && playedGames === 96 ? (

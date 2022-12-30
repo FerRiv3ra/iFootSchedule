@@ -7,6 +7,7 @@ import {premierLeagueData} from '../data/premierLeague';
 import champData from '../data/champData';
 import {matchesProps, teamsChampProps, teamsProperties} from './dbProperties';
 import champMatches from '../data/champMatches';
+import {laLigaDataMatches} from '../data/laLigaMatches';
 
 // Realm
 const teamsSchemaConstructor = name => ({
@@ -136,21 +137,21 @@ const quickStart = async () => {
       });
     }
 
-    // if (!dataMatches.length) {
-    //   matchData.forEach((match, index) => {
-    //     realm.write(() => {
-    //       realm.create('matches', {
-    //         id: index + 1,
-    //         local: match.local,
-    //         visit: match.visit,
-    //         date: match.date,
-    //         goll: match.goll,
-    //         golv: match.golv,
-    //         played: match.played,
-    //       });
-    //     });
-    //   });
-    // }
+    if (!dbLaLigaMatches.length) {
+      laLigaDataMatches.forEach(match => {
+        realm.write(() => {
+          realm.create('laLigaMatches', {
+            _id: uuid(),
+            local: match.local,
+            visit: match.visit,
+            date: match.date,
+            goll: match.goll,
+            golv: match.golv,
+            played: match.played,
+          });
+        });
+      });
+    }
 
     // if (!dataMatchesP.length) {
     //   matchData.forEach((match, index) => {

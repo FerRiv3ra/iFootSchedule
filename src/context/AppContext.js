@@ -14,9 +14,10 @@ const AppContext = createContext();
 
 const AppProvider = ({children}) => {
   const [DBLoading, setDBLoading] = useState(true);
-  const [teams, setTeams] = useState([]);
+  const [laLiga, setLaLiga] = useState([]);
+  const [premier, setPremier] = useState([]);
   const [teamsC, setTeamsC] = useState([]);
-  const [matches, setMatches] = useState([]);
+  const [laLigaMatches, setLaLigaMatches] = useState([]);
   const [matchesC, setMatchesC] = useState([]);
   const [matchesPlayed, setMatchesPlayed] = useState(0);
   const [matchesPlayedC, setMatchesPlayedC] = useState(0);
@@ -25,6 +26,8 @@ const AppProvider = ({children}) => {
   const [pendingMatches, setPendingMatches] = useState([]);
   const [lang, setLang] = useState('EN');
   const [uiMode, setUiMode] = useState('WCF');
+
+  const today = moment();
 
   useEffect(() => {
     loadAdsEngine();
@@ -71,14 +74,8 @@ const AppProvider = ({children}) => {
       const premier = realm.objects('premier');
       const dataTeamsC = realm.objects('uclTeams');
 
-      // const dataMatches = realm.objects('matches');
+      const laLigaMatches = realm.objects('laLigaMatches');
       const dataMatchesC = realm.objects('uclMatches');
-
-      const orderTeams = laLiga.sorted([
-        ['pts', true],
-        ['gd', true],
-        ['gf', true],
-      ]);
 
       const orderTeamsC = dataTeamsC.sorted([
         ['pts', true],
@@ -86,16 +83,37 @@ const AppProvider = ({children}) => {
         ['gf', true],
       ]);
 
-      // const countPlayed = dataMatches.filtered('played = true');
+      const countPlayed = laLigaMatches.filtered('played = true');
       const countPlayedC = dataMatchesC.filtered('played = true');
 
-      setTeams(orderTeams.toJSON());
+      setLaLiga(
+        laLiga
+          .sorted([
+            ['pts', true],
+            ['gd', true],
+            ['win', true],
+            ['gf', true],
+          ])
+          .toJSON(),
+      );
+
+      setPremier(
+        premier
+          .sorted([
+            ['pts', true],
+            ['gd', true],
+            ['win', true],
+            ['gf', true],
+          ])
+          .toJSON(),
+      );
+
       setTeamsC(orderTeamsC.toJSON());
 
-      // setMatches(dataMatches.toJSON());
-      setMatchesC(dataMatchesC.toJSON());
+      setLaLigaMatches(laLigaMatches.sorted([['date', false]]).toJSON());
+      setMatchesC(dataMatchesC.sorted([['date', false]]).toJSON());
 
-      // setMatchesPlayed(countPlayed.length);
+      setMatchesPlayed(countPlayed.length);
       setMatchesPlayedC(countPlayedC.length);
 
       setDBLoading(false);
@@ -106,56 +124,67 @@ const AppProvider = ({children}) => {
     }
   };
 
-  const getNextMatch = parent => {
-    switch (parent) {
-      case 'C':
+  const getNextMatch = mode => {
+    switch (mode) {
+      case 'laLiga':
+        setNextMatch(laLigaMatches.filter(match => match.played === false)[0]);
+        break;
+      case 'UCL':
         setNextMatch(matchesC.filter(match => match.played === false)[0]);
         break;
-      case 'M':
-        setNextMatch(matches.filter(match => match.played === false)[0]);
+      default:
+        setNextMatch({});
         break;
     }
   };
 
-  const getMatchesToday = (day, parent) => {
+  const getMatchesToday = parent => {
+    let data = [];
     switch (parent) {
-      case 'C':
-        const dataC = matchesC.filter(match => {
-          const date = moment(match.date).dayOfYear();
-          if (date === day) {
+      case 'laLiga':
+        data = laLigaMatches.filter(match => {
+          const date = moment(match.date);
+
+          if (
+            date.toISOString().slice(0, 10) === today.toISOString().slice(0, 10)
+          ) {
             return match;
           }
         });
-
-        setTodayMatches(dataC);
         break;
-      case 'M':
-        const data = matches.filter(match => {
-          const date = moment(match.date).dayOfYear();
-          if (date === day) {
+
+      case 'UCL':
+        data = matchesC.filter(match => {
+          const date = moment(match.date);
+
+          if (
+            date.toISOString().slice(0, 10) === today.toISOString().slice(0, 10)
+          ) {
             return match;
           }
         });
+        break;
 
-        setTodayMatches(data);
+      default:
+        data = [];
         break;
     }
+    setTodayMatches(data);
   };
 
   const getPendingMatches = parent => {
-    const today = moment();
-
     switch (parent) {
-      case 'C':
-        const dataC = matchesC.filter(match => {
+      case 'laLiga':
+        const dataC = laLigaMatches.filter(match => {
           const date = moment(match.date);
-          if (date.isBefore(today) && !match.played) {
+          if (moment(date).add(2, 'hours').isBefore(today) && !match.played) {
             return match;
           }
         });
-
         setPendingMatches(dataC);
-
+        break;
+      default:
+        setPendingMatches([]);
         break;
     }
   };
@@ -169,7 +198,7 @@ const AppProvider = ({children}) => {
 
         break;
       case 'M':
-        match = matches.filter(match => match.id === limit)[0];
+        match = laLigaMatches.filter(match => match.id === limit)[0];
 
         break;
     }
@@ -218,7 +247,7 @@ const AppProvider = ({children}) => {
       champ_name = visit;
     }
 
-    const champ = teams.filter(team => team.short_name === champ_name)[0];
+    const champ = laLiga.filter(team => team.short_name === champ_name)[0];
 
     return champ;
   };
@@ -258,11 +287,11 @@ const AppProvider = ({children}) => {
       let local =
         uiMode === 'UCL'
           ? teamsC.filter(team => team.short_name === match.local)[0]
-          : teams.filter(team => team.short_name === match.local)[0];
+          : laLiga.filter(team => team.short_name === match.local)[0];
       let visit =
         uiMode === 'UCL'
           ? teamsC.filter(team => team.short_name === match.visit)[0]
-          : teams.filter(team => team.short_name === match.visit)[0];
+          : laLiga.filter(team => team.short_name === match.visit)[0];
 
       realm.write(() => {
         const tempMatch = realm.objectForPrimaryKey(dataMatch, match.id);
@@ -458,14 +487,14 @@ const AppProvider = ({children}) => {
   };
 
   const generateNextMatches = async () => {
-    const match49 = matches.filter(match => match.id === 49)[0];
+    const match49 = laLigaMatches.filter(match => match.id === 49)[0];
 
     if (matchesPlayed === 48 && match49 && match49.local === '1A') {
       const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
       try {
         const realm = await Realm.open({path: 'ifootschedule'});
 
-        const groupTeam = teams.filter(team => team.group === group);
+        const groupTeam = laLiga.filter(team => team.group === group);
         realm.write(() => {
           groups.forEach(group => {
             const first = realm
@@ -491,10 +520,11 @@ const AppProvider = ({children}) => {
   return (
     <AppContext.Provider
       value={{
-        matches,
+        laLigaMatches,
         matchesC,
         DBLoading,
-        teams,
+        laLiga,
+        premier,
         teamsC,
         getNextMatch,
         nextMatch,

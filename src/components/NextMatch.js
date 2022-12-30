@@ -18,7 +18,7 @@ import language from '../helper/translate';
 import useApp from '../hooks/useApp';
 import ThemeContext from '../context/ThemeContext';
 
-const NextMatch = ({nextMatch, pendingMatches, todayMatches, parent}) => {
+const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
   const [date, setDate] = useState(moment(nextMatch.date));
   const [loading, setLoading] = useState(true);
   const [local, setLocal] = useState({});
@@ -46,7 +46,7 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches, parent}) => {
 
   const handlePress = () => {
     if (matchSet.includes(nextMatch)) {
-      navigation.navigate('Match', {match: nextMatch, parent, local});
+      navigation.navigate('Match', {match: nextMatch, local});
     } else {
       Alert.alert(
         language[lang].info,

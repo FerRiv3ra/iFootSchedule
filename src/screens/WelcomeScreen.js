@@ -1,3 +1,4 @@
+import React, {useCallback, useContext, useState} from 'react';
 import {
   View,
   Text,
@@ -7,23 +8,23 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
-import React, {useCallback, useContext, useState} from 'react';
 import * as Animatable from 'react-native-animatable';
+import {useFocusEffect} from '@react-navigation/native';
+
+import Carousel from 'react-native-snap-carousel';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faCog, faFutbol} from '@fortawesome/free-solid-svg-icons';
+
+import useApp from '../hooks/useApp';
 
 import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helper/scale';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faCog, faFutbol} from '@fortawesome/free-solid-svg-icons';
-import {useFocusEffect} from '@react-navigation/native';
+import language from '../helper/translate';
 
 import ModalSettings from '../components/ModalSettings';
-import useApp from '../hooks/useApp';
-import language from '../helper/translate';
-import gradientSelector from '../helper/gradientSelector';
-import Carousel from 'react-native-snap-carousel';
 import {leaguesData} from '../data/leaguesData';
 import CardLeague from '../components/CardLeague';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import GradientBackground from '../components/GradientBackground';
 import ThemeContext from '../context/ThemeContext';
 
@@ -46,7 +47,7 @@ const WelcomeScreen = ({navigation}) => {
   };
 
   const selectGradient = index => {
-    setMainColors(gradientSelector(leaguesData[index].id));
+    setMainColors(leaguesData[index].gradient);
     setMode(leaguesData[index].id);
   };
 

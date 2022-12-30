@@ -1,21 +1,41 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import TableTeam from './TableTeam';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import globalStyles from '../styles/styles';
 import ThemeContext from '../context/ThemeContext';
 
-const Table = ({teams, group}) => {
-  const data = teams.filter(team => team.group === group);
+const Table = ({group}) => {
+  const [data, setData] = useState([]);
 
-  const {lang} = useApp();
   const {mode} = useContext(ThemeContext);
+  const {lang, laLiga, premier, teamsC} = useApp();
+
+  useEffect(() => {
+    switch (mode) {
+      case 'UCL':
+        setData(teamsC.filter(t => t.group === group));
+        break;
+      case 'laLiga':
+        setData(laLiga);
+        break;
+      case 'premier':
+        setData(premier);
+        break;
+      default:
+        break;
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
       <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
-        {language[lang].group} {group}
+        {mode === 'UCL'
+          ? `${language[lang.group]} ${group}`
+          : mode === 'laLiga'
+          ? 'La Liga'
+          : 'Premier League'}
       </Text>
       <View style={styles.containerGroup}>
         <Text style={styles.team}>{language[lang].team}</Text>
@@ -36,7 +56,7 @@ const Table = ({teams, group}) => {
         </View>
       </View>
       {data.map((team, index) => (
-        <TableTeam key={index} team={team} />
+        <TableTeam key={index} team={team} index={index} />
       ))}
     </View>
   );
@@ -81,6 +101,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     height: 'auto',
     marginTop: 2,
+    marginLeft: 5,
     width: 150,
     color: '#111111',
   },
