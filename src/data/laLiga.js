@@ -38,7 +38,7 @@ export const laLigaData = [
   {
     name: 'Athetic Club',
     short_name: 'RSO',
-    stadium: 'ATC',
+    stadium: 'ATH',
     p: 14,
     win: 7,
     draw: 3,
@@ -97,7 +97,7 @@ export const laLigaData = [
   },
   {
     name: 'Villarreal',
-    short_name: 'VIL',
+    short_name: 'VLL',
     stadium: 'Estadio de la cerámica',
     p: 14,
     win: 6,
@@ -121,7 +121,7 @@ export const laLigaData = [
   },
   {
     name: 'Mallorca',
-    short_name: 'MLC',
+    short_name: 'MLL',
     stadium: 'Iberostar Stadium',
     p: 14,
     win: 5,
@@ -133,7 +133,7 @@ export const laLigaData = [
   },
   {
     name: 'Valladolid',
-    short_name: 'VLD',
+    short_name: 'VID',
     stadium: 'José Zorrilla',
     p: 14,
     win: 5,
@@ -193,7 +193,7 @@ export const laLigaData = [
   },
   {
     name: 'Celta Vigo',
-    short_name: 'CVI',
+    short_name: 'CEL',
     stadium: 'Balaídos',
     p: 14,
     win: 3,

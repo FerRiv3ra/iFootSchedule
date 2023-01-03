@@ -8,6 +8,7 @@ import champData from '../data/champData';
 import {matchesProps, teamsChampProps, teamsProperties} from './dbProperties';
 import champMatches from '../data/champMatches';
 import {laLigaDataMatches} from '../data/laLigaMatches';
+import {premierLegueMatches} from '../data/premierMatches';
 
 // Realm
 const teamsSchemaConstructor = name => ({
@@ -50,13 +51,6 @@ const quickStart = async () => {
       deleteRealmIfMigrationNeeded: true,
     });
 
-    const dbLaLiga = realm.objects('laLiga');
-    const dbPremier = realm.objects('premier');
-    const dbUclTeams = realm.objects('uclTeams');
-    const dbLaLigaMatches = realm.objects('laLigaMatches');
-    const dbPremierMatches = realm.objects('premierMatches');
-    const dbUclMatches = realm.objects('uclMatches');
-
     // await AsyncStorage.removeItem('newVersion');
     const asKeys = await AsyncStorage.getAllKeys();
 
@@ -75,6 +69,13 @@ const quickStart = async () => {
       await AsyncStorage.setItem('currentDay', '324');
       await AsyncStorage.setItem('newVersion', 'true');
     }
+
+    const dbLaLiga = realm.objects('laLiga');
+    const dbPremier = realm.objects('premier');
+    const dbUclTeams = realm.objects('uclTeams');
+    const dbLaLigaMatches = realm.objects('laLigaMatches');
+    const dbPremierMatches = realm.objects('premierMatches');
+    const dbUclMatches = realm.objects('uclMatches');
 
     if (!dbLaLiga.length) {
       laLigaData.forEach(team => {
@@ -153,18 +154,21 @@ const quickStart = async () => {
       });
     }
 
-    // if (!dataMatchesP.length) {
-    //   matchData.forEach((match, index) => {
-    //     realm.write(() => {
-    //       realm.create('matches_p', {
-    //         id: index + 1,
-    //         local: match.local,
-    //         visit: match.visit,
-    //         date: match.date,
-    //       });
-    //     });
-    //   });
-    // }
+    if (!dbPremierMatches.length) {
+      premierLegueMatches.forEach(match => {
+        realm.write(() => {
+          realm.create('premierMatches', {
+            _id: uuid(),
+            local: match.local,
+            visit: match.visit,
+            date: match.date,
+            goll: match.goll,
+            golv: match.golv,
+            played: match.played,
+          });
+        });
+      });
+    }
 
     if (!dbUclMatches.length) {
       champMatches.forEach(match => {
@@ -181,7 +185,7 @@ const quickStart = async () => {
 
     realm.close();
   } catch (err) {
-    console.error('Failed to open the realm', err.message);
+    console.error('Failed to open the realm QuickStart', err.message);
   }
 };
 

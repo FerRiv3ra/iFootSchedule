@@ -18,8 +18,10 @@ const AppProvider = ({children}) => {
   const [premier, setPremier] = useState([]);
   const [teamsC, setTeamsC] = useState([]);
   const [laLigaMatches, setLaLigaMatches] = useState([]);
+  const [premierMatches, setPremierMatches] = useState([]);
   const [matchesC, setMatchesC] = useState([]);
   const [matchesPlayed, setMatchesPlayed] = useState(0);
+  const [premierPlayed, setPremierPlayed] = useState(0);
   const [matchesPlayedC, setMatchesPlayedC] = useState(0);
   const [nextMatch, setNextMatch] = useState({});
   const [todayMatches, setTodayMatches] = useState([]);
@@ -75,6 +77,7 @@ const AppProvider = ({children}) => {
       const dataTeamsC = realm.objects('uclTeams');
 
       const laLigaMatches = realm.objects('laLigaMatches');
+      const premierMatches = realm.objects('premierMatches');
       const dataMatchesC = realm.objects('uclMatches');
 
       const orderTeamsC = dataTeamsC.sorted([
@@ -84,6 +87,7 @@ const AppProvider = ({children}) => {
       ]);
 
       const countPlayed = laLigaMatches.filtered('played = true');
+      const countPremierPlayed = premierMatches.filtered('played = true');
       const countPlayedC = dataMatchesC.filtered('played = true');
 
       setLaLiga(
@@ -111,9 +115,11 @@ const AppProvider = ({children}) => {
       setTeamsC(orderTeamsC.toJSON());
 
       setLaLigaMatches(laLigaMatches.sorted([['date', false]]).toJSON());
+      setPremierMatches(premierMatches.sorted([['date', false]]).toJSON());
       setMatchesC(dataMatchesC.sorted([['date', false]]).toJSON());
 
       setMatchesPlayed(countPlayed.length);
+      setPremierPlayed(countPremierPlayed.length);
       setMatchesPlayedC(countPlayedC.length);
 
       setDBLoading(false);
@@ -129,6 +135,9 @@ const AppProvider = ({children}) => {
       case 'laLiga':
         setNextMatch(laLigaMatches.filter(match => match.played === false)[0]);
         break;
+      case 'premier':
+        setNextMatch(premierMatches.filter(match => match.played === false)[0]);
+        break;
       case 'UCL':
         setNextMatch(matchesC.filter(match => match.played === false)[0]);
         break;
@@ -143,6 +152,18 @@ const AppProvider = ({children}) => {
     switch (parent) {
       case 'laLiga':
         data = laLigaMatches.filter(match => {
+          const date = moment(match.date);
+
+          if (
+            date.toISOString().slice(0, 10) === today.toISOString().slice(0, 10)
+          ) {
+            return match;
+          }
+        });
+        break;
+
+      case 'premier':
+        data = premierMatches.filter(match => {
           const date = moment(match.date);
 
           if (
@@ -173,20 +194,32 @@ const AppProvider = ({children}) => {
   };
 
   const getPendingMatches = parent => {
+    let data = [];
+
     switch (parent) {
       case 'laLiga':
-        const dataC = laLigaMatches.filter(match => {
+        data = laLigaMatches.filter(match => {
           const date = moment(match.date);
           if (moment(date).add(2, 'hours').isBefore(today) && !match.played) {
             return match;
           }
         });
-        setPendingMatches(dataC);
+        break;
+
+      case 'premier':
+        data = premierMatches.filter(match => {
+          const date = moment(match.date);
+          if (moment(date).add(2, 'hours').isBefore(today) && !match.played) {
+            return match;
+          }
+        });
         break;
       default:
-        setPendingMatches([]);
+        data = [];
         break;
     }
+
+    setPendingMatches(data);
   };
 
   const getChampion = parent => {
