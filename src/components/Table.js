@@ -32,7 +32,7 @@ const Table = ({group}) => {
     <View style={styles.container}>
       <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
         {mode === 'UCL'
-          ? `${language[lang.group]} ${group}`
+          ? `${language[lang].group} ${group}`
           : mode === 'laLiga'
           ? 'La Liga'
           : 'Premier League'}

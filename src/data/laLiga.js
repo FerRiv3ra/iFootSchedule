@@ -37,8 +37,8 @@ export const laLigaData = [
   },
   {
     name: 'Athetic Club',
-    short_name: 'RSO',
-    stadium: 'ATH',
+    short_name: 'ATH',
+    stadium: 'San Mamés',
     p: 14,
     win: 7,
     draw: 3,

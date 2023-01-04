@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
-import CHAMPS from '../helper/selectChamp';
 
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -65,20 +64,12 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
             <Text style={styles.team}>{nextMatch.local}</Text>
             <Image
               style={styles.logoTeam}
-              source={
-                mode === 'UCL'
-                  ? CHAMPS[nextMatch.local]?.file
-                  : SECTIONS[nextMatch.local]?.file
-              }
+              source={SECTIONS[mode][nextMatch.local]?.file}
             />
             <Text style={{color: '#111111'}}>VRS</Text>
             <Image
               style={styles.logoTeam}
-              source={
-                mode === 'UCL'
-                  ? CHAMPS[nextMatch.visit]?.file
-                  : SECTIONS[nextMatch.visit]?.file
-              }
+              source={SECTIONS[mode][nextMatch.visit]?.file}
             />
             <Text style={styles.team}>{nextMatch.visit}</Text>
           </View>

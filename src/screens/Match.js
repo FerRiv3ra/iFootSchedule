@@ -25,7 +25,6 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import SECTIONS from '../helper/selectImg';
-import CHAMPS from '../helper/selectChamp';
 
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
@@ -198,11 +197,7 @@ const Match = ({route}) => {
             <View>
               <Image
                 style={styles.logoTeam}
-                source={
-                  mode === 'UCL'
-                    ? CHAMPS[match.local]?.file
-                    : SECTIONS[match.local]?.file
-                }
+                source={SECTIONS[mode][match.local]?.file}
               />
               <View style={styles.match}>
                 <Pressable onPress={() => handleLocal('min')}>
@@ -230,11 +225,7 @@ const Match = ({route}) => {
             <View>
               <Image
                 style={styles.logoTeam}
-                source={
-                  mode === 'UCL'
-                    ? CHAMPS[match.visit]?.file
-                    : SECTIONS[match.visit]?.file
-                }
+                source={SECTIONS[mode][match.visit]?.file}
               />
               <View style={styles.match}>
                 <Pressable onPress={() => handleVisit('min')}>

@@ -1,7 +1,6 @@
 import {Image, StyleSheet, Text, View, Pressable} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
-import CHAMPS from '../helper/selectChamp';
 
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,10 +37,7 @@ const MatchDay = ({match, parent, editing}) => {
     <Pressable disabled={!editing} onPress={handleEdit}>
       <View style={styles.container}>
         <Text style={styles.text}>{local}</Text>
-        <Image
-          style={styles.logoTeam}
-          source={mode === 'UCL' ? CHAMPS[local]?.file : SECTIONS[local]?.file}
-        />
+        <Image style={styles.logoTeam} source={SECTIONS[mode][local]?.file} />
         <Text style={styles.hour}>
           {match.played
             ? `${match.goll} - ${match.golv}`
@@ -49,10 +45,7 @@ const MatchDay = ({match, parent, editing}) => {
                 moment(date).utcOffset(utc).minutes() || '00'
               }`}
         </Text>
-        <Image
-          style={styles.logoTeam}
-          source={mode === 'UCL' ? CHAMPS[visit]?.file : SECTIONS[visit]?.file}
-        />
+        <Image style={styles.logoTeam} source={SECTIONS[mode][visit]?.file} />
         <Text style={styles.text}>{visit}</Text>
         {editing && (
           <FontAwesomeIcon
