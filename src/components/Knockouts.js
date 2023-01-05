@@ -6,58 +6,43 @@ import KnockoutRight from './KnockoutRight';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SECTIONS from '../helper/selectImg';
 import moment from 'moment';
+import useApp from '../hooks/useApp';
 
-const Knockouts = ({data, matchesPlayed}) => {
+const Knockouts = () => {
   const [utc, setUtc] = useState('+00:00');
   const [matchesP1, setMatchesP1] = useState([]);
   const [matchesP2, setMatchesP2] = useState([]);
   const [finalMatch, setFinalMatch] = useState({});
   const [final, setFinal] = useState(false);
-  const [maxG1, setMaxG1] = useState(0);
-  const [maxG2, setMaxG2] = useState(0);
-  const [minG1, setMinG1] = useState(0);
-  const [minG2, setMinG2] = useState(0);
+
+  const {matchesC} = useApp();
 
   useEffect(() => {
-    const getUTC = async () => {
-      const utcStg = await AsyncStorage.getItem('UTC');
-
-      if (utcStg) {
-        setUtc(utcStg);
-      }
-    };
-
-    if (matchesPlayed < 56) {
-      setMinG1(49);
-      setMaxG1(52);
-      setMinG2(53);
-      setMaxG2(56);
-    } else if (matchesPlayed < 60) {
-      setMinG1(57);
-      setMaxG1(58);
-      setMinG2(59);
-      setMaxG2(60);
-    } else if (matchesPlayed < 62) {
-      setMinG1(61);
-      setMaxG1(61);
-      setMinG2(62);
-      setMaxG2(62);
-    } else {
-      setFinalMatch(data.filter(match => match._id === 64)[0]);
-      setFinal(true);
-    }
-
     getUTC();
-  }, [matchesPlayed, data]);
+  }, []);
 
   useEffect(() => {
     setMatchesP1(
-      data.filter(match => match._id >= minG1 && match._id <= maxG1),
+      matchesC.filter((match, index) => {
+        if (index < 4) return match;
+      }),
     );
     setMatchesP2(
-      data.filter(match => match._id >= minG2 && match._id <= maxG2),
+      matchesC.filter((match, index) => {
+        if (index >= 4 && index < 8) return match;
+      }),
     );
-  }, [maxG2, data]);
+  }, [matchesC]);
+
+  const getUTC = async () => {
+    const utcStg = await AsyncStorage.getItem('UTC');
+
+    if (utcStg) {
+      setUtc(utcStg);
+    }
+  };
+
+  console.log(matchesP1);
 
   return (
     <View>

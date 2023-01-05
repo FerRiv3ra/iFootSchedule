@@ -79,31 +79,16 @@ const Matches = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {playedGames >= limitGroups ? (
-          mode === 'WCF' && (
-            <View style={styles.match}>
-              <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
-                {playedGames < limitRound16
-                  ? `${language[lang].round16}`
-                  : playedGames < limitQuarter
-                  ? `${language[lang].quarter}`
-                  : playedGames < limitSemis
-                  ? 'Semi Final'
-                  : 'Final'}
-              </Text>
-              <Knockouts
-                data={mode === 'UCL' ? matchesC : matches}
-                matchesPlayed={playedGames}
-              />
-            </View>
-          )
+        {mode === 'UCL' ? (
+          <View style={styles.match}>
+            <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
+              {`${language[lang].round16}`}
+            </Text>
+            <Knockouts />
+          </View>
         ) : (
-          <ScrollView horizontal={true}>
-            {mode === 'UCL' ? (
-              groups.map((group, index) => <Table key={index} group={group} />)
-            ) : (
-              <Table group={mode} />
-            )}
+          <ScrollView horizontal>
+            <Table group={mode} />
           </ScrollView>
         )}
         {nextMatch && nextMatch._id ? (

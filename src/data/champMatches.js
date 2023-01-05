@@ -68,7 +68,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2023-02-21T20:00:00+00:00',
+    date: '2023-02-22T20:00:00+00:00',
   },
   {
     local: 'INT',
@@ -78,7 +78,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2023-02-21T20:00:00+00:00',
+    date: '2023-02-22T20:00:00+00:00',
   },
 
   // ** Match 2 **
@@ -130,7 +130,7 @@ const champMatches = [
     golv: 0,
     penv: 0,
     played: false,
-    date: '2023-02-14T20:00:00+00:00',
+    date: '2023-03-14T20:00:00+00:00',
   },
   {
     local: 'MCI',

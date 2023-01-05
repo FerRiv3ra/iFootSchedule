@@ -1,13 +1,16 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import globalStyles from '../styles/styles';
 import {faCheckCircle} from '@fortawesome/free-solid-svg-icons';
+import ThemeContext from '../context/ThemeContext';
 
 const KnockoutRight = ({match, utc}) => {
   const [ko, setKo] = useState({local: false, visit: false});
+
+  const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
     if (match.played) {
@@ -52,22 +55,22 @@ const KnockoutRight = ({match, utc}) => {
           <Text style={styles.team}>{match.local}</Text>
           <Image
             style={[styles.logoTeam, ko.local && styles.KO]}
-            source={SECTIONS[match.local]?.file}
+            source={SECTIONS[mode][match.local]?.file}
           />
           <Image
             style={[styles.logoTeam, styles.duplicate]}
-            source={SECTIONS[match.local]?.file}
+            source={SECTIONS[mode][match.local]?.file}
           />
         </View>
         <View style={styles.containerMatch}>
           <Text style={styles.team}>{match.visit}</Text>
           <Image
             style={[styles.logoTeam, ko.visit && styles.KO]}
-            source={SECTIONS[match.visit]?.file}
+            source={SECTIONS[mode][match.visit]?.file}
           />
           <Image
             style={[styles.logoTeam, styles.duplicate]}
-            source={SECTIONS[match.visit]?.file}
+            source={SECTIONS[mode][match.visit]?.file}
           />
         </View>
       </View>
