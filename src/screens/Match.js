@@ -37,6 +37,7 @@ import Penalties from '../components/Penalties';
 import language from '../helper/translate';
 import {adUnit} from '../helper/adUnit';
 import ThemeContext from '../context/ThemeContext';
+import {getUTC} from '../helper/getUTC';
 
 const interstitial = InterstitialAd.createForAdRequest(adUnit('INTERSTITIAL'), {
   requestNonPersonalizedAdsOnly: true,
@@ -44,7 +45,7 @@ const interstitial = InterstitialAd.createForAdRequest(adUnit('INTERSTITIAL'), {
 });
 
 const Match = ({route}) => {
-  const {match, parent, editing, local} = route.params;
+  const {match, editing, local} = route.params;
 
   const [date, setDate] = useState(moment(match.date).utcOffset(0));
   const [loading, setLoading] = useState(true);
@@ -58,32 +59,20 @@ const Match = ({route}) => {
   const [loaded, setLoaded] = useState(false);
 
   const navigation = useNavigation();
-  const {saveMatch, matchesPlayed, matchesPlayed_p, DBLoading, lang} = useApp();
+  const {saveMatch, DBLoading, lang} = useApp();
   const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
     setLoading(true);
-    const getUTC = async () => {
-      const utc = await AsyncStorage.getItem('UTC');
+    getUTC().then(value => value && setUtc(value));
+    setLoading(false);
+  }, []);
 
-      if (utc) {
-        setDate(moment(match.date).utcOffset(utc));
-      }
-    };
-
-    if (parent === 'Playground') {
-      setPlayed(matchesPlayed_p);
-    } else {
-      setPlayed(matchesPlayed);
-    }
-
+  useEffect(() => {
     if (match.played) {
       setGoll(match.goll);
       setGolv(match.golv);
     }
-
-    getUTC();
-    setLoading(false);
   }, []);
 
   const focusEffect = useCallback(() => {
@@ -114,6 +103,7 @@ const Match = ({route}) => {
       }
     }
   };
+
   const handleVisit = type => {
     if (type === 'add') {
       setGolv(golv + 1);
@@ -133,7 +123,7 @@ const Match = ({route}) => {
       date: match.date,
       goll,
       golv,
-      id: match.id,
+      id: match._id,
       local: match.local,
       penl,
       penv,
@@ -153,9 +143,10 @@ const Match = ({route}) => {
     }
 
     if (loaded) {
-      interstitial.show();
+      // interstitial.show();
     }
-    await saveMatch(matchSave, parent, editing);
+
+    await saveMatch(matchSave, mode, editing);
 
     if (match.id === limit) {
       navigation.dispatch(StackActions.replace('WelcomeScreen'));

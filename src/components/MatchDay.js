@@ -3,34 +3,29 @@ import React, {useContext, useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
 
 import moment from 'moment';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
 import ThemeContext from '../context/ThemeContext';
+import {getUTC} from '../helper/getUTC';
+import Probability from './Probability';
 
-const MatchDay = ({match, parent, editing}) => {
+const MatchDay = ({match, editing, today}) => {
   const [utc, setUtc] = useState('+00:00');
   const {local, visit, date} = match;
 
   const {mode} = useContext(ThemeContext);
+
   const navigator = useNavigation();
 
   useEffect(() => {
-    const getUTC = async () => {
-      const utcStg = await AsyncStorage.getItem('UTC');
-
-      if (utcStg) {
-        setUtc(utcStg);
-      }
-    };
-
-    getUTC();
+    getUTC().then(value => value && setUtc(value));
   }, []);
 
   const handleEdit = () => {
-    navigator.navigate('Match', {match, parent, editing});
+    navigator.navigate('Match', {match, editing});
   };
 
   return (
@@ -55,6 +50,7 @@ const MatchDay = ({match, parent, editing}) => {
           />
         )}
       </View>
+      {today && <Probability shortLocal={local} shortVisit={visit} />}
     </Pressable>
   );
 };

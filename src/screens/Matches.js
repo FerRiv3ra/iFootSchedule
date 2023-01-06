@@ -125,7 +125,7 @@ const Matches = ({navigation}) => {
             </View>
           )
         ) : (
-          <Champion parent={mode === 'UCL' ? 'C' : 'M'} />
+          <Champion parent={mode} />
         )}
         {loading ? (
           <ActivityIndicator animating={loading} />
@@ -136,7 +136,7 @@ const Matches = ({navigation}) => {
               <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
                 {language[lang].todayMatches}
               </Text>
-              <MatchesDay matchData={todayMatches} parent={parent} />
+              <MatchesDay matchData={todayMatches} parent={parent} today />
             </View>
           )
         )}

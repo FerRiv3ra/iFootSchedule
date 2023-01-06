@@ -214,6 +214,16 @@ const AppProvider = ({children}) => {
           }
         });
         break;
+
+      case 'UCL':
+        data = matchesC.filter(match => {
+          const date = moment(match.date);
+          if (moment(date).add(2, 'hours').isBefore(today) && !match.played) {
+            return match;
+          }
+        });
+        break;
+
       default:
         data = [];
         break;
@@ -289,25 +299,27 @@ const AppProvider = ({children}) => {
     try {
       const realm = await Realm.open({path: 'ifootschedule'});
 
-      const dataMatch =
-        parent === 'Playground'
-          ? 'matches_p'
-          : uiMode === 'UCL'
-          ? 'champ_matches'
-          : 'matches';
-      const dataTeam =
-        parent === 'Playground'
-          ? 'teams_p'
-          : uiMode === 'UCL'
-          ? 'champ_teams'
-          : 'teams';
+      const dataMatch = parent === 'UCL' ? 'uclMatches' : `${parent}Matches`;
+      const dataTeam = parent === 'UCL' ? 'uclTeams' : parent;
 
       let currentMatch = {};
+      let local = {};
+      let visit = {};
+
+      if (parent === 'UCL') {
+        local = teamsC.filter(team => team.short_name === match.local)[0];
+        visit = teamsC.filter(team => team.short_name === match.visit)[0];
+      } else if (parent === 'laLiga') {
+        local = laLiga.filter(team => team.short_name === match.local)[0];
+        visit = laLiga.filter(team => team.short_name === match.visit)[0];
+      } else {
+        local = premier.filter(team => team.short_name === match.local)[0];
+        visit = premier.filter(team => team.short_name === match.visit)[0];
+      }
 
       const groupsLimit = uiMode === 'UCL' ? 96 : 48;
       const round16Limit = uiMode === 'UCL' ? 112 : 56;
       const quarterLimit = uiMode === 'UCL' ? 120 : 60;
-      const totalLimit = uiMode === 'UCL' ? 124 : 63;
 
       let part =
         match.id <= groupsLimit
@@ -317,15 +329,10 @@ const AppProvider = ({children}) => {
           : match.id <= quarterLimit
           ? 'quarter'
           : 'semis';
-      let local =
-        uiMode === 'UCL'
-          ? teamsC.filter(team => team.short_name === match.local)[0]
-          : laLiga.filter(team => team.short_name === match.local)[0];
-      let visit =
-        uiMode === 'UCL'
-          ? teamsC.filter(team => team.short_name === match.visit)[0]
-          : laLiga.filter(team => team.short_name === match.visit)[0];
 
+      // TODO: finalizar el guardar match
+      console.log({match, dataMatch, dataTeam, local, visit});
+      return;
       realm.write(() => {
         const tempMatch = realm.objectForPrimaryKey(dataMatch, match.id);
 
@@ -339,32 +346,14 @@ const AppProvider = ({children}) => {
         tempMatch.played = match.played;
       });
 
-      if (match.id >= totalLimit) {
-        realm.close();
-
-        await getDataTeams();
-
-        return;
-      }
-
       let winner = '';
       let looser = '';
-      if (part === 'groups') {
-        if (match.goll === match.golv) {
-          winner = 'draw';
-        } else if (match.goll > match.golv) {
-          winner = 'local';
-        } else {
-          winner = 'visit';
-        }
+      if (match.goll === match.golv) {
+        winner = 'draw';
+      } else if (match.goll > match.golv) {
+        winner = 'local';
       } else {
-        if (match.goll + match.penl > match.golv + match.penv) {
-          winner = 'local';
-          looser = 'visit';
-        } else {
-          winner = 'visit';
-          looser = 'local';
-        }
+        winner = 'visit';
       }
 
       if (editing) {
@@ -519,37 +508,6 @@ const AppProvider = ({children}) => {
     }
   };
 
-  const generateNextMatches = async () => {
-    const match49 = laLigaMatches.filter(match => match.id === 49)[0];
-
-    if (matchesPlayed === 48 && match49 && match49.local === '1A') {
-      const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-      try {
-        const realm = await Realm.open({path: 'ifootschedule'});
-
-        const groupTeam = laLiga.filter(team => team.group === group);
-        realm.write(() => {
-          groups.forEach(group => {
-            const first = realm
-              .objects('matches')
-              .filtered(`local = '1${group}'`)[0];
-
-            first.local = groupTeam[0].short_name;
-
-            const second = realm
-              .objects('matches')
-              .filtered(`visit = '2${group}'`)[0];
-            second.visit = groupTeam[1].short_name;
-          });
-        });
-
-        realm.close();
-      } catch (err) {
-        console.error('Generate matches ', err.message);
-      }
-    }
-  };
-
   return (
     <AppContext.Provider
       value={{
@@ -569,7 +527,7 @@ const AppProvider = ({children}) => {
         saveMatch,
         matchesPlayed,
         matchesPlayedC,
-        generateNextMatches,
+        premierPlayed,
         lang,
         setLang,
         uiMode,

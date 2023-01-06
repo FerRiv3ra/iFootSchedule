@@ -3,17 +3,12 @@ import React from 'react';
 
 import MatchDay from './MatchDay';
 
-const MatchesDay = ({matchData, parent, editing = false}) => {
+const MatchesDay = ({matchData, today = false, editing = false}) => {
   return (
     <View>
       <View>
         {matchData.map((match, index) => (
-          <MatchDay
-            key={index}
-            match={match}
-            parent={parent}
-            editing={editing}
-          />
+          <MatchDay key={index} match={match} editing={editing} today={today} />
         ))}
       </View>
     </View>

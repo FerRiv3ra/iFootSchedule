@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SECTIONS from '../helper/selectImg';
 import moment from 'moment';
 import useApp from '../hooks/useApp';
+import {getUTC} from '../helper/getUTC';
 
 const Knockouts = () => {
   const [utc, setUtc] = useState('+00:00');
@@ -18,7 +19,7 @@ const Knockouts = () => {
   const {matchesC} = useApp();
 
   useEffect(() => {
-    getUTC();
+    getUTC().then(value => value && setUtc(value));
   }, []);
 
   useEffect(() => {
@@ -33,14 +34,6 @@ const Knockouts = () => {
       }),
     );
   }, [matchesC]);
-
-  const getUTC = async () => {
-    const utcStg = await AsyncStorage.getItem('UTC');
-
-    if (utcStg) {
-      setUtc(utcStg);
-    }
-  };
 
   console.log(matchesP1);
 

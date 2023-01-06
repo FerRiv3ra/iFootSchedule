@@ -16,6 +16,8 @@ import {useNavigation} from '@react-navigation/native';
 import language from '../helper/translate';
 import useApp from '../hooks/useApp';
 import ThemeContext from '../context/ThemeContext';
+import {getUTC} from '../helper/getUTC';
+import Probability from './Probability';
 
 const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
   const [date, setDate] = useState(moment(nextMatch.date));
@@ -23,23 +25,25 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
   const [local, setLocal] = useState({});
 
   const navigation = useNavigation();
-  const {lang, teamsC} = useApp();
+  const {lang, teamsC, laLiga, premier} = useApp();
   const {mode} = useContext(ThemeContext);
 
   const matchSet = [...pendingMatches, ...todayMatches];
 
   useEffect(() => {
     setLoading(true);
-    const getUTC = async () => {
-      const utc = await AsyncStorage.getItem('UTC');
 
-      if (utc) {
-        setDate(moment(nextMatch.date).utcOffset(utc));
-      }
-    };
-    setLocal(teamsC.filter(team => team.short_name === nextMatch.local)[0]);
+    if (mode === 'UCL') {
+      setLocal(teamsC.filter(team => team.short_name === nextMatch.local)[0]);
+    } else if (mode === 'laLiga') {
+      setLocal(laLiga.filter(team => team.short_name === nextMatch.local)[0]);
+    } else {
+      setLocal(premier.filter(team => team.short_name === nextMatch.local)[0]);
+    }
 
-    getUTC();
+    getUTC().then(
+      value => value && setDate(moment(nextMatch.date).utcOffset(value)),
+    );
     setLoading(false);
   }, [nextMatch]);
 
@@ -73,9 +77,13 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
             />
             <Text style={styles.team}>{nextMatch.visit}</Text>
           </View>
-          {mode === 'UCL' && (
-            <Text style={styles.stadium}>{local && local.stadium}</Text>
-          )}
+          <Probability
+            shortLocal={nextMatch.local}
+            shortVisit={nextMatch.visit}
+            long
+          />
+          <Text style={styles.stadium}>{local && local.stadium}</Text>
+
           <Text style={styles.date}>{date.format('lll')}</Text>
         </View>
       )}

@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import {useFocusEffect} from '@react-navigation/native';
 
 import Carousel from 'react-native-snap-carousel';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -31,20 +30,10 @@ import ThemeContext from '../context/ThemeContext';
 const WelcomeScreen = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {generateNextMatches, lang} = useApp();
+  const {lang} = useApp();
   const {setMainColors, setMode, mode} = useContext(ThemeContext);
   const {top} = useSafeAreaInsets();
   const {width} = Dimensions.get('window');
-
-  const callback = useCallback(() => {
-    generate();
-  }, []);
-
-  useFocusEffect(callback);
-
-  const generate = async () => {
-    await generateNextMatches();
-  };
 
   const selectGradient = index => {
     setMainColors(leaguesData[index].gradient);
