@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import ThemeContext from '../context/ThemeContext';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
+import {calculatePosibility} from '../helper/calculatePosibility';
 
 const Probability = ({shortLocal, shortVisit, long = false}) => {
   const [local, setLocal] = useState({});
@@ -11,11 +12,7 @@ const Probability = ({shortLocal, shortVisit, long = false}) => {
   const {laLiga, premier, lang} = useApp();
   const {mode} = useContext(ThemeContext);
 
-  const posLocal =
-    ((local.win * 100) / local.p + (visit.lost * 100) / visit.p) / 2;
-  const posVisit =
-    ((visit.win * 100) / visit.p + (local.lost * 100) / local.p) / 2;
-  const posDraw = 100 - posLocal - posVisit;
+  const {posLocal, posVisit, posDraw} = calculatePosibility();
 
   useEffect(() => {
     if (mode === 'laLiga') {

@@ -64,7 +64,9 @@ const Match = ({route}) => {
 
   useEffect(() => {
     setLoading(true);
-    getUTC().then(value => value && setUtc(value));
+    getUTC().then(
+      value => value && setDate(moment(nextMatch.date).utcOffset(value)),
+    );
     setLoading(false);
   }, []);
 
