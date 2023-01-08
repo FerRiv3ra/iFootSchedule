@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import ThemeContext from '../context/ThemeContext';
 import useApp from '../hooks/useApp';
@@ -8,11 +8,13 @@ import {calculatePosibility} from '../helper/calculatePosibility';
 const Probability = ({shortLocal, shortVisit, long = false}) => {
   const [local, setLocal] = useState({});
   const [visit, setVisit] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const {laLiga, premier, lang} = useApp();
   const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
+    setLoading(true);
     if (mode === 'laLiga') {
       setLocal(laLiga.filter(team => team.short_name === shortLocal)[0]);
       setVisit(laLiga.filter(team => team.short_name === shortVisit)[0]);
@@ -22,12 +24,12 @@ const Probability = ({shortLocal, shortVisit, long = false}) => {
       setLocal(premier.filter(team => team.short_name === shortLocal)[0]);
       setVisit(premier.filter(team => team.short_name === shortVisit)[0]);
     }
+    setLoading(false);
   }, []);
 
-  const {posLocal, posVisit, posDraw} = calculatePosibility(
-    local.last,
-    visit.last,
-  );
+  if (loading) return <ActivityIndicator animating={loading} />;
+
+  const {posLocal, posVisit, posDraw} = calculatePosibility(local, visit);
 
   return (
     <View

@@ -1,14 +1,16 @@
-export const calculatePosibility = (local = [], visit = []) => {
+import {promCalculator} from './promCalculator';
+
+export const calculatePosibility = (local = {}, visit = {}) => {
   let posLocal = 0;
   let posVisit = 0;
   let posDraw = 0;
 
-  if (!local.length) {
+  if (!Object.entries(local)) {
     posLocal = 33.33;
     posVisit = 33.33;
     posDraw = 33.33;
   } else {
-    const {WL, LL, DL} = local.reduce(
+    const {WL, LL, DL} = local.last.reduce(
       (tot, res) => {
         tot[`${res}L`] += 1;
 
@@ -17,7 +19,7 @@ export const calculatePosibility = (local = [], visit = []) => {
       {WL: 0, LL: 0, DL: 0},
     );
 
-    const {WV, LV, DV} = visit.reduce(
+    const {WV, LV, DV} = visit.last.reduce(
       (tot, res) => {
         tot[`${res}V`] += 1;
 
@@ -26,13 +28,9 @@ export const calculatePosibility = (local = [], visit = []) => {
       {WV: 0, LV: 0, DV: 0},
     );
 
-    posLocal = ((WL * 100) / local.length + (LV * 100) / visit.length) / 2;
-    posVisit = ((WV * 100) / visit.length + (LL * 100) / local.length) / 2;
-    posDraw = ((DL * 100) / local.length + (DV * 100) / visit.length) / 2;
-
-    posLocal = posLocal + posDraw * 0.25 + posVisit * 0.25;
-    posVisit = posVisit - posVisit * 0.25;
-    posDraw = posDraw - posDraw * 0.25;
+    posLocal = promCalculator(local, visit);
+    posVisit = promCalculator(visit, local);
+    posDraw = promCalculator(local, visit, 'D');
 
     if (posLocal + posVisit === 100) {
       posLocal = posLocal - posLocal * 0.16;
@@ -56,6 +54,16 @@ export const calculatePosibility = (local = [], visit = []) => {
       posVisit = 33.33;
       posDraw = 33.33;
     }
+  }
+
+  posLocal = posLocal + posVisit * 0.17;
+  posDraw = posDraw + posVisit * 0.16;
+  posVisit = posVisit - posVisit * 0.33;
+
+  if (Math.round(posLocal) === Math.round(posVisit)) {
+    posLocal = 33.33;
+    posVisit = 33.33;
+    posDraw = 33.33;
   }
 
   return {
