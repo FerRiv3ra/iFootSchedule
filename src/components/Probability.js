@@ -12,8 +12,6 @@ const Probability = ({shortLocal, shortVisit, long = false}) => {
   const {laLiga, premier, lang} = useApp();
   const {mode} = useContext(ThemeContext);
 
-  const {posLocal, posVisit, posDraw} = calculatePosibility();
-
   useEffect(() => {
     if (mode === 'laLiga') {
       setLocal(laLiga.filter(team => team.short_name === shortLocal)[0]);
@@ -25,6 +23,11 @@ const Probability = ({shortLocal, shortVisit, long = false}) => {
       setVisit(premier.filter(team => team.short_name === shortVisit)[0]);
     }
   }, []);
+
+  const {posLocal, posVisit, posDraw} = calculatePosibility(
+    local.last,
+    visit.last,
+  );
 
   return (
     <View
@@ -48,17 +51,19 @@ const Probability = ({shortLocal, shortVisit, long = false}) => {
               {visit.name}
             </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text>{Math.round(posLocal)}%</Text>
-            <Text>{100 - Math.round(posLocal) - Math.round(posVisit)}%</Text>
-            <Text>{Math.round(posVisit)}%</Text>
-          </View>
         </View>
       )}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+        <Text style={{fontSize: long ? 14 : 11}}>{Math.round(posLocal)}%</Text>
+        <Text style={{fontSize: long ? 14 : 11}}>
+          {100 - Math.round(posLocal) - Math.round(posVisit)}%
+        </Text>
+        <Text style={{fontSize: long ? 14 : 11}}>{Math.round(posVisit)}%</Text>
+      </View>
       <View style={{flexDirection: 'row'}}>
         <View
           style={{

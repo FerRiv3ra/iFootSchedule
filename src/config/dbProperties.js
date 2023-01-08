@@ -15,6 +15,10 @@ export const teamsProperties = {
     type: 'int',
     default: 0,
   },
+  last: {
+    type: 'string[]',
+    default: [],
+  },
   lost: {
     type: 'int',
     default: 0,

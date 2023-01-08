@@ -88,6 +88,7 @@ const quickStart = async () => {
             p: team.p,
             win: team.win,
             draw: team.draw,
+            last: team.last,
             lost: team.lost,
             gf: team.gf,
             ga: team.ga,
