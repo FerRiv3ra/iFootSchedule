@@ -1,9 +1,8 @@
 import {View, StyleSheet, Text, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import KnockoutLeft from './KnockoutLeft';
+import KnockoutSide from './KnockoutSide';
 import globalStyles from '../styles/styles';
-import KnockoutRight from './KnockoutRight';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import SECTIONS from '../helper/selectImg';
 import moment from 'moment';
 import useApp from '../hooks/useApp';
@@ -16,26 +15,26 @@ const Knockouts = () => {
   const [finalMatch, setFinalMatch] = useState({});
   const [final, setFinal] = useState(false);
 
-  const {matchesC} = useApp();
+  const {matchesC, matchesPlayedC} = useApp();
 
   useEffect(() => {
     getUTC().then(value => value && setUtc(value));
   }, []);
 
   useEffect(() => {
+    const limit = matchesPlayedC < 8 ? 8 : 16;
+
     setMatchesP1(
       matchesC.filter((match, index) => {
-        if (index < 4) return match;
+        if (index >= limit - 8 && index < limit - 4) return match;
       }),
     );
     setMatchesP2(
       matchesC.filter((match, index) => {
-        if (index >= 4 && index < 8) return match;
+        if (index >= limit - 4 && index < limit) return match;
       }),
     );
-  }, [matchesC]);
-
-  console.log(matchesP1);
+  }, [matchesPlayedC]);
 
   return (
     <View>
@@ -62,12 +61,12 @@ const Knockouts = () => {
         <View style={styles.container}>
           <View style={globalStyles.flex}>
             {matchesP1.map(match => (
-              <KnockoutLeft key={match._id} match={match} utc={utc} />
+              <KnockoutSide key={match._id} match={match} utc={utc} left />
             ))}
           </View>
           <View style={globalStyles.flex}>
             {matchesP2.map(match => (
-              <KnockoutRight key={match._id} match={match} utc={utc} />
+              <KnockoutSide key={match._id} match={match} utc={utc} />
             ))}
           </View>
         </View>

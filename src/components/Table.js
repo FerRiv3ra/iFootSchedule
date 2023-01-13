@@ -26,7 +26,7 @@ const Table = ({group}) => {
       default:
         break;
     }
-  }, []);
+  }, [laLiga, premier, teamsC]);
 
   return (
     <View style={styles.container}>

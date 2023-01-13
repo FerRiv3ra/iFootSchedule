@@ -317,22 +317,6 @@ const AppProvider = ({children}) => {
         visit = premier.filter(team => team.short_name === match.visit)[0];
       }
 
-      const groupsLimit = uiMode === 'UCL' ? 96 : 48;
-      const round16Limit = uiMode === 'UCL' ? 112 : 56;
-      const quarterLimit = uiMode === 'UCL' ? 120 : 60;
-
-      let part =
-        match.id <= groupsLimit
-          ? 'groups'
-          : match.id <= round16Limit
-          ? 'round16'
-          : match.id <= quarterLimit
-          ? 'quarter'
-          : 'semis';
-
-      // TODO: finalizar el guardar match
-      console.log({match, dataMatch, dataTeam, local, visit});
-      return;
       realm.write(() => {
         const tempMatch = realm.objectForPrimaryKey(dataMatch, match.id);
 
@@ -347,7 +331,7 @@ const AppProvider = ({children}) => {
       });
 
       let winner = '';
-      let looser = '';
+
       if (match.goll === match.golv) {
         winner = 'draw';
       } else if (match.goll > match.golv) {
@@ -364,7 +348,7 @@ const AppProvider = ({children}) => {
             ? 'local'
             : 'visit';
         realm.write(() => {
-          const tempTeamL = realm.objectForPrimaryKey(dataTeam, local.id);
+          const tempTeamL = realm.objectForPrimaryKey(dataTeam, local._id);
 
           tempTeamL.gf = tempTeamL.gf - Number(currentMatch.goll) + match.goll;
           tempTeamL.ga = tempTeamL.ga - Number(currentMatch.golv) + match.golv;
@@ -374,7 +358,7 @@ const AppProvider = ({children}) => {
             (winEdit === 'draw' ? 1 : winEdit === 'local' ? 3 : 0) +
             (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0);
 
-          const tempTeamV = realm.objectForPrimaryKey(dataTeam, visit.id);
+          const tempTeamV = realm.objectForPrimaryKey(dataTeam, visit._id);
 
           tempTeamV.gf = tempTeamV.gf - Number(currentMatch.golv) + match.golv;
           tempTeamV.ga = tempTeamV.ga - Number(currentMatch.goll) + match.goll;
@@ -384,125 +368,34 @@ const AppProvider = ({children}) => {
             (winEdit === 'draw' ? 1 : winEdit === 'visit' ? 3 : 0) +
             (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0);
         });
-
-        realm.close();
-
-        await getDataTeams();
-
-        return;
-      }
-
-      if (part === 'groups') {
+      } else {
         realm.write(() => {
-          const tempTeamL = realm.objectForPrimaryKey(dataTeam, local.id);
+          const tempTeamL = realm.objectForPrimaryKey(dataTeam, local._id);
 
           tempTeamL.p += 1;
           tempTeamL.gf += match.goll;
           tempTeamL.ga += match.golv;
           tempTeamL.gd = tempTeamL.gf - tempTeamL.ga;
           tempTeamL.pts += winner === 'draw' ? 1 : winner === 'local' ? 3 : 0;
+          tempTeamL.win += winner === 'local' ? 1 : 0;
+          tempTeamL.draw += winner === 'draw' ? 1 : 0;
+          tempTeamL.lost += winner === 'visit' ? 1 : 0;
 
-          const tempTeamV = realm.objectForPrimaryKey(dataTeam, visit.id);
+          const tempTeamV = realm.objectForPrimaryKey(dataTeam, visit._id);
 
           tempTeamV.p += 1;
           tempTeamV.gf += match.golv;
           tempTeamV.ga += match.goll;
           tempTeamV.gd = tempTeamV.gf - tempTeamV.ga;
           tempTeamV.pts += winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0;
+          tempTeamV.win += winner === 'visit' ? 1 : 0;
+          tempTeamV.draw += winner === 'draw' ? 1 : 0;
+          tempTeamV.lost += winner === 'local' ? 1 : 0;
         });
-
-        realm.close();
-
-        await getDataTeams();
-
-        return;
       }
+      realm.close();
 
-      if (part === 'round16') {
-        if (
-          match.id === 49 ||
-          match.id === 52 ||
-          match.id === 53 ||
-          match.id === 55
-        ) {
-          realm.write(() => {
-            const local = realm
-              .objects(dataMatch)
-              .filtered(`local = '8W${match.id - 48}'`)[0];
-            local.local = `${match[winner]}`;
-          });
-        } else {
-          realm.write(() => {
-            const visit = realm
-              .objects(dataMatch)
-              .filtered(`visit = '8W${match.id - 48}'`)[0];
-            visit.visit = `${match[winner]}`;
-          });
-        }
-
-        realm.close();
-
-        await getDataTeams();
-
-        return;
-      }
-
-      if (part === 'quarter') {
-        if (match.id % 2 === 0) {
-          realm.write(() => {
-            const local = realm
-              .objects(dataMatch)
-              .filtered(`local = '4W${match.id - 56}'`)[0];
-            local.local = `${match[winner]}`;
-          });
-        } else {
-          realm.write(() => {
-            const visit = realm
-              .objects(dataMatch)
-              .filtered(`visit = '4W${match.id - 56}'`)[0];
-            visit.visit = `${match[winner]}`;
-          });
-        }
-
-        realm.close();
-
-        await getDataTeams();
-
-        return;
-      }
-
-      if (part === 'semis') {
-        if (match.id % 2 === 1) {
-          realm.write(() => {
-            const winLocal = realm
-              .objects(dataMatch)
-              .filtered(`local = 'SW${match.id - 60}'`)[0];
-            winLocal.local = `${match[winner]}`;
-
-            const loosLocal = realm
-              .objects(dataMatch)
-              .filtered(`local = 'SL${match.id - 60}'`)[0];
-            loosLocal.local = `${match[looser]}`;
-          });
-        } else {
-          realm.write(() => {
-            const winVisit = realm
-              .objects(dataMatch)
-              .filtered(`visit = 'SW${match.id - 60}'`)[0];
-            winVisit.visit = `${match[winner]}`;
-
-            const loosLocal = realm
-              .objects(dataMatch)
-              .filtered(`visit = 'SL${match.id - 60}'`)[0];
-            loosLocal.visit = `${match[looser]}`;
-          });
-        }
-        realm.close();
-
-        await getDataTeams();
-
-        return;
-      }
+      await getDataTeams();
     } catch (err) {
       console.error('Failed to open the realm', err.message);
     }

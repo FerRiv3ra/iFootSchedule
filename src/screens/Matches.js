@@ -41,8 +41,6 @@ const Matches = ({navigation}) => {
     nextMatch,
     matchesPlayed,
     matchesPlayedC,
-    matches,
-    matchesC,
     lang,
   } = useApp();
   const {mode} = useContext(ThemeContext);

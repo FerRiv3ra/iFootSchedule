@@ -51,7 +51,6 @@ const Match = ({route}) => {
   const [loading, setLoading] = useState(true);
   const [penalties, setPenalties] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [played, setPlayed] = useState(0);
   const [goll, setGoll] = useState(0);
   const [golv, setGolv] = useState(0);
   const [penl, setPenl] = useState(0);
@@ -62,10 +61,12 @@ const Match = ({route}) => {
   const {saveMatch, DBLoading, lang} = useApp();
   const {mode} = useContext(ThemeContext);
 
+  // TODO: Arreglar boton guardar y enviar a penales al empatar en goles del segundo partido.
+
   useEffect(() => {
     setLoading(true);
     getUTC().then(
-      value => value && setDate(moment(nextMatch.date).utcOffset(value)),
+      value => value && setDate(moment(match.date).utcOffset(value)),
     );
     setLoading(false);
   }, []);
@@ -182,9 +183,7 @@ const Match = ({route}) => {
             {language[lang].match}
           </Text>
           <Text style={styles.date}>{date.format('lll')}</Text>
-          {mode === 'UCL' && (
-            <Text style={styles.stadium}>{local && local.stadium}</Text>
-          )}
+          <Text style={styles.stadium}>{local && local.stadium}</Text>
           <View style={styles.match}>
             <Text style={styles.team}>{match.local}</Text>
             <View>
@@ -266,7 +265,7 @@ const Match = ({route}) => {
                     icon={faSave}
                   />
                   <Text style={styles.textStyle}>
-                    {played < 48 || editing || (played >= 48 && goll !== golv)
+                    {editing || (mode === 'UCL' && goll !== golv)
                       ? `${language[lang].save}`
                       : `${language[lang].endTime}`}
                   </Text>

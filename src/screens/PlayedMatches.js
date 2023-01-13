@@ -22,22 +22,18 @@ const PlayedMatches = ({route}) => {
 
   const [dataMatches, setDataMatches] = useState([]);
 
-  const {matches, matchesC, matches_p, DBLoading, lang} = useApp();
+  const {matchesC, laLigaMatches, premierMatches, DBLoading, lang} = useApp();
   const {mode} = useContext(ThemeContext);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (parent === 'Playground') {
-      setDataMatches(matches_p.filter(match => match.id <= 48 && match.played));
+    if (mode === 'laLiga') {
+      setDataMatches(laLigaMatches.filter(match => match.played));
+    } else if (mode === 'UCL') {
+      setDataMatches(matchesC.filter(match => match.played));
     } else {
-      if (mode === 'UCL') {
-        setDataMatches(
-          matchesC.filter(match => match.id <= 96 && match.played),
-        );
-      } else {
-        setDataMatches(matches.filter(match => match.id <= 48 && match.played));
-      }
+      setDataMatches(premierMatches.filter(match => match.played));
     }
   }, [DBLoading]);
 
@@ -59,8 +55,6 @@ const PlayedMatches = ({route}) => {
               editing={true}
             />
           </View>
-
-          <Text style={styles.info}>* {language[lang].matchPlayedMessage}</Text>
           <Pressable
             onPress={goBack}
             style={[
@@ -95,6 +89,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
     borderTopLeftRadius: 20,
     marginBottom: 80,
+    marginTop: 10,
   },
   container: {
     marginHorizontal: 5,

@@ -11,7 +11,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
 
 import moment from 'moment';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {useNavigation} from '@react-navigation/native';
 import language from '../helper/translate';
 import useApp from '../hooks/useApp';
@@ -48,14 +48,15 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
   }, [nextMatch]);
 
   const handlePress = () => {
-    if (matchSet.includes(nextMatch)) {
-      navigation.navigate('Match', {match: nextMatch, local});
-    } else {
-      Alert.alert(
-        language[lang].info,
-        `${language[lang].infoMessage} ${date.format('lll')}`,
-      );
-    }
+    navigation.navigate('Match', {match: nextMatch, local});
+    // if (matchSet.includes(nextMatch)) {
+    //   navigation.navigate('Match', {match: nextMatch, local});
+    // } else {
+    //   Alert.alert(
+    //     language[lang].info,
+    //     `${language[lang].infoMessage} ${date.format('lll')}`,
+    //   );
+    // }
   };
 
   return (
@@ -77,11 +78,7 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
             />
             <Text style={styles.team}>{nextMatch.visit}</Text>
           </View>
-          <Probability
-            shortLocal={nextMatch.local}
-            shortVisit={nextMatch.visit}
-            long
-          />
+          {mode !== 'UCL' && <Probability long />}
           <Text style={styles.stadium}>{local && local.stadium}</Text>
 
           <Text style={styles.date}>{date.format('lll')}</Text>

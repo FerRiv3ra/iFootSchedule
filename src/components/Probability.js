@@ -5,27 +5,27 @@ import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import {calculatePosibility} from '../helper/calculatePosibility';
 
-const Probability = ({shortLocal, shortVisit, long = false}) => {
+const Probability = ({long = false}) => {
   const [local, setLocal] = useState({});
   const [visit, setVisit] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const {laLiga, premier, lang} = useApp();
+  const {laLiga, premier, lang, nextMatch} = useApp();
   const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
     setLoading(true);
     if (mode === 'laLiga') {
-      setLocal(laLiga.filter(team => team.short_name === shortLocal)[0]);
-      setVisit(laLiga.filter(team => team.short_name === shortVisit)[0]);
+      setLocal(laLiga.filter(team => team.short_name === nextMatch.local)[0]);
+      setVisit(laLiga.filter(team => team.short_name === nextMatch.visit)[0]);
     }
 
     if (mode === 'premier') {
-      setLocal(premier.filter(team => team.short_name === shortLocal)[0]);
-      setVisit(premier.filter(team => team.short_name === shortVisit)[0]);
+      setLocal(premier.filter(team => team.short_name === nextMatch.local)[0]);
+      setVisit(premier.filter(team => team.short_name === nextMatch.visit)[0]);
     }
     setLoading(false);
-  }, []);
+  }, [nextMatch]);
 
   if (loading) return <ActivityIndicator animating={loading} />;
 

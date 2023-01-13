@@ -5,7 +5,7 @@ export const calculatePosibility = (local = {}, visit = {}) => {
   let posVisit = 0;
   let posDraw = 0;
 
-  if (!Object.entries(local)) {
+  if (!Object.entries(local).length) {
     posLocal = 33.33;
     posVisit = 33.33;
     posDraw = 33.33;

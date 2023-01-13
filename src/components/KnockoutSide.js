@@ -6,15 +6,23 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import globalStyles from '../styles/styles';
 import {faCheckCircle} from '@fortawesome/free-solid-svg-icons';
 import ThemeContext from '../context/ThemeContext';
+import useApp from '../hooks/useApp';
 
-const KnockoutLeft = ({match, utc}) => {
+const KnockoutSide = ({match, utc, left = false}) => {
   const [ko, setKo] = useState({local: false, visit: false});
+  const [prevMatch, setPrevMatch] = useState({});
 
   const {mode} = useContext(ThemeContext);
+  const {matchesPlayedC, matchesC} = useApp();
 
   useEffect(() => {
-    if (match.played) {
-      if (match.goll + match.penl > match.golv + match.penv) {
+    setPrevMatch(matchesC.filter(m => match.visit === m.local)[0]);
+
+    if (match.played && matchesPlayedC > 8) {
+      if (
+        match.goll + match.penl + prevMatch.golv >
+        match.golv + match.penv + prevMatch.goll
+      ) {
         setKo({
           local: false,
           visit: true,
@@ -29,9 +37,18 @@ const KnockoutLeft = ({match, utc}) => {
   }, [match]);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        ...styles.container,
+        alignItems: left ? 'flex-start' : 'flex-end',
+        flexDirection: left ? 'row' : 'row-reverse',
+      }}>
       <View>
-        <View style={styles.containerMatch}>
+        <View
+          style={{
+            ...styles.containerMatch,
+            flexDirection: left ? 'row' : 'row-reverse',
+          }}>
           <Image
             style={[styles.logoTeam, ko.local && styles.KO]}
             source={SECTIONS[mode][match.local]?.file}
@@ -40,9 +57,26 @@ const KnockoutLeft = ({match, utc}) => {
             style={[styles.logoTeam, styles.duplicate]}
             source={SECTIONS[mode][match.local]?.file}
           />
-          <Text style={styles.team}>{match.local}</Text>
+          <Text>
+            {(match.played || !!prevMatch) && !left && (
+              <Text style={{fontSize: 10}}>
+                ({match.goll + prevMatch.golv || 0}){' '}
+              </Text>
+            )}
+            {match.local}
+            {(match.played || !!prevMatch) && left && (
+              <Text style={{fontSize: 10}}>
+                {' '}
+                ({match.goll + prevMatch.golv || 0})
+              </Text>
+            )}
+          </Text>
         </View>
-        <View style={styles.containerMatch}>
+        <View
+          style={{
+            ...styles.containerMatch,
+            flexDirection: left ? 'row' : 'row-reverse',
+          }}>
           <Image
             style={[styles.logoTeam, ko.visit && styles.KO]}
             source={SECTIONS[mode][match.visit]?.file}
@@ -51,10 +85,28 @@ const KnockoutLeft = ({match, utc}) => {
             style={[styles.logoTeam, styles.duplicate]}
             source={SECTIONS[mode][match.visit]?.file}
           />
-          <Text style={styles.team}>{match.visit}</Text>
+          <Text>
+            {(match.played || !!prevMatch) && !left && (
+              <Text style={{fontSize: 10}}>
+                ({match.golv + prevMatch.goll || 0}){' '}
+              </Text>
+            )}
+            {match.visit}
+            {(match.played || !!prevMatch) && left && (
+              <Text style={{fontSize: 10}}>
+                {' '}
+                ({match.golv + prevMatch.goll || 0})
+              </Text>
+            )}
+          </Text>
         </View>
       </View>
-      <View style={styles.date}>
+      <View
+        style={{
+          ...styles.date,
+          marginLeft: left ? 15 : 0,
+          marginRight: left ? 0 : 15,
+        }}>
         {match.played ? (
           <View style={styles.iconContainer}>
             <FontAwesomeIcon
@@ -64,7 +116,11 @@ const KnockoutLeft = ({match, utc}) => {
             />
           </View>
         ) : (
-          <View style={styles.badge}>
+          <View
+            style={{
+              ...styles.badge,
+              alignSelf: left ? 'flex-start' : 'flex-end',
+            }}>
             <Text style={styles.textDate}>
               {moment(match.date).utc(utc).toLocaleString().slice(4, 10)}
             </Text>
@@ -78,23 +134,19 @@ const KnockoutLeft = ({match, utc}) => {
   );
 };
 
-export default KnockoutLeft;
+export default KnockoutSide;
 
 const styles = StyleSheet.create({
   badge: {
     backgroundColor: '#EEE',
     padding: 8,
     borderRadius: 50,
-    alignSelf: 'flex-start',
   },
   container: {
-    flexDirection: 'row',
     borderTopWidth: 1,
     borderTopColor: '#DDD',
-    alignItems: 'flex-start',
   },
   containerMatch: {
-    flexDirection: 'row',
     alignItems: 'center',
   },
   date: {
