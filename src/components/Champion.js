@@ -26,7 +26,7 @@ const Champion = ({parent}) => {
   return (
     <View style={styles.container}>
       <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
-        {language[lang].championMessage}
+        {`${language[lang].championMessage} ${SECTIONS.trophy[mode]?.title}`}
       </Text>
       <Animatable.View animation="zoomIn" delay={500} duration={3000}>
         <Animatable.Image
@@ -35,7 +35,7 @@ const Champion = ({parent}) => {
           duration={2000}
           iterationCount="infinite"
           style={styles.logo}
-          source={require('../assets/logoWcup.png')}
+          source={SECTIONS.trophy[mode]?.file}
         />
       </Animatable.View>
       <Animatable.View animation="zoomIn" delay={500} duration={3000}>
@@ -45,7 +45,7 @@ const Champion = ({parent}) => {
           duration={2000}
           iterationCount="infinite"
           style={styles.logoTeam}
-          source={SECTIONS[champion.short_name]?.file}
+          source={SECTIONS[mode][champion.short_name]?.file}
         />
       </Animatable.View>
       <Animatable.Text

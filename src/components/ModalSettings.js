@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -17,14 +16,13 @@ import {
   faMinus,
   faPlus,
   faSave,
-  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import SegmentedControl from './SegmentedControl';
-import {adUnit} from '../helper/adUnit';
 import ThemeContext from '../context/ThemeContext';
+import FooterBannerAd from './FooterBannerAd';
 
 const ModalSettings = ({setModalVisible}) => {
   const [hours, setHours] = useState('00');
@@ -215,15 +213,7 @@ const ModalSettings = ({setModalVisible}) => {
           <Text style={{color: '#111111'}}>{language[lang].close}</Text>
         </Pressable>
       </View>
-      <View style={globalStyles.ads}>
-        <BannerAd
-          unitId={adUnit()}
-          size={BannerAdSize.FULL_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
-      </View>
+      <FooterBannerAd />
     </View>
   );
 };

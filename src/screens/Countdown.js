@@ -7,18 +7,17 @@ import {
   SafeAreaView,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import LinearGradient from 'react-native-linear-gradient';
+
 import * as Animatable from 'react-native-animatable';
 import moment from 'moment';
 
 import globalStyles from '../styles/styles';
 import {heightScale, withScale} from '../helper/scale';
 import {useNavigation} from '@react-navigation/native';
-import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
-import {adUnit} from '../helper/adUnit';
 import GradientBackground from '../components/GradientBackground';
+import FooterBannerAd from '../components/FooterBannerAd';
 
 const Countdown = () => {
   const today = moment();
@@ -117,15 +116,7 @@ const Countdown = () => {
           </Pressable>
         </Animatable.View>
       </SafeAreaView>
-      <View style={styles.ads}>
-        <BannerAd
-          unitId={adUnit()}
-          size={BannerAdSize.FULL_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
-      </View>
+      <FooterBannerAd />
     </GradientBackground>
   );
 };
@@ -133,9 +124,6 @@ const Countdown = () => {
 export default Countdown;
 
 const styles = StyleSheet.create({
-  ads: {
-    alignItems: 'center',
-  },
   view: {
     flex: 1,
     justifyContent: 'space-between',
@@ -152,7 +140,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
     borderTopLeftRadius: 20,
     position: 'relative',
-    bottom: 20,
+    bottom: 35,
   },
   dayCounter: {
     textAlign: 'center',

@@ -77,6 +77,18 @@ const SECTIONS = {
     SHA: {title: 'SHA', file: require('../assets/teams/SHA.png')},
     TOT: {title: 'TOT', file: require('../assets/teams/TOT.png')},
   },
+  trophy: {
+    laLiga: {title: 'La Liga', file: require('../assets/laLigaCup.png')},
+    premier: {
+      title: 'Premier League',
+      file: require('../assets/premierCup.png'),
+    },
+    FWC: {title: 'FIFA World Cup', file: require('../assets/logoWcup.png')},
+    UCL: {
+      title: 'UEFA Champions League',
+      file: require('../assets/UCLCup.png'),
+    },
+  },
 };
 
 export default SECTIONS;

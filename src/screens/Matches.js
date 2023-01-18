@@ -11,23 +11,19 @@ import React, {useCallback, useContext, useState} from 'react';
 import useApp from '../hooks/useApp';
 import Table from '../components/Table';
 import NextMatch from '../components/NextMatch';
-import moment from 'moment';
 import MatchesDay from '../components/MatchesDay';
-import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import globalStyles from '../styles/styles';
 import {useFocusEffect} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import Knockouts from '../components/Knockouts';
 import language from '../helper/translate';
-import {adUnit} from '../helper/adUnit';
 import WaitingDraw from './WaitingDraw';
 import ThemeContext from '../context/ThemeContext';
+import FooterBannerAd from '../components/FooterBannerAd';
 
 const Matches = ({navigation}) => {
   const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   const parent = 'Matches';
-
-  const today = moment().dayOfYear();
 
   const [loading, setLoading] = useState(true);
   const [playedGames, setPlayedGames] = useState(0);
@@ -45,10 +41,6 @@ const Matches = ({navigation}) => {
   } = useApp();
   const {mode} = useContext(ThemeContext);
 
-  const limitGroups = mode === 'UCL' ? 96 : 48;
-  const limitRound16 = mode === 'UCL' ? 112 : 56;
-  const limitQuarter = mode === 'UCL' ? 120 : 60;
-  const limitSemis = mode === 'UCL' ? 124 : 62;
   const totalMatches = mode === 'UCL' ? 125 : 64;
 
   const focusEffect = useCallback(() => {
@@ -92,17 +84,7 @@ const Matches = ({navigation}) => {
         {nextMatch && nextMatch._id ? (
           <View style={styles.match}>
             <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
-              {playedGames < limitGroups
-                ? `${language[lang].nextMatch}`
-                : playedGames < limitRound16
-                ? `${language[lang].round16}`
-                : playedGames < limitQuarter
-                ? `${language[lang].quarter}`
-                : playedGames < limitSemis
-                ? 'Semi Final'
-                : playedGames < 63
-                ? `${language[lang].thirdPlace}`
-                : 'Final'}
+              {`${language[lang].nextMatch}`}
             </Text>
             <NextMatch
               nextMatch={nextMatch}
@@ -111,7 +93,7 @@ const Matches = ({navigation}) => {
               parent={mode}
             />
           </View>
-        ) : mode === 'UCL' && playedGames === 96 ? (
+        ) : mode === 'UCL' && !nextMatch ? (
           loading ? (
             <ActivityIndicator animating={loading} />
           ) : (
@@ -150,7 +132,7 @@ const Matches = ({navigation}) => {
             </View>
           )
         )}
-        {playedGames > 0 && playedGames < limitGroups && (
+        {playedGames > 0 && !!nextMatch && (
           <Pressable onPress={handleMatchesPlayed} style={styles.matchesPlayed}>
             <Text style={[globalStyles.textCenter, {color: '#111111'}]}>
               {language[lang].editPlayed}
@@ -165,15 +147,7 @@ const Matches = ({navigation}) => {
           </Text>
         </Pressable>
       </ScrollView>
-      <View style={globalStyles.ads}>
-        <BannerAd
-          unitId={adUnit()}
-          size={BannerAdSize.FULL_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
-      </View>
+      <FooterBannerAd />
     </SafeAreaView>
   );
 };

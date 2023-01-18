@@ -7,15 +7,14 @@ import {
   Pressable,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 
 import useApp from '../hooks/useApp';
 import MatchesDay from '../components/MatchesDay';
 import globalStyles from '../styles/styles';
 import {useNavigation} from '@react-navigation/native';
 import language from '../helper/translate';
-import {adUnit} from '../helper/adUnit';
 import ThemeContext from '../context/ThemeContext';
+import FooterBannerAd from '../components/FooterBannerAd';
 
 const PlayedMatches = ({route}) => {
   const {parent} = route.params;
@@ -68,15 +67,7 @@ const PlayedMatches = ({route}) => {
           </Pressable>
         </ScrollView>
       </SafeAreaView>
-      <View style={globalStyles.ads}>
-        <BannerAd
-          unitId={adUnit()}
-          size={BannerAdSize.FULL_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
-      </View>
+      <FooterBannerAd />
     </View>
   );
 };

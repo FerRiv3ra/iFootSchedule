@@ -233,66 +233,40 @@ const AppProvider = ({children}) => {
   };
 
   const getChampion = parent => {
-    let match = {};
-    let limit = parent === 'C' ? 125 : 64;
+    let champion = {};
+
     switch (parent) {
-      case 'C':
-        match = matchesC.filter(match => match.id === limit)[0];
+      case 'UCL':
+        const lastMatch = matchesC[matchesC.length - 1];
 
+        const {local, goll, penl, visit, golv, penv} = lastMatch;
+
+        let champ_name = '';
+
+        if (goll === golv) {
+          if (penl > penv) {
+            champ_name = local;
+          } else {
+            champ_name = visit;
+          }
+        } else if (goll > golv) {
+          champ_name = local;
+        } else {
+          champ_name = visit;
+        }
+
+        champion = teamsC.filter(team => team.short_name === champ_name)[0];
         break;
-      case 'M':
-        match = laLigaMatches.filter(match => match.id === limit)[0];
+      case 'laLiga':
+        champion = laLiga[0];
+        break;
 
+      case 'premier':
+        champion = premier[0];
         break;
     }
 
-    if (!match) {
-      const dataTest =
-        parent === 'UCL'
-          ? {
-              name: 'Real Madrid',
-              group: 'F',
-              short_name: 'RMA',
-              stadium: 'Santiago Benabéu',
-              p: 0,
-              gf: 0,
-              ga: 0,
-              gd: 0,
-              pts: 0,
-            }
-          : {
-              name: 'QATAR',
-              group: 'A',
-              short_name: 'QAT',
-              p: 0,
-              gf: 0,
-              ga: 0,
-              gd: 0,
-              pts: 0,
-            };
-
-      return dataTest;
-    }
-
-    const {local, goll, penl, visit, golv, penv} = match;
-
-    let champ_name;
-
-    if (goll === golv) {
-      if (penl > penv) {
-        champ_name = local;
-      } else {
-        champ_name = visit;
-      }
-    } else if (goll > golv) {
-      champ_name = local;
-    } else {
-      champ_name = visit;
-    }
-
-    const champ = laLiga.filter(team => team.short_name === champ_name)[0];
-
-    return champ;
+    return champion;
   };
 
   const saveMatch = async (match, parent, editing = false) => {

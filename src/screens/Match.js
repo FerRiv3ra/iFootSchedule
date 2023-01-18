@@ -5,15 +5,10 @@ import {
   SafeAreaView,
   Image,
   ActivityIndicator,
-  Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {
-  BannerAd,
-  BannerAdSize,
-  AdEventType,
-  InterstitialAd,
-} from 'react-native-google-mobile-ads';
+import {AdEventType, InterstitialAd} from 'react-native-google-mobile-ads';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
@@ -22,29 +17,25 @@ import {
   faPlusCircle,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import SECTIONS from '../helper/selectImg';
 
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
-import {
-  StackActions,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native';
+import {StackActions, useFocusEffect} from '@react-navigation/native';
 import Penalties from '../components/Penalties';
 import language from '../helper/translate';
 import {adUnit} from '../helper/adUnit';
 import ThemeContext from '../context/ThemeContext';
 import {getUTC} from '../helper/getUTC';
+import FooterBannerAd from '../components/FooterBannerAd';
 
 const interstitial = InterstitialAd.createForAdRequest(adUnit('INTERSTITIAL'), {
   requestNonPersonalizedAdsOnly: true,
   keywords: ['football', 'world cup', 'sports'],
 });
 
-const Match = ({route}) => {
+const Match = ({route, navigation}) => {
   const {match, editing, local} = route.params;
 
   const [date, setDate] = useState(moment(match.date).utcOffset(0));
@@ -57,8 +48,9 @@ const Match = ({route}) => {
   const [penv, setPenv] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
-  const navigation = useNavigation();
-  const {saveMatch, DBLoading, lang} = useApp();
+  const [prevMatch, setPrevMatch] = useState({});
+
+  const {saveMatch, matchesC, DBLoading, lang} = useApp();
   const {mode} = useContext(ThemeContext);
 
   // TODO: Arreglar boton guardar y enviar a penales al empatar en goles del segundo partido.
@@ -69,6 +61,10 @@ const Match = ({route}) => {
       value => value && setDate(moment(match.date).utcOffset(value)),
     );
     setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    setPrevMatch(matchesC.filter(m => match.visit === m.local)[0]);
   }, []);
 
   useEffect(() => {
@@ -135,10 +131,9 @@ const Match = ({route}) => {
     };
 
     if (
-      match.id > limit &&
-      matchSave.goll === matchSave.golv &&
-      matchSave.penl === 0 &&
-      matchSave.penv === 0
+      matchSave.goll + prevMatch?.golv ||
+      0 === matchSave.golv + prevMatch?.goll ||
+      (0 && matchSave.penl === 0 && matchSave.penv === 0)
     ) {
       setPenalties(true);
       setSaving(false);
@@ -146,17 +141,17 @@ const Match = ({route}) => {
     }
 
     if (loaded) {
-      // interstitial.show();
+      interstitial.show();
     }
 
     await saveMatch(matchSave, mode, editing);
 
+    setSaving(false);
     if (match.id === limit) {
       navigation.dispatch(StackActions.replace('WelcomeScreen'));
     } else {
       navigation.goBack();
     }
-    setSaving(false);
   };
 
   const handleClose = () => {
@@ -170,13 +165,13 @@ const Match = ({route}) => {
       ) : (
         <View style={styles.container}>
           <View style={styles.close}>
-            <Pressable onPress={handleClose}>
+            <TouchableOpacity activeOpacity={0.7} onPress={handleClose}>
               <FontAwesomeIcon
                 style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
                 size={18}
                 icon={faClose}
               />
-            </Pressable>
+            </TouchableOpacity>
           </View>
           <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
             {editing && `${language[lang].editing}`}
@@ -192,7 +187,9 @@ const Match = ({route}) => {
                 source={SECTIONS[mode][match.local]?.file}
               />
               <View style={styles.match}>
-                <Pressable onPress={() => handleLocal('min')}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => handleLocal('min')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
                       style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
@@ -200,9 +197,11 @@ const Match = ({route}) => {
                       icon={faMinusCircle}
                     />
                   </View>
-                </Pressable>
+                </TouchableOpacity>
                 <Text style={styles.goals}>{goll}</Text>
-                <Pressable onPress={() => handleLocal('add')}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => handleLocal('add')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
                       style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
@@ -210,7 +209,7 @@ const Match = ({route}) => {
                       icon={faPlusCircle}
                     />
                   </View>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
             <Text style={{color: '#111111'}}>VRS</Text>
@@ -220,7 +219,9 @@ const Match = ({route}) => {
                 source={SECTIONS[mode][match.visit]?.file}
               />
               <View style={styles.match}>
-                <Pressable onPress={() => handleVisit('min')}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => handleVisit('min')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
                       style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
@@ -228,9 +229,11 @@ const Match = ({route}) => {
                       icon={faMinusCircle}
                     />
                   </View>
-                </Pressable>
+                </TouchableOpacity>
                 <Text style={styles.goals}>{golv}</Text>
-                <Pressable onPress={() => handleVisit('add')}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => handleVisit('add')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
                       style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
@@ -238,13 +241,14 @@ const Match = ({route}) => {
                       icon={faPlusCircle}
                     />
                   </View>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </View>
             <Text style={styles.team}>{match.visit}</Text>
           </View>
           {!penalties && (
-            <Pressable
+            <TouchableOpacity
+              activeOpacity={0.7}
               onPress={handleSave}
               disabled={saving}
               style={[
@@ -265,13 +269,15 @@ const Match = ({route}) => {
                     icon={faSave}
                   />
                   <Text style={styles.textStyle}>
-                    {editing || (mode === 'UCL' && goll !== golv)
-                      ? `${language[lang].save}`
-                      : `${language[lang].endTime}`}
+                    {(!editing && mode === 'UCL' && goll + prevMatch?.golv) ||
+                    0 === golv + prevMatch?.goll ||
+                    0
+                      ? `${language[lang].endTime}`
+                      : `${language[lang].save}`}
                   </Text>
                 </View>
               )}
-            </Pressable>
+            </TouchableOpacity>
           )}
         </View>
       )}
@@ -282,15 +288,7 @@ const Match = ({route}) => {
           handleSave={handleSave}
         />
       )}
-      <View style={globalStyles.ads}>
-        <BannerAd
-          unitId={adUnit()}
-          size={BannerAdSize.FULL_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
-      </View>
+      <FooterBannerAd />
     </SafeAreaView>
   );
 };
