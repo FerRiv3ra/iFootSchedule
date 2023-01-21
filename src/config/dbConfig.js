@@ -9,6 +9,7 @@ import {matchesProps, teamsChampProps, teamsProperties} from './dbProperties';
 import champMatches from '../data/champMatches';
 import {laLigaDataMatches} from '../data/laLigaMatches';
 import {premierLegueMatches} from '../data/premierMatches';
+import {getDataFetch} from '../helper/getDataFetch';
 
 // Realm
 const teamsSchemaConstructor = name => ({
@@ -52,6 +53,10 @@ const quickStart = async () => {
     });
 
     // await AsyncStorage.removeItem('newVersion');
+    // await AsyncStorage.removeItem('laLigaVersion');
+    // await AsyncStorage.removeItem('premierVersion');
+    // await AsyncStorage.removeItem('laLigaMatchesVersion');
+    // await AsyncStorage.removeItem('premierMatchesVersion');
     const asKeys = await AsyncStorage.getAllKeys();
 
     if (!asKeys.includes('newVersion')) {
@@ -70,6 +75,13 @@ const quickStart = async () => {
       await AsyncStorage.setItem('newVersion', 'true');
     }
 
+    if (!asKeys.includes('laLigaVersion')) {
+      await AsyncStorage.setItem('laLigaVersion', '1.0.0');
+      await AsyncStorage.setItem('premierVersion', '1.0.0');
+      await AsyncStorage.setItem('laLigaMatchesVersion', '1.0.0');
+      await AsyncStorage.setItem('premierMatchesVersion', '1.0.0');
+    }
+
     const dbLaLiga = realm.objects('laLiga');
     const dbPremier = realm.objects('premier');
     const dbUclTeams = realm.objects('uclTeams');
@@ -77,8 +89,52 @@ const quickStart = async () => {
     const dbPremierMatches = realm.objects('premierMatches');
     const dbUclMatches = realm.objects('uclMatches');
 
-    if (!dbLaLiga.length) {
-      laLigaData.forEach(team => {
+    const {
+      laLigaDataFetch,
+      premierDataFetch,
+      laLigaMatchesDataFetch,
+      premierMatchesDataFetch,
+    } = await getDataFetch();
+
+    const laLigaVersion = await AsyncStorage.getItem('laLigaVersion');
+    const premierVersion = await AsyncStorage.getItem('premierVersion');
+    const laLigaMatchesVersion = await AsyncStorage.getItem(
+      'laLigaMatchesVersion',
+    );
+    const premierMatchesVersion = await AsyncStorage.getItem(
+      'premierMatchesVersion',
+    );
+
+    if (laLigaVersion === laLigaDataFetch.version) {
+      if (!dbLaLiga.length) {
+        laLigaData.forEach(team => {
+          realm.write(() => {
+            realm.create('laLiga', {
+              _id: uuid(),
+              name: team.name,
+              short_name: team.short_name,
+              stadium: team.stadium,
+              p: team.p,
+              win: team.win,
+              draw: team.draw,
+              last: team.last,
+              lost: team.lost,
+              gf: team.gf,
+              ga: team.ga,
+              gd: team.gf - team.ga,
+              pts: team.pts,
+            });
+          });
+        });
+
+        await AsyncStorage.setItem('laLigaVersion', '1.0.0');
+      }
+    } else {
+      realm.write(() => {
+        realm.delete(dbLaLiga);
+      });
+
+      laLigaDataFetch.data.forEach(team => {
         realm.write(() => {
           realm.create('laLiga', {
             _id: uuid(),
@@ -97,10 +153,39 @@ const quickStart = async () => {
           });
         });
       });
+
+      await AsyncStorage.setItem('laLigaVersion', laLigaDataFetch.version);
     }
 
-    if (!dbPremier.length) {
-      premierLeagueData.forEach(team => {
+    if (premierVersion === premierDataFetch.version) {
+      if (!dbPremier.length) {
+        premierLeagueData.forEach(team => {
+          realm.write(() => {
+            realm.create('premier', {
+              _id: uuid(),
+              name: team.name,
+              short_name: team.short_name,
+              stadium: team.stadium,
+              p: team.p,
+              win: team.win,
+              draw: team.draw,
+              lost: team.lost,
+              gf: team.gf,
+              ga: team.ga,
+              gd: team.gf - team.ga,
+              pts: team.pts,
+            });
+          });
+        });
+
+        await AsyncStorage.setItem('premierVersion', '1.0.0');
+      }
+    } else {
+      realm.write(() => {
+        realm.delete(dbPremier);
+      });
+
+      premierDataFetch.data.forEach(team => {
         realm.write(() => {
           realm.create('premier', {
             _id: uuid(),
@@ -118,6 +203,8 @@ const quickStart = async () => {
           });
         });
       });
+
+      await AsyncStorage.setItem('premierVersion', premierDataFetch.version);
     }
 
     if (!dbUclTeams.length) {
@@ -139,8 +226,29 @@ const quickStart = async () => {
       });
     }
 
-    if (!dbLaLigaMatches.length) {
-      laLigaDataMatches.forEach(match => {
+    if (laLigaMatchesVersion === laLigaMatchesDataFetch.version) {
+      if (!dbLaLigaMatches.length) {
+        laLigaDataMatches.forEach(match => {
+          realm.write(() => {
+            realm.create('laLigaMatches', {
+              _id: uuid(),
+              local: match.local,
+              visit: match.visit,
+              date: match.date,
+              goll: match.goll,
+              golv: match.golv,
+              played: match.played,
+            });
+          });
+        });
+        await AsyncStorage.setItem('laLigaMatchesVersion', '1.0.0');
+      }
+    } else {
+      realm.write(() => {
+        realm.delete(dbLaLigaMatches);
+      });
+
+      laLigaMatchesDataFetch.data.forEach(match => {
         realm.write(() => {
           realm.create('laLigaMatches', {
             _id: uuid(),
@@ -153,10 +261,37 @@ const quickStart = async () => {
           });
         });
       });
+
+      await AsyncStorage.setItem(
+        'laLigaMatchesVersion',
+        laLigaMatchesDataFetch.version,
+      );
     }
 
-    if (!dbPremierMatches.length) {
-      premierLegueMatches.forEach(match => {
+    if (premierMatchesVersion === premierMatchesDataFetch.version) {
+      if (!dbPremierMatches.length) {
+        premierLegueMatches.forEach(match => {
+          realm.write(() => {
+            realm.create('premierMatches', {
+              _id: uuid(),
+              local: match.local,
+              visit: match.visit,
+              date: match.date,
+              goll: match.goll,
+              golv: match.golv,
+              played: match.played,
+            });
+          });
+        });
+
+        await AsyncStorage.setItem('premierMatchesVersion', '1.0.0');
+      }
+    } else {
+      realm.write(() => {
+        realm.delete(dbPremierMatches);
+      });
+
+      premierMatchesDataFetch.data.forEach(match => {
         realm.write(() => {
           realm.create('premierMatches', {
             _id: uuid(),
@@ -169,6 +304,11 @@ const quickStart = async () => {
           });
         });
       });
+
+      await AsyncStorage.setItem(
+        'premierMatchesVersion',
+        premierMatchesDataFetch.version,
+      );
     }
 
     if (!dbUclMatches.length) {

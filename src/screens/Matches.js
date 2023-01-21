@@ -116,7 +116,7 @@ const Matches = ({navigation}) => {
               <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
                 {language[lang].todayMatches}
               </Text>
-              <MatchesDay matchData={todayMatches} parent={parent} today />
+              <MatchesDay matchData={todayMatches} parent={parent} />
             </View>
           )
         )}

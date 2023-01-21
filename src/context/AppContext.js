@@ -331,6 +331,20 @@ const AppProvider = ({children}) => {
             tempTeamL.pts -
             (winEdit === 'draw' ? 1 : winEdit === 'local' ? 3 : 0) +
             (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0);
+          if (parent !== 'UCL') {
+            tempTeamL.win +=
+              (winEdit === 'local' ? -1 : 0) + (winner === 'local' ? 1 : 0);
+            tempTeamL.draw +=
+              (winEdit === 'draw' ? -1 : 0) + (winner === 'draw' ? 1 : 0);
+            tempTeamL.lost +=
+              (winEdit === 'visit' ? -1 : 0) + (winner === 'visit' ? 1 : 0);
+            tempTeamL.last = [
+              ...tempTeamL.last.filter((item, index) => {
+                if (index > 0) return item;
+              }),
+              winner === 'draw' ? 'D' : winner === 'local' ? 'W' : 'L',
+            ];
+          }
 
           const tempTeamV = realm.objectForPrimaryKey(dataTeam, visit._id);
 
@@ -341,6 +355,26 @@ const AppProvider = ({children}) => {
             tempTeamV.pts -
             (winEdit === 'draw' ? 1 : winEdit === 'visit' ? 3 : 0) +
             (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0);
+          if (parent !== 'UCL') {
+            tempTeamV.win =
+              tempTeamV.win -
+              (winEdit === 'visit' ? 1 : 0) +
+              (winner === 'visit' ? 1 : 0);
+            tempTeamV.draw =
+              tempTeamV.draw -
+              (winEdit === 'draw' ? 1 : 0) +
+              (winner === 'draw' ? 1 : 0);
+            tempTeamV.lost =
+              tempTeamV.lost -
+              (winEdit === 'local' ? 1 : 0) +
+              (winner === 'local' ? 1 : 0);
+            tempTeamV.last = [
+              ...tempTeamV.last.filter((item, index) => {
+                if (index > 0) return item;
+              }),
+              winner === 'draw' ? 'D' : winner === 'visit' ? 'W' : 'L',
+            ];
+          }
         });
       } else {
         realm.write(() => {
@@ -351,9 +385,18 @@ const AppProvider = ({children}) => {
           tempTeamL.ga += match.golv;
           tempTeamL.gd = tempTeamL.gf - tempTeamL.ga;
           tempTeamL.pts += winner === 'draw' ? 1 : winner === 'local' ? 3 : 0;
-          tempTeamL.win += winner === 'local' ? 1 : 0;
-          tempTeamL.draw += winner === 'draw' ? 1 : 0;
-          tempTeamL.lost += winner === 'visit' ? 1 : 0;
+
+          if (parent !== 'UCL') {
+            tempTeamL.win += winner === 'local' ? 1 : 0;
+            tempTeamL.draw += winner === 'draw' ? 1 : 0;
+            tempTeamL.lost += winner === 'visit' ? 1 : 0;
+            tempTeamL.last = [
+              ...tempTeamL.last.filter((item, index) => {
+                if (index > 0) return item;
+              }),
+              winner === 'draw' ? 'D' : winner === 'local' ? 'W' : 'L',
+            ];
+          }
 
           const tempTeamV = realm.objectForPrimaryKey(dataTeam, visit._id);
 
@@ -362,9 +405,18 @@ const AppProvider = ({children}) => {
           tempTeamV.ga += match.goll;
           tempTeamV.gd = tempTeamV.gf - tempTeamV.ga;
           tempTeamV.pts += winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0;
-          tempTeamV.win += winner === 'visit' ? 1 : 0;
-          tempTeamV.draw += winner === 'draw' ? 1 : 0;
-          tempTeamV.lost += winner === 'local' ? 1 : 0;
+
+          if (parent !== 'UCL') {
+            tempTeamV.win += winner === 'visit' ? 1 : 0;
+            tempTeamV.draw += winner === 'draw' ? 1 : 0;
+            tempTeamV.lost += winner === 'local' ? 1 : 0;
+            tempTeamV.last = [
+              ...tempTeamV.last.filter((item, index) => {
+                if (index > 0) return item;
+              }),
+              winner === 'draw' ? 'D' : winner === 'visit' ? 'W' : 'L',
+            ];
+          }
         });
       }
       realm.close();

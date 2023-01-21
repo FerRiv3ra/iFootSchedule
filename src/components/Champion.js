@@ -23,6 +23,7 @@ const Champion = ({parent}) => {
 
   if (loading) return <ActivityIndicator animating={loading} />;
 
+  console.log(champion);
   return (
     <View style={styles.container}>
       <Text style={[styles.title, globalStyles[`text-${mode}`]]}>

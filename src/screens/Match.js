@@ -22,7 +22,7 @@ import SECTIONS from '../helper/selectImg';
 
 import globalStyles from '../styles/styles';
 import useApp from '../hooks/useApp';
-import {StackActions, useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 import Penalties from '../components/Penalties';
 import language from '../helper/translate';
 import {adUnit} from '../helper/adUnit';
@@ -50,10 +50,8 @@ const Match = ({route, navigation}) => {
 
   const [prevMatch, setPrevMatch] = useState({});
 
-  const {saveMatch, matchesC, DBLoading, lang} = useApp();
+  const {saveMatch, matchesC, laLiga, DBLoading, lang} = useApp();
   const {mode} = useContext(ThemeContext);
-
-  // TODO: Arreglar boton guardar y enviar a penales al empatar en goles del segundo partido.
 
   useEffect(() => {
     setLoading(true);
@@ -64,7 +62,9 @@ const Match = ({route, navigation}) => {
   }, []);
 
   useEffect(() => {
-    setPrevMatch(matchesC.filter(m => match.visit === m.local)[0]);
+    if (mode === 'UCL') {
+      setPrevMatch(matchesC.filter(m => match.visit === m.local)[0]);
+    }
   }, []);
 
   useEffect(() => {
@@ -117,7 +117,6 @@ const Match = ({route, navigation}) => {
 
   const handleSave = async () => {
     setSaving(true);
-    const limit = mode === 'UCL' ? 96 : 48;
     const matchSave = {
       date: match.date,
       goll,
@@ -147,11 +146,7 @@ const Match = ({route, navigation}) => {
     await saveMatch(matchSave, mode, editing);
 
     setSaving(false);
-    if (match.id === limit) {
-      navigation.dispatch(StackActions.replace('WelcomeScreen'));
-    } else {
-      navigation.goBack();
-    }
+    navigation.goBack();
   };
 
   const handleClose = () => {

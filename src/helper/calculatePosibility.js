@@ -32,13 +32,6 @@ export const calculatePosibility = (local = {}, visit = {}) => {
     posVisit = promCalculator(visit, local);
     posDraw = promCalculator(local, visit, 'D');
 
-    if (posLocal + posVisit === 100) {
-      posLocal = posLocal - posLocal * 0.16;
-      posVisit = posVisit - posVisit * 0.16;
-
-      posDraw = 100 - posLocal - posVisit;
-    }
-
     if (posLocal === 0) {
       posLocal = posDraw / 2;
       posDraw = posLocal;
@@ -55,10 +48,6 @@ export const calculatePosibility = (local = {}, visit = {}) => {
       posDraw = 33.33;
     }
   }
-
-  posLocal = posLocal + posVisit * 0.17;
-  posDraw = posDraw + posVisit * 0.16;
-  posVisit = posVisit - posVisit * 0.33;
 
   if (Math.round(posLocal) === Math.round(posVisit)) {
     posLocal = 33.33;

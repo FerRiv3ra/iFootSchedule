@@ -17,7 +17,6 @@ import language from '../helper/translate';
 import useApp from '../hooks/useApp';
 import ThemeContext from '../context/ThemeContext';
 import {getUTC} from '../helper/getUTC';
-import Probability from './Probability';
 
 const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
   const [date, setDate] = useState(moment(nextMatch.date));
@@ -48,15 +47,15 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
   }, [nextMatch]);
 
   const handlePress = () => {
-    navigation.navigate('Match', {match: nextMatch, local});
-    // if (matchSet.includes(nextMatch)) {
-    //   navigation.navigate('Match', {match: nextMatch, local});
-    // } else {
-    //   Alert.alert(
-    //     language[lang].info,
-    //     `${language[lang].infoMessage} ${date.format('lll')}`,
-    //   );
-    // }
+    // navigation.navigate('Match', {match: nextMatch, local});
+    if (matchSet.includes(nextMatch)) {
+      navigation.navigate('Match', {match: nextMatch, local});
+    } else {
+      Alert.alert(
+        language[lang].info,
+        `${language[lang].infoMessage} ${date.format('lll')}`,
+      );
+    }
   };
 
   return (
@@ -78,7 +77,6 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
             />
             <Text style={styles.team}>{nextMatch.visit}</Text>
           </View>
-          {mode !== 'UCL' && <Probability long />}
           <Text style={styles.stadium}>{local && local.stadium}</Text>
 
           <Text style={styles.date}>{date.format('lll')}</Text>

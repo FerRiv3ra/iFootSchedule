@@ -10,9 +10,8 @@ import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../styles/styles';
 import ThemeContext from '../context/ThemeContext';
 import {getUTC} from '../helper/getUTC';
-import Probability from './Probability';
 
-const MatchDay = ({match, editing, today}) => {
+const MatchDay = ({match, editing}) => {
   const [utc, setUtc] = useState('+00:00');
   const {local, visit, date} = match;
 
@@ -50,7 +49,6 @@ const MatchDay = ({match, editing, today}) => {
           />
         )}
       </View>
-      {today && <Probability shortLocal={local} shortVisit={visit} />}
     </Pressable>
   );
 };
