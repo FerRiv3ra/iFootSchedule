@@ -16,7 +16,7 @@ const KnockoutSide = ({match, utc, left = false}) => {
   const {matchesPlayedC, matchesC} = useApp();
 
   useEffect(() => {
-    setPrevMatch(matchesC.filter(m => match.visit === m.local)[0]);
+    setPrevMatch(matchesC.filter(m => match.visit === m.local && m.played)[0]);
 
     if (match.played && matchesPlayedC > 8) {
       if (
@@ -60,14 +60,14 @@ const KnockoutSide = ({match, utc, left = false}) => {
           <Text>
             {(match.played || !!prevMatch) && !left && (
               <Text style={{fontSize: 10}}>
-                ({match.goll + prevMatch.golv || 0}){' '}
+                ({match.goll + (prevMatch?.golv || 0)}){' '}
               </Text>
             )}
             {match.local}
             {(match.played || !!prevMatch) && left && (
               <Text style={{fontSize: 10}}>
                 {' '}
-                ({match.goll + prevMatch.golv || 0})
+                ({match.goll + (prevMatch?.golv || 0)})
               </Text>
             )}
           </Text>
@@ -88,14 +88,14 @@ const KnockoutSide = ({match, utc, left = false}) => {
           <Text>
             {(match.played || !!prevMatch) && !left && (
               <Text style={{fontSize: 10}}>
-                ({match.golv + prevMatch.goll || 0}){' '}
+                ({match.golv + (prevMatch?.goll || 0)}){' '}
               </Text>
             )}
             {match.visit}
             {(match.played || !!prevMatch) && left && (
               <Text style={{fontSize: 10}}>
                 {' '}
-                ({match.golv + prevMatch.goll || 0})
+                ({match.golv + (prevMatch?.goll || 0)})
               </Text>
             )}
           </Text>

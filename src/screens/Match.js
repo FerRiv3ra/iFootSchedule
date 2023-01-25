@@ -50,7 +50,7 @@ const Match = ({route, navigation}) => {
 
   const [prevMatch, setPrevMatch] = useState({});
 
-  const {saveMatch, matchesC, laLiga, DBLoading, lang} = useApp();
+  const {saveMatch, matchesC, DBLoading, lang} = useApp();
   const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
@@ -63,7 +63,11 @@ const Match = ({route, navigation}) => {
 
   useEffect(() => {
     if (mode === 'UCL') {
-      setPrevMatch(matchesC.filter(m => match.visit === m.local)[0]);
+      setPrevMatch(
+        matchesC.filter(m => {
+          if (match.visit === m.local && m.played) return m;
+        })[0],
+      );
     }
   }, []);
 
@@ -130,9 +134,9 @@ const Match = ({route, navigation}) => {
     };
 
     if (
-      matchSave.goll + prevMatch?.golv ||
-      0 === matchSave.golv + prevMatch?.goll ||
-      (0 && matchSave.penl === 0 && matchSave.penv === 0)
+      matchSave.goll + prevMatch?.golv === matchSave.golv + prevMatch?.goll &&
+      matchSave.penl === 0 &&
+      matchSave.penv === 0
     ) {
       setPenalties(true);
       setSaving(false);
@@ -264,9 +268,10 @@ const Match = ({route, navigation}) => {
                     icon={faSave}
                   />
                   <Text style={styles.textStyle}>
-                    {(!editing && mode === 'UCL' && goll + prevMatch?.golv) ||
-                    0 === golv + prevMatch?.goll ||
-                    0
+                    {!editing &&
+                    mode === 'UCL' &&
+                    !!prevMatch &&
+                    goll + prevMatch?.golv === golv + prevMatch?.goll
                       ? `${language[lang].endTime}`
                       : `${language[lang].save}`}
                   </Text>
