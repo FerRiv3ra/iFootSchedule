@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import SECTIONS from '../helper/selectImg';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import {faCheckCircle} from '@fortawesome/free-solid-svg-icons';
 import ThemeContext from '../context/ThemeContext';
 import useApp from '../hooks/useApp';

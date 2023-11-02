@@ -6,8 +6,9 @@ import Matches from '../screens/Matches';
 import Match from '../screens/Match';
 import PlayedMatches from '../screens/PlayedMatches';
 import Countdown from '../screens/Countdown';
+import {RootStackParams} from '../types/navigator';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParams>();
 
 const StackNavigation = () => {
   return (

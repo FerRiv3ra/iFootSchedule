@@ -7,7 +7,7 @@ import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
 import {getUTC} from '../helper/getUTC';
 

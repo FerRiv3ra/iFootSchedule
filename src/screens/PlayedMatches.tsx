@@ -10,13 +10,18 @@ import React, {useContext, useEffect, useState} from 'react';
 
 import useApp from '../hooks/useApp';
 import MatchesDay from '../components/MatchesDay';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import {useNavigation} from '@react-navigation/native';
 import language from '../helper/translate';
 import ThemeContext from '../context/ThemeContext';
 import FooterBannerAd from '../components/FooterBannerAd';
+import {StackScreenProps} from '@react-navigation/stack';
+import {RootStackParams} from '../types/navigator';
 
-const PlayedMatches = ({route}) => {
+interface Props extends StackScreenProps<RootStackParams, 'PlayedMatches'> {}
+
+const PlayedMatches = ({route}: Props) => {
+  // TODO: Finalizar esta pantalla
   const {parent} = route.params;
 
   const [dataMatches, setDataMatches] = useState([]);

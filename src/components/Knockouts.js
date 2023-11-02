@@ -1,7 +1,7 @@
 import {View, StyleSheet, Text, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import KnockoutSide from './KnockoutSide';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 
 import SECTIONS from '../helper/selectImg';
 import moment from 'moment';

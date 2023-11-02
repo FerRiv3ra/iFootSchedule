@@ -1,7 +1,12 @@
 import React from 'react';
 import {StyleSheet, View, Image} from 'react-native';
+import {LeaguesDataInterface} from '../types/matches';
 
-const CardLeague = ({item}) => {
+interface Props {
+  item: LeaguesDataInterface;
+}
+
+const CardLeague = ({item}: Props) => {
   return (
     <View style={styles.card}>
       <Image source={item.img} style={{...styles.img}} />

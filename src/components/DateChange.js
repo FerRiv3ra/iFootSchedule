@@ -3,7 +3,7 @@ import React, {useContext} from 'react';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
 import ThemeContext from '../context/ThemeContext';

@@ -2,7 +2,7 @@ import {View} from 'react-native';
 import React from 'react';
 import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import {adUnit} from '../helper/adUnit';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 
 const FooterBannerAd = () => {
   return (

@@ -12,7 +12,7 @@ import useApp from '../hooks/useApp';
 import Table from '../components/Table';
 import NextMatch from '../components/NextMatch';
 import MatchesDay from '../components/MatchesDay';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import {useFocusEffect} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import Knockouts from '../components/Knockouts';

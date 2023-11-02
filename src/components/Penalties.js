@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React, {useContext, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import {faSave} from '@fortawesome/free-solid-svg-icons';
 import Penalty from './Penalty';
 import useApp from '../hooks/useApp';

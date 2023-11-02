@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ThemeContext from '../context/ThemeContext';
 import {useFade} from '../hooks/useFade';
 
-const GradientBackground = ({children}) => {
+const GradientBackground = ({children}: any) => {
   const {colors, prevColors, setPrevMainColors} = useContext(ThemeContext);
 
   const {opacity, fadeIn, fadeOut} = useFade();

@@ -1,4 +1,6 @@
-export const leaguesData = [
+import {LeaguesDataInterface} from '../types/matches';
+
+export const leaguesData: LeaguesDataInterface[] = [
   {
     id: 'UCL',
     name: 'Champions League',

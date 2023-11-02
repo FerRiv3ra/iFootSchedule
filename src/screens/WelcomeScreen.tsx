@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Pressable,
   Image,
@@ -13,29 +12,29 @@ import * as Animatable from 'react-native-animatable';
 import Carousel from 'react-native-snap-carousel';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faCog, faFutbol} from '@fortawesome/free-solid-svg-icons';
+import {faCog} from '@fortawesome/free-solid-svg-icons';
+import {StackScreenProps} from '@react-navigation/stack';
 
-import useApp from '../hooks/useApp';
-
-import globalStyles from '../styles/styles';
-import {heightScale, withScale} from '../helper/scale';
-import language from '../helper/translate';
+import globalStyles from '../theme/styles';
 
 import ModalSettings from '../components/ModalSettings';
 import {leaguesData} from '../data/leaguesData';
 import CardLeague from '../components/CardLeague';
 import GradientBackground from '../components/GradientBackground';
 import ThemeContext from '../context/ThemeContext';
+import {RootStackParams} from '../types/navigator';
+import MainButton from '../components/MainButton';
 
-const WelcomeScreen = ({navigation}) => {
+interface Props extends StackScreenProps<RootStackParams, 'WelcomeScreen'> {}
+
+const WelcomeScreen = ({navigation}: Props) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {lang} = useApp();
   const {setMainColors, setMode, mode} = useContext(ThemeContext);
   const {top} = useSafeAreaInsets();
   const {width} = Dimensions.get('window');
 
-  const selectGradient = index => {
+  const selectGradient = (index: number) => {
     setMainColors(leaguesData[index].gradient);
     setMode(leaguesData[index].id);
   };
@@ -48,12 +47,13 @@ const WelcomeScreen = ({navigation}) => {
     <GradientBackground>
       <Pressable onPress={() => setModalVisible(true)} style={styles.icon}>
         <FontAwesomeIcon
-          style={[globalStyles.icon, {color: '#FFF', zIndex: 99}]}
+          style={{...globalStyles.icon, zIndex: 99}}
+          color="#FFF"
           size={26}
           icon={faCog}
         />
       </Pressable>
-      <View style={{...styles.containerPet, marginTop: top + 50}}>
+      <View style={{marginTop: top + 50}}>
         <Carousel
           data={leaguesData}
           renderItem={({item}) => <CardLeague item={item} />}
@@ -65,16 +65,12 @@ const WelcomeScreen = ({navigation}) => {
       </View>
 
       <Animatable.View animation={'fadeInUpBig'} delay={1000}>
-        <Pressable
+        <MainButton
+          title="UI.matches"
           onPress={navigate}
-          style={[globalStyles.button, globalStyles.white, styles.btnUp]}>
-          <FontAwesomeIcon
-            style={[globalStyles.icon, {color: '#000'}]}
-            size={16}
-            icon={faFutbol}
-          />
-          <Text style={globalStyles.textBtn}> {language[lang].matches}</Text>
-        </Pressable>
+          icon="faFutbol"
+          style={{backgroundColor: '#FFF'}}
+        />
       </Animatable.View>
 
       <Animatable.View
@@ -105,10 +101,6 @@ const styles = StyleSheet.create({
     height: 82,
     width: 260,
   },
-  logoPet: {
-    height: heightScale(170),
-    width: withScale(180),
-  },
   containerImg: {
     alignSelf: 'center',
     position: 'absolute',
@@ -119,10 +111,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     borderTopLeftRadius: 20,
     borderBottomRightRadius: 20,
-  },
-  btnDown: {
-    borderBottomRightRadius: 20,
-    marginHorizontal: '3%',
   },
   icon: {
     position: 'absolute',

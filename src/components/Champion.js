@@ -5,7 +5,7 @@ import {heightScale, withScale} from '../helper/scale';
 import SECTIONS from '../helper/selectImg';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
 
 const Champion = ({parent}) => {

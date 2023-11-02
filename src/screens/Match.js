@@ -20,7 +20,7 @@ import {
 
 import SECTIONS from '../helper/selectImg';
 
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import useApp from '../hooks/useApp';
 import {useFocusEffect} from '@react-navigation/native';
 import Penalties from '../components/Penalties';

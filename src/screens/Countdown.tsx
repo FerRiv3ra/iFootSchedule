@@ -6,59 +6,20 @@ import {
   Pressable,
   SafeAreaView,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React from 'react';
 
 import * as Animatable from 'react-native-animatable';
-import moment from 'moment';
 
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import {heightScale, withScale} from '../helper/scale';
-import {useNavigation} from '@react-navigation/native';
-import useApp from '../hooks/useApp';
-import language from '../helper/translate';
 import GradientBackground from '../components/GradientBackground';
 import FooterBannerAd from '../components/FooterBannerAd';
+import i18n from '../translate/i18nConfig';
+import {useCountDownScreen} from '../hooks/useCountDownScreen';
 
 const Countdown = () => {
-  const today = moment();
-  const start = moment([2026, 6, 8, 16, 0, 0]).utcOffset('00:00');
-  const diffDays = start.diff(today, 'days');
-  const diffHours = start.diff(today, 'hours', true) % 24;
-  const diffMins =
-    (start.diff(today, 'minutes', true) % 1440) - Math.floor(diffHours) * 60;
-
-  const [days, setDays] = useState(diffDays);
-  const [hours, setHours] = useState(diffHours);
-  const [minutes, setMinutes] = useState(diffMins);
-  const navigation = useNavigation();
-  const {lang} = useApp();
-
-  const timerRef = useRef(diffMins);
-
-  useEffect(() => {
-    const timerId = setInterval(() => {
-      timerRef.current -= 1;
-      if (timerRef.current < 0) {
-        timerRef.current = 59;
-        if (hours < 0) {
-          setHours(23);
-          setDays(days - 1);
-        } else {
-          setHours(hours - 1);
-        }
-        setMinutes(59);
-      } else {
-        setMinutes(timerRef.current);
-      }
-    }, 1000 * 60);
-    return () => {
-      clearInterval(timerId);
-    };
-  }, []);
-
-  const goBack = () => {
-    navigation.goBack();
-  };
+  const {language, t} = i18n;
+  const {days, hours, minutes, goBack} = useCountDownScreen();
 
   return (
     <GradientBackground>
@@ -67,7 +28,7 @@ const Countdown = () => {
           <Image style={styles.logo} source={require('../assets/FWC26.png')} />
         </Animatable.View>
         <View>
-          {lang === 'ES' && (
+          {language === 'es' && (
             <Animatable.View animation="fadeInUp" delay={2500}>
               <Animatable.Text
                 animation="pulse"
@@ -82,21 +43,21 @@ const Countdown = () => {
             animation="fadeInUp"
             delay={1000}
             style={styles.dayCounter}>
-            {days} {language[lang].days}
+            {days} {t('CountDown.days')}
           </Animatable.Text>
           <Animatable.Text
             animation="fadeInUp"
             delay={1500}
             style={styles.dayCounter}>
-            {Math.floor(hours)} {language[lang].hours}
+            {Math.floor(hours)} {t('CountDown.hours')}
           </Animatable.Text>
           <Animatable.Text
             animation="fadeInUp"
             delay={2000}
             style={styles.dayCounter}>
-            {Math.round(minutes)} {language[lang].minutes}
+            {Math.round(minutes)} {t('CountDown.minutes')}
           </Animatable.Text>
-          {lang === 'EN' && (
+          {language === 'EN' && (
             <Animatable.View animation="fadeInUp" delay={2500}>
               <Animatable.Text
                 animation="pulse"
@@ -112,7 +73,7 @@ const Countdown = () => {
           <Pressable
             onPress={goBack}
             style={[globalStyles.button, globalStyles.white, styles.btn]}>
-            <Text style={globalStyles.textBtn}>{language[lang].goHome}</Text>
+            <Text style={globalStyles.textBtn}>{t('CountDown.goHome')}</Text>
           </Pressable>
         </Animatable.View>
       </SafeAreaView>

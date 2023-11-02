@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {
   faClose,

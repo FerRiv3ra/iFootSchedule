@@ -9,6 +9,7 @@ import MobileAds, {
   AdsConsent,
   AdsConsentStatus,
 } from 'react-native-google-mobile-ads';
+import i18n from '../translate/i18nConfig';
 
 const AppContext = createContext();
 
@@ -56,9 +57,11 @@ const AppProvider = ({children}) => {
   const init = async () => {
     await quickStart();
     await getDataTeams();
+    // TODO: Cambiar a lowercase
     const language = await AsyncStorage.getItem('lang');
     if (language) {
       setLang(language);
+      i18n.changeLanguage(language.toLowerCase());
     }
     const mode = await AsyncStorage.getItem('uiMode');
     if (mode) {

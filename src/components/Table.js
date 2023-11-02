@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import TableTeam from './TableTeam';
 import useApp from '../hooks/useApp';
 import language from '../helper/translate';
-import globalStyles from '../styles/styles';
+import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
 
 const Table = ({group}) => {
