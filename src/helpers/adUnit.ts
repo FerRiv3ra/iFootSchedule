@@ -1,7 +1,7 @@
-const {Platform} = require('react-native');
-const {TestIds} = require('react-native-google-mobile-ads');
+import {Platform} from 'react-native';
+import {TestIds} from 'react-native-google-mobile-ads';
 
-const adUnit = (type = 'BANNER') => {
+export const adUnit = (type = 'BANNER') => {
   let adUnitId = '';
   if (type === 'BANNER') {
     adUnitId = __DEV__
@@ -19,5 +19,3 @@ const adUnit = (type = 'BANNER') => {
 
   return adUnitId;
 };
-
-module.exports = {adUnit};

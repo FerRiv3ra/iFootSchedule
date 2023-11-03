@@ -14,7 +14,7 @@ const globalStyles = StyleSheet.create({
   'bg-premier': {
     backgroundColor: 'rgb(0,198,255)',
   },
-  'text-WCF': {
+  'text-FWC': {
     color: '#5a0024',
   },
   'text-UCL': {

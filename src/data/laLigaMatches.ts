@@ -1,4 +1,6 @@
-export const laLigaDataMatches = [
+import {MatchInterface} from '../types/database';
+
+export const laLigaDataMatches: MatchInterface[] = [
   // ** Jornada 16
   {
     local: 'SEV',

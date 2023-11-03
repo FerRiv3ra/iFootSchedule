@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import globalStyles from '../theme/styles';
 import useApp from '../hooks/useApp';
-import language from '../helper/translate';
+import language from '../helpers';
 import ThemeContext from '../context/ThemeContext';
 
 const DateChange = ({setCurrentDay, today}) => {

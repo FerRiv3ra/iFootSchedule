@@ -17,17 +17,13 @@ import {
   faPlusCircle,
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
-
-import SECTIONS from '../helper/selectImg';
+import {useFocusEffect} from '@react-navigation/native';
 
 import globalStyles from '../theme/styles';
 import useApp from '../hooks/useApp';
-import {useFocusEffect} from '@react-navigation/native';
 import Penalties from '../components/Penalties';
-import language from '../helper/translate';
-import {adUnit} from '../helper/adUnit';
+import {adUnit, getUTC, language, SECTIONS} from '../helpers';
 import ThemeContext from '../context/ThemeContext';
-import {getUTC} from '../helper/getUTC';
 import FooterBannerAd from '../components/FooterBannerAd';
 
 const interstitial = InterstitialAd.createForAdRequest(adUnit('INTERSTITIAL'), {

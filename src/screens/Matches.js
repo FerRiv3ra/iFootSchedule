@@ -16,7 +16,7 @@ import globalStyles from '../theme/styles';
 import {useFocusEffect} from '@react-navigation/native';
 import Champion from '../components/Champion';
 import Knockouts from '../components/Knockouts';
-import language from '../helper/translate';
+import {language} from '../helpers';
 import WaitingDraw from './WaitingDraw';
 import ThemeContext from '../context/ThemeContext';
 import FooterBannerAd from '../components/FooterBannerAd';

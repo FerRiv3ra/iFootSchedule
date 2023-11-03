@@ -1,11 +1,13 @@
 import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React, {useContext, useState} from 'react';
+
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import globalStyles from '../theme/styles';
 import {faSave} from '@fortawesome/free-solid-svg-icons';
+
+import globalStyles from '../theme/styles';
 import Penalty from './Penalty';
 import useApp from '../hooks/useApp';
-import language from '../helper/translate';
+import {language} from '../helpers';
 import ThemeContext from '../context/ThemeContext';
 
 const Penalties = ({setPenl, setPenv, handleSave}) => {

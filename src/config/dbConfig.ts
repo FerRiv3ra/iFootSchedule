@@ -9,22 +9,22 @@ import {matchesProps, teamsChampProps, teamsProperties} from './dbProperties';
 import champMatches from '../data/champMatches';
 import {laLigaDataMatches} from '../data/laLigaMatches';
 import {premierLegueMatches} from '../data/premierMatches';
-import {getDataFetch} from '../helper/getDataFetch';
+import {getDataFetch} from '../helpers';
 
 // Realm
-const teamsSchemaConstructor = name => ({
+const teamsSchemaConstructor = (name: string) => ({
   name,
   properties: teamsProperties,
   primaryKey: '_id',
 });
 
-const teamsSchemaChampions = name => ({
+const teamsSchemaChampions = (name: string) => ({
   name,
   properties: teamsChampProps,
   primaryKey: '_id',
 });
 
-const matchesSchemaConstructor = name => ({
+const matchesSchemaConstructor = (name: string) => ({
   name,
   primaryKey: '_id',
   properties: matchesProps,
@@ -218,7 +218,6 @@ const quickStart = async () => {
             group: team.group,
             p: team.p,
             gf: team.gf,
-            gd: team.gd,
             gd: team.gf - team.ga,
             pts: team.pts,
           });
@@ -325,7 +324,7 @@ const quickStart = async () => {
     }
 
     realm.close();
-  } catch (err) {
+  } catch (err: any) {
     console.error('Failed to open the realm QuickStart', err.message);
   }
 };

@@ -1,15 +1,14 @@
 import {Image, StyleSheet, Text, View, Pressable} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import SECTIONS from '../helper/selectImg';
 
 import moment from 'moment';
-
 import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
+
+import {SECTIONS, getUTC} from '../helpers';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
-import {getUTC} from '../helper/getUTC';
 
 const MatchDay = ({match, editing}) => {
   const [utc, setUtc] = useState('+00:00');

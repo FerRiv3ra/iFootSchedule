@@ -1,10 +1,10 @@
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
+
 import * as Animatable from 'react-native-animatable';
-import {heightScale, withScale} from '../helper/scale';
-import SECTIONS from '../helper/selectImg';
+
+import {heightScale, withScale, SECTIONS, language} from '../helpers';
 import useApp from '../hooks/useApp';
-import language from '../helper/translate';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
 

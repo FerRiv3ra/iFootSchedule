@@ -19,7 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useApp from '../hooks/useApp';
-import language from '../helper/translate';
+import {language} from '../helpers';
 import SegmentedControl from './SegmentedControl';
 import ThemeContext from '../context/ThemeContext';
 import FooterBannerAd from './FooterBannerAd';

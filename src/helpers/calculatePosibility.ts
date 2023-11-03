@@ -1,6 +1,10 @@
+import {TeamDBInterface} from '../types/database';
 import {promCalculator} from './promCalculator';
 
-export const calculatePosibility = (local = {}, visit = {}) => {
+export const calculatePosibility = (
+  local: TeamDBInterface,
+  visit: TeamDBInterface,
+) => {
   let posLocal = 0;
   let posVisit = 0;
   let posDraw = 0;

@@ -11,7 +11,7 @@ import React from 'react';
 import * as Animatable from 'react-native-animatable';
 
 import globalStyles from '../theme/styles';
-import {heightScale, withScale} from '../helper/scale';
+import {heightScale, withScale} from '../helpers';
 import GradientBackground from '../components/GradientBackground';
 import FooterBannerAd from '../components/FooterBannerAd';
 import i18n from '../translate/i18nConfig';

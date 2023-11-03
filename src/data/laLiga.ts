@@ -1,4 +1,6 @@
-export const laLigaData = [
+import {TeamInterface} from '../types/database';
+
+export const laLigaData: TeamInterface[] = [
   {
     name: 'Barcelona',
     short_name: 'FCB',

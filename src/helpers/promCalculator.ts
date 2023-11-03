@@ -1,4 +1,10 @@
-export const promCalculator = (obj1, obj2, type = 'W') => {
+import {MatchResult, TeamDBInterface} from '../types/database';
+
+export const promCalculator = (
+  obj1: TeamDBInterface,
+  obj2: TeamDBInterface,
+  type: MatchResult = 'W',
+) => {
   const tot1 = obj1.last.reduce((tot, res) => {
     if (res === type) {
       tot++;

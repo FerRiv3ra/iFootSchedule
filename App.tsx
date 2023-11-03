@@ -8,6 +8,7 @@ import StackNavigation from './src/navigation/StackNavigation';
 import {ThemeProvider} from './src/context/ThemeContext';
 import {I18nextProvider} from 'react-i18next';
 import i18n from './src/translate/i18nConfig';
+import SplashScreen from 'react-native-splash-screen';
 
 const AppState = ({children}) => {
   return (
@@ -22,7 +23,7 @@ const AppState = ({children}) => {
 const App = () => {
   return (
     <AppState>
-      <NavigationContainer>
+      <NavigationContainer onReady={() => SplashScreen.hide()}>
         <StackNavigation />
       </NavigationContainer>
     </AppState>

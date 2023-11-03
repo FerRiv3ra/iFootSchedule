@@ -8,15 +8,13 @@ import {
   Alert,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import SECTIONS from '../helper/selectImg';
 
 import moment from 'moment';
-
 import {useNavigation} from '@react-navigation/native';
-import language from '../helper/translate';
+
+import {getUTC, SECTIONS, language} from '../helpers';
 import useApp from '../hooks/useApp';
 import ThemeContext from '../context/ThemeContext';
-import {getUTC} from '../helper/getUTC';
 
 const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
   const [date, setDate] = useState(moment(nextMatch.date));

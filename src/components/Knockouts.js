@@ -1,12 +1,12 @@
 import {View, StyleSheet, Text, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
+
+import moment from 'moment';
+
 import KnockoutSide from './KnockoutSide';
 import globalStyles from '../theme/styles';
-
-import SECTIONS from '../helper/selectImg';
-import moment from 'moment';
 import useApp from '../hooks/useApp';
-import {getUTC} from '../helper/getUTC';
+import {getUTC, SECTIONS} from '../helpers';
 
 const Knockouts = () => {
   const [utc, setUtc] = useState('+00:00');

@@ -1,3 +1,5 @@
+import {MatchResponse, TeamsResponse} from '../types/database';
+
 export const getDataFetch = async () => {
   const laLigaResp = await fetch(
     'https://raw.githubusercontent.com/FerRiv3ra/iFootScheduleDB/main/data/laLiga.json',
@@ -12,10 +14,12 @@ export const getDataFetch = async () => {
     'https://raw.githubusercontent.com/FerRiv3ra/iFootScheduleDB/main/data/premierMatches.json',
   );
 
-  const laLigaDataFetch = await laLigaResp.json();
-  const premierDataFetch = await premierResp.json();
-  const laLigaMatchesDataFetch = await laLigaMatchesResp.json();
-  const premierMatchesDataFetch = await premierMatchesResp.json();
+  const laLigaDataFetch = (await laLigaResp.json()) as TeamsResponse;
+  const premierDataFetch = (await premierResp.json()) as TeamsResponse;
+  const laLigaMatchesDataFetch =
+    (await laLigaMatchesResp.json()) as MatchResponse;
+  const premierMatchesDataFetch =
+    (await premierMatchesResp.json()) as MatchResponse;
 
   return {
     laLigaDataFetch,

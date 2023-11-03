@@ -2,7 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import TableTeam from './TableTeam';
 import useApp from '../hooks/useApp';
-import language from '../helper/translate';
+import {language} from '../helpers';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
 

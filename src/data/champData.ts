@@ -1,4 +1,6 @@
-const champData = [
+import {ChampTeamInterface} from '../types/database';
+
+const champData: ChampTeamInterface[] = [
   // ** Group A **
   {
     name: 'Ajax',

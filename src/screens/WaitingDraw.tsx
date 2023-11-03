@@ -1,6 +1,6 @@
 import {StyleSheet, View, Image} from 'react-native';
 import React from 'react';
-import {heightScale} from '../helper/scale';
+import {heightScale} from '../helpers/scale';
 
 const WaitingDraw = () => {
   return (

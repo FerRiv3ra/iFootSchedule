@@ -1,9 +1,9 @@
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
+
 import ThemeContext from '../context/ThemeContext';
 import useApp from '../hooks/useApp';
-import language from '../helper/translate';
-import {calculatePosibility} from '../helper/calculatePosibility';
+import {calculatePosibility, language} from '../helpers';
 
 const Probability = ({long = false}) => {
   const [local, setLocal] = useState({});

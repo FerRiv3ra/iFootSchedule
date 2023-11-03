@@ -11,25 +11,21 @@ import React, {useContext, useEffect, useState} from 'react';
 import useApp from '../hooks/useApp';
 import MatchesDay from '../components/MatchesDay';
 import globalStyles from '../theme/styles';
-import {useNavigation} from '@react-navigation/native';
-import language from '../helper/translate';
+import {language} from '../helpers';
 import ThemeContext from '../context/ThemeContext';
 import FooterBannerAd from '../components/FooterBannerAd';
+import {MatchDBInterface} from '../types/database';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParams} from '../types/navigator';
 
 interface Props extends StackScreenProps<RootStackParams, 'PlayedMatches'> {}
 
-const PlayedMatches = ({route}: Props) => {
+const PlayedMatches = ({navigation}: Props) => {
   // TODO: Finalizar esta pantalla
-  const {parent} = route.params;
-
-  const [dataMatches, setDataMatches] = useState([]);
+  const [dataMatches, setDataMatches] = useState<MatchDBInterface[]>();
 
   const {matchesC, laLigaMatches, premierMatches, DBLoading, lang} = useApp();
   const {mode} = useContext(ThemeContext);
-
-  const navigation = useNavigation();
 
   useEffect(() => {
     if (mode === 'laLiga') {
@@ -51,13 +47,9 @@ const PlayedMatches = ({route}: Props) => {
         <ScrollView>
           <View style={styles.container}>
             <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
-              {language[lang].matchPlayed}
+              {language[lang.toUpperCase() as 'EN'].matchPlayed}
             </Text>
-            <MatchesDay
-              matchData={dataMatches}
-              parent={parent}
-              editing={true}
-            />
+            <MatchesDay matchData={dataMatches} editing={true} />
           </View>
           <Pressable
             onPress={goBack}
@@ -67,7 +59,7 @@ const PlayedMatches = ({route}: Props) => {
               styles.btn,
             ]}>
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
-              {language[lang].goBack}
+              {language[lang.toUpperCase() as 'EN'].goBack}
             </Text>
           </Pressable>
         </ScrollView>
