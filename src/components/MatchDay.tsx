@@ -9,14 +9,20 @@ import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
 import {SECTIONS, getUTC} from '../helpers';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
+import {MatchDBInterface} from '../types/database';
 
-const MatchDay = ({match, editing}) => {
+interface Props {
+  match: MatchDBInterface;
+  editing: boolean;
+}
+
+const MatchDay = ({match, editing}: Props) => {
   const [utc, setUtc] = useState('+00:00');
   const {local, visit, date} = match;
 
   const {mode} = useContext(ThemeContext);
 
-  const navigator = useNavigation();
+  const navigator = useNavigation<any>();
 
   useEffect(() => {
     getUTC().then(value => value && setUtc(value));

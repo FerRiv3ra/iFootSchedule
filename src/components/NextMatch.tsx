@@ -12,17 +12,31 @@ import React, {useContext, useEffect, useState} from 'react';
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
 
-import {getUTC, SECTIONS, language} from '../helpers';
+import {getUTC} from '../helpers';
 import useApp from '../hooks/useApp';
 import ThemeContext from '../context/ThemeContext';
+import {
+  ChampTeamDBInterface,
+  MatchDBInterface,
+  TeamDBInterface,
+} from '../types/database';
+import {getImage} from '../helpers/getImage';
+import {useTranslation} from 'react-i18next';
 
-const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
+interface Props {
+  nextMatch: MatchDBInterface;
+  pendingMatches: MatchDBInterface[];
+  todayMatches: MatchDBInterface[];
+}
+
+const NextMatch = ({nextMatch, pendingMatches, todayMatches}: Props) => {
   const [date, setDate] = useState(moment(nextMatch.date));
   const [loading, setLoading] = useState(true);
-  const [local, setLocal] = useState({});
+  const [local, setLocal] = useState<TeamDBInterface | ChampTeamDBInterface>();
 
-  const navigation = useNavigation();
-  const {lang, teamsC, laLiga, premier} = useApp();
+  const navigation = useNavigation<any>();
+  const {t} = useTranslation();
+  const {teamsC, laLiga, premier} = useApp();
   const {mode} = useContext(ThemeContext);
 
   const matchSet = [...pendingMatches, ...todayMatches];
@@ -45,13 +59,12 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
   }, [nextMatch]);
 
   const handlePress = () => {
-    // navigation.navigate('Match', {match: nextMatch, local});
     if (matchSet.includes(nextMatch)) {
-      navigation.navigate('Match', {match: nextMatch, local});
+      navigation.navigate('Match' as never, {match: nextMatch, local});
     } else {
       Alert.alert(
-        language[lang].info,
-        `${language[lang].infoMessage} ${date.format('lll')}`,
+        t('Alerts.info'),
+        `${t('Alerts.infoMessage')} ${date.format('lll')}`,
       );
     }
   };
@@ -66,12 +79,12 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}) => {
             <Text style={styles.team}>{nextMatch.local}</Text>
             <Image
               style={styles.logoTeam}
-              source={SECTIONS[mode][nextMatch.local]?.file}
+              source={getImage(mode, nextMatch.local)}
             />
             <Text style={{color: '#111111'}}>VRS</Text>
             <Image
               style={styles.logoTeam}
-              source={SECTIONS[mode][nextMatch.visit]?.file}
+              source={getImage(mode, nextMatch.visit)}
             />
             <Text style={styles.team}>{nextMatch.visit}</Text>
           </View>

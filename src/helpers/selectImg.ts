@@ -1,4 +1,11 @@
-const SECTIONS = {
+import {MatchMode} from '../types/MatchesContextProps';
+
+type modes = MatchMode | 'trophy';
+type Images = {
+  [mode in modes]: {[club: string]: {title: string; file: any}};
+};
+
+const SECTIONS: Images = {
   laLiga: {
     ALM: {title: 'ALM', file: require('../assets/LaLiga/ALM.png')},
     ATH: {title: 'ATH', file: require('../assets/LaLiga/ATH.png')},
@@ -77,6 +84,7 @@ const SECTIONS = {
     SHA: {title: 'SHA', file: require('../assets/teams/SHA.png')},
     TOT: {title: 'TOT', file: require('../assets/teams/TOT.png')},
   },
+  FWC: {},
   trophy: {
     laLiga: {title: 'La Liga', file: require('../assets/laLigaCup.png')},
     premier: {
