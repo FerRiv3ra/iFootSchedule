@@ -1,16 +1,26 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
+
+import {useTranslation} from 'react-i18next';
+
 import TableTeam from './TableTeam';
 import useApp from '../hooks/useApp';
-import {language} from '../helpers';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
+import {ChampTeamDBInterface, TeamDBInterface} from '../types';
 
-const Table = ({group}) => {
-  const [data, setData] = useState([]);
+interface Props {
+  group: string;
+}
+
+const Table = ({group}: Props) => {
+  const [data, setData] = useState<ChampTeamDBInterface[] | TeamDBInterface[]>(
+    [],
+  );
 
   const {mode} = useContext(ThemeContext);
-  const {lang, laLiga, premier, teamsC} = useApp();
+  const {t} = useTranslation();
+  const {laLiga, premier, teamsC} = useApp();
 
   useEffect(() => {
     switch (mode) {
@@ -32,27 +42,27 @@ const Table = ({group}) => {
     <View style={styles.container}>
       <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
         {mode === 'UCL'
-          ? `${language[lang].group} ${group}`
+          ? `${t('Table.group')} ${group}`
           : mode === 'laLiga'
           ? 'La Liga'
           : 'Premier League'}
       </Text>
       <View style={styles.containerGroup}>
-        <Text style={styles.team}>{language[lang].team}</Text>
+        <Text style={styles.team}>{t('Table.team')}</Text>
         <View style={styles.border}>
-          <Text style={styles.column}>{language[lang].mp}</Text>
+          <Text style={styles.column}>{t('Table.mp')}</Text>
         </View>
         <View style={styles.border}>
-          <Text style={styles.column}>GF</Text>
+          <Text style={styles.column}>{t('Table.gf')}</Text>
         </View>
         <View style={styles.border}>
-          <Text style={styles.column}>{language[lang].ga}</Text>
+          <Text style={styles.column}>{t('Table.ga')}</Text>
         </View>
         <View style={styles.border}>
-          <Text style={styles.column}>{language[lang].gd}</Text>
+          <Text style={styles.column}>{t('Table.gd')}</Text>
         </View>
         <View style={styles.border}>
-          <Text style={styles.column}>Pts</Text>
+          <Text style={styles.column}>{t('Table.pts')}</Text>
         </View>
       </View>
       {data.map((team, index) => (

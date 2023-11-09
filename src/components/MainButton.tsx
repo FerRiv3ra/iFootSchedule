@@ -6,6 +6,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import React from 'react';
+
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faFutbol} from '@fortawesome/free-solid-svg-icons';
 import {useTranslation} from 'react-i18next';

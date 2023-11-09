@@ -1,12 +1,15 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
-import WelcomeScreen from '../screens/WelcomeScreen';
-import Matches from '../screens/Matches';
 
-import Match from '../screens/Match';
-import PlayedMatches from '../screens/PlayedMatches';
-import Countdown from '../screens/Countdown';
-import {RootStackParams} from '../types/navigator';
+import {createStackNavigator} from '@react-navigation/stack';
+
+import {
+  WelcomeScreen,
+  Matches,
+  Match,
+  PlayedMatches,
+  Countdown,
+} from '../screens';
+import {RootStackParams} from '../types';
 
 const Stack = createStackNavigator<RootStackParams>();
 

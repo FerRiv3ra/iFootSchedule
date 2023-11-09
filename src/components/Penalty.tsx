@@ -3,16 +3,21 @@ import React, {useState} from 'react';
 
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCircle} from '@fortawesome/free-solid-svg-icons';
+import {useTranslation} from 'react-i18next';
 
 import globalStyles from '../theme/styles';
-import useApp from '../hooks/useApp';
-import {language} from '../helpers';
+import {RoundType} from '../hooks/usePenalties';
 
-const Penalty = ({handleRounds, round}) => {
+interface Props {
+  handleRounds: (round: RoundType, type: 'local' | 'visit', res: 0 | 1) => void;
+  round: RoundType;
+}
+
+const Penalty = ({handleRounds, round}: Props) => {
   const [penl, setPenl] = useState(0);
   const [penv, setPenv] = useState(0);
 
-  const {lang} = useApp();
+  const {t} = useTranslation();
 
   const handlePressL = () => {
     if (penl <= 0) {
@@ -50,7 +55,7 @@ const Penalty = ({handleRounds, round}) => {
         />
       </Pressable>
       <Text>
-        {language[lang].round} {round.round}
+        {t('UI.round')} {round.round}
       </Text>
       <Pressable onPress={handlePressV}>
         <FontAwesomeIcon

@@ -1,6 +1,7 @@
-import {useNavigation} from '@react-navigation/native';
-import moment from 'moment';
 import {useEffect, useRef, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+
+import moment from 'moment';
 
 export const useCountDownScreen = () => {
   const today = moment();

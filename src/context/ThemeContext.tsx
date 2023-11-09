@@ -1,6 +1,5 @@
 import React, {createContext, useState} from 'react';
-import {MatchMode} from '../types/MatchesContextProps';
-import {ThemeContextProps} from '../types/ThemeContextProps';
+import {MatchMode, ThemeContextProps} from '../types';
 
 const ThemeContext = createContext({} as ThemeContextProps);
 

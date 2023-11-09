@@ -1,18 +1,19 @@
 import Realm from 'realm';
 import React, {createContext, useEffect, useState} from 'react';
-import {quickStart} from '../config/dbConfig';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import i18n from '../translate/i18nConfig';
 import {useAds} from '../hooks/useAds';
 import {
   ChampTeamDBInterface,
   MatchDBInterface,
   TeamDBInterface,
-} from '../types/database';
-import {MatchMode} from '../types/MatchesContextProps';
-import {ValidLanguages} from '../types/ConfigContexInterface';
-import {DataContextProps} from '../types/DataContextInterface';
+  MatchMode,
+  ValidLanguages,
+  DataContextProps,
+} from '../types';
+import {quickStart} from '../config/dbConfig';
 import {useRealmData} from '../hooks/useRealmData';
 import {getMatches, getChampionData} from '../helpers';
 

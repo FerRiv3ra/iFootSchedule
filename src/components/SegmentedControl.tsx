@@ -1,21 +1,35 @@
 import {Pressable, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 
+interface Values {
+  key: string;
+  value: string;
+}
+
+interface Props {
+  values: Values[];
+  onChange: (value: string) => void;
+  selectedIndex?: number;
+  backgroundColor?: string;
+  tintColor?: string;
+  textColor?: string;
+}
+
 const SegmentedControl = ({
-  values = [],
+  values,
   onChange,
-  selectedIndex = null,
+  selectedIndex,
   backgroundColor = '#CCCCCC',
   tintColor = '#FFFFFF',
   textColor = '#000000',
-}) => {
+}: Props) => {
   const [selected, setSelected] = useState(0);
 
   useEffect(() => {
     setSelected(selectedIndex ? selectedIndex : 0);
   }, []);
 
-  const handlePress = idx => {
+  const handlePress = (idx: number) => {
     onChange(values[idx].value);
     setSelected(idx);
   };

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
+
 import {AdEventType, InterstitialAd} from 'react-native-google-mobile-ads';
 import moment from 'moment';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -18,20 +19,25 @@ import {
   faSave,
 } from '@fortawesome/free-solid-svg-icons';
 import {useFocusEffect} from '@react-navigation/native';
+import {StackScreenProps} from '@react-navigation/stack';
+import {useTranslation} from 'react-i18next';
 
 import globalStyles from '../theme/styles';
 import useApp from '../hooks/useApp';
 import Penalties from '../components/Penalties';
-import {adUnit, getUTC, language, SECTIONS} from '../helpers';
+import {adUnit, getImage, getUTC} from '../helpers';
 import ThemeContext from '../context/ThemeContext';
 import FooterBannerAd from '../components/FooterBannerAd';
+import {MatchDBInterface, RootStackParams} from '../types';
+
+interface Props extends StackScreenProps<RootStackParams, 'Match'> {}
 
 const interstitial = InterstitialAd.createForAdRequest(adUnit('INTERSTITIAL'), {
   requestNonPersonalizedAdsOnly: true,
   keywords: ['football', 'world cup', 'sports'],
 });
 
-const Match = ({route, navigation}) => {
+const Match = ({route, navigation}: Props) => {
   const {match, editing, local} = route.params;
 
   const [date, setDate] = useState(moment(match.date).utcOffset(0));
@@ -44,9 +50,10 @@ const Match = ({route, navigation}) => {
   const [penv, setPenv] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
-  const [prevMatch, setPrevMatch] = useState({});
+  const [prevMatch, setPrevMatch] = useState<MatchDBInterface>();
 
-  const {saveMatch, matchesC, DBLoading, lang} = useApp();
+  const {saveMatch, matchesC, DBLoading} = useApp();
+  const {t} = useTranslation();
   const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
@@ -91,26 +98,26 @@ const Match = ({route, navigation}) => {
 
   useFocusEffect(focusEffect);
 
-  const handleLocal = type => {
-    if (type === 'add') {
-      setGoll(goll + 1);
-    } else {
-      if (goll === 0) {
-        return;
+  const handleGol = (team: 'local' | 'visit', type: 'add' | 'sub') => {
+    if (team === 'local') {
+      if (type === 'add') {
+        setGoll(goll + 1);
       } else {
-        setGoll(goll - 1);
+        if (goll === 0) {
+          return;
+        } else {
+          setGoll(goll - 1);
+        }
       }
-    }
-  };
-
-  const handleVisit = type => {
-    if (type === 'add') {
-      setGolv(golv + 1);
     } else {
-      if (golv === 0) {
-        return;
+      if (type === 'add') {
+        setGolv(golv + 1);
       } else {
-        setGolv(golv - 1);
+        if (golv === 0) {
+          return;
+        } else {
+          setGolv(golv - 1);
+        }
       }
     }
   };
@@ -121,7 +128,7 @@ const Match = ({route, navigation}) => {
       date: match.date,
       goll,
       golv,
-      id: match._id,
+      id: match.id,
       local: match.local,
       penl,
       penv,
@@ -130,7 +137,7 @@ const Match = ({route, navigation}) => {
     };
 
     if (
-      matchSave.goll + prevMatch?.golv === matchSave.golv + prevMatch?.goll &&
+      matchSave.goll + prevMatch?.golv! === matchSave.golv + prevMatch?.goll! &&
       matchSave.penl === 0 &&
       matchSave.penv === 0
     ) {
@@ -162,15 +169,15 @@ const Match = ({route, navigation}) => {
           <View style={styles.close}>
             <TouchableOpacity activeOpacity={0.7} onPress={handleClose}>
               <FontAwesomeIcon
-                style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
+                style={{...globalStyles.icon, ...globalStyles[`text-${mode}`]}}
                 size={18}
                 icon={faClose}
               />
             </TouchableOpacity>
           </View>
           <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
-            {editing && `${language[lang].editing}`}
-            {language[lang].match}
+            {editing && `${t('Match.editing')}`}
+            {t('Match.match')}
           </Text>
           <Text style={styles.date}>{date.format('lll')}</Text>
           <Text style={styles.stadium}>{local && local.stadium}</Text>
@@ -179,15 +186,18 @@ const Match = ({route, navigation}) => {
             <View>
               <Image
                 style={styles.logoTeam}
-                source={SECTIONS[mode][match.local]?.file}
+                source={getImage(mode, match.local)}
               />
               <View style={styles.match}>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => handleLocal('min')}>
+                  onPress={() => handleGol('local', 'sub')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
+                      style={{
+                        ...globalStyles.icon,
+                        ...globalStyles[`text-${mode}`],
+                      }}
                       size={18}
                       icon={faMinusCircle}
                     />
@@ -196,10 +206,13 @@ const Match = ({route, navigation}) => {
                 <Text style={styles.goals}>{goll}</Text>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => handleLocal('add')}>
+                  onPress={() => handleGol('local', 'add')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
+                      style={{
+                        ...globalStyles.icon,
+                        ...globalStyles[`text-${mode}`],
+                      }}
                       size={18}
                       icon={faPlusCircle}
                     />
@@ -211,15 +224,18 @@ const Match = ({route, navigation}) => {
             <View>
               <Image
                 style={styles.logoTeam}
-                source={SECTIONS[mode][match.visit]?.file}
+                source={getImage(mode, match.visit)}
               />
               <View style={styles.match}>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => handleVisit('min')}>
+                  onPress={() => handleGol('visit', 'sub')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
+                      style={{
+                        ...globalStyles.icon,
+                        ...globalStyles[`text-${mode}`],
+                      }}
                       size={18}
                       icon={faMinusCircle}
                     />
@@ -228,10 +244,13 @@ const Match = ({route, navigation}) => {
                 <Text style={styles.goals}>{golv}</Text>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => handleVisit('add')}>
+                  onPress={() => handleGol('visit', 'add')}>
                   <View style={styles.btnContainer}>
                     <FontAwesomeIcon
-                      style={[globalStyles.icon, globalStyles[`text-${mode}`]]}
+                      style={{
+                        ...globalStyles.icon,
+                        ...globalStyles[`text-${mode}`],
+                      }}
                       size={18}
                       icon={faPlusCircle}
                     />
@@ -256,11 +275,9 @@ const Match = ({route, navigation}) => {
               ) : (
                 <View style={{flexDirection: 'row'}}>
                   <FontAwesomeIcon
-                    style={[
-                      globalStyles.icon,
-                      {color: '#FFF', marginHorizontal: 5},
-                    ]}
+                    style={[globalStyles.icon, {marginHorizontal: 5}]}
                     size={14}
+                    color="#FFF"
                     icon={faSave}
                   />
                   <Text style={styles.textStyle}>
@@ -268,8 +285,8 @@ const Match = ({route, navigation}) => {
                     mode === 'UCL' &&
                     !!prevMatch &&
                     goll + prevMatch?.golv === golv + prevMatch?.goll
-                      ? `${language[lang].endTime}`
-                      : `${language[lang].save}`}
+                      ? `${t('Match.endTime')}`
+                      : `${t('Settings.save')}`}
                   </Text>
                 </View>
               )}

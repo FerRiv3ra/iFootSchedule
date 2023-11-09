@@ -2,7 +2,7 @@ import {View} from 'react-native';
 import React from 'react';
 
 import MatchDay from './MatchDay';
-import {MatchDBInterface} from '../types/database';
+import {MatchDBInterface} from '../types';
 
 interface Props {
   matchData: MatchDBInterface[];

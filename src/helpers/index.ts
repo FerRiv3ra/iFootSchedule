@@ -1,7 +1,6 @@
 import data from './data';
 import matchData from './matchData';
 import SECTIONS from './selectImg';
-import language from './translate';
 
 export * from './adUnit';
 export * from './calculatePosibility';
@@ -11,5 +10,6 @@ export * from './getMatches';
 export * from './getUTC';
 export * from './promCalculator';
 export * from './scale';
+export * from './getDataTeam';
 
-export {data, matchData, SECTIONS, language};
+export {data, matchData, SECTIONS};

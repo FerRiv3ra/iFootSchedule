@@ -1,8 +1,15 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useContext} from 'react';
-import ThemeContext from '../context/ThemeContext';
 
-const TableTeam = ({team, index}) => {
+import ThemeContext from '../context/ThemeContext';
+import {ChampTeamDBInterface, TeamDBInterface} from '../types';
+
+interface Props {
+  team: TeamDBInterface | ChampTeamDBInterface;
+  index: number;
+}
+
+const TableTeam = ({team, index}: Props) => {
   const {name, p, gf, ga, gd, pts} = team;
 
   const {mode} = useContext(ThemeContext);

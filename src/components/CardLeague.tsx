@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Image} from 'react-native';
-import {LeaguesDataInterface} from '../types/matches';
+import {LeaguesDataInterface} from '../types';
 
 interface Props {
   item: LeaguesDataInterface;

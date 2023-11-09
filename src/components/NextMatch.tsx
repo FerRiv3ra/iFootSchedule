@@ -11,6 +11,7 @@ import React, {useContext, useEffect, useState} from 'react';
 
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 
 import {getUTC} from '../helpers';
 import useApp from '../hooks/useApp';
@@ -19,9 +20,8 @@ import {
   ChampTeamDBInterface,
   MatchDBInterface,
   TeamDBInterface,
-} from '../types/database';
-import {getImage} from '../helpers/getImage';
-import {useTranslation} from 'react-i18next';
+} from '../types';
+import {getImage} from '../helpers';
 
 interface Props {
   nextMatch: MatchDBInterface;

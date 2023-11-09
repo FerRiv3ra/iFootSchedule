@@ -22,7 +22,7 @@ export interface DataContextProps {
   teamsC: ChampTeamDBInterface[];
   todayMatches: MatchDBInterface[];
   uiMode: MatchMode;
-  getChampion: (parent: MatchMode) => void;
+  getChampion: (parent: MatchMode) => TeamDBInterface | ChampTeamDBInterface;
   getMatchesToday: (parent: MatchMode) => void;
   getNextMatch: (mode: MatchMode) => void;
   getPendingMatches: (parent: MatchMode) => void;

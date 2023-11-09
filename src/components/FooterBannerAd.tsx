@@ -1,6 +1,8 @@
 import {View} from 'react-native';
 import React from 'react';
+
 import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
+
 import {adUnit} from '../helpers';
 import globalStyles from '../theme/styles';
 

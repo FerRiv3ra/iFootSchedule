@@ -6,10 +6,10 @@ import {useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faAngleRight} from '@fortawesome/free-solid-svg-icons';
 
-import {SECTIONS, getUTC} from '../helpers';
+import {getImage, getUTC} from '../helpers';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
-import {MatchDBInterface} from '../types/database';
+import {MatchDBInterface} from '../types';
 
 interface Props {
   match: MatchDBInterface;
@@ -36,7 +36,7 @@ const MatchDay = ({match, editing}: Props) => {
     <Pressable disabled={!editing} onPress={handleEdit}>
       <View style={styles.container}>
         <Text style={styles.text}>{local}</Text>
-        <Image style={styles.logoTeam} source={SECTIONS[mode][local]?.file} />
+        <Image style={styles.logoTeam} source={getImage(mode, local)} />
         <Text style={styles.hour}>
           {match.played
             ? `${match.goll} - ${match.golv}`
@@ -44,7 +44,7 @@ const MatchDay = ({match, editing}: Props) => {
                 moment(date).utcOffset(utc).minutes() || '00'
               }`}
         </Text>
-        <Image style={styles.logoTeam} source={SECTIONS[mode][visit]?.file} />
+        <Image style={styles.logoTeam} source={getImage(mode, visit)} />
         <Text style={styles.text}>{visit}</Text>
         {editing && (
           <FontAwesomeIcon

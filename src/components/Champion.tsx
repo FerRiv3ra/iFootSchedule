@@ -2,17 +2,27 @@ import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 
 import * as Animatable from 'react-native-animatable';
+import {useTranslation} from 'react-i18next';
 
-import {heightScale, withScale, SECTIONS, language} from '../helpers';
+import {heightScale, withScale} from '../helpers';
 import useApp from '../hooks/useApp';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
+import {ChampTeamDBInterface, TeamDBInterface, MatchMode} from '../types';
+import {getImage, getTitle} from '../helpers';
 
-const Champion = ({parent}) => {
-  const [champion, setChampion] = useState({});
+interface Props {
+  parent: MatchMode;
+}
+
+const Champion = ({parent}: Props) => {
+  const [champion, setChampion] = useState<
+    TeamDBInterface | ChampTeamDBInterface
+  >();
   const [loading, setLoading] = useState(true);
 
-  const {lang, getChampion} = useApp();
+  const {getChampion} = useApp();
+  const {t} = useTranslation();
   const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
@@ -27,7 +37,7 @@ const Champion = ({parent}) => {
   return (
     <View style={styles.container}>
       <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
-        {`${language[lang].championMessage} ${SECTIONS.trophy[mode]?.title}`}
+        {`${t('UI.championMessage')} ${getTitle('trophy', mode)}`}
       </Text>
       <Animatable.View animation="zoomIn" delay={500} duration={3000}>
         <Animatable.Image
@@ -36,7 +46,7 @@ const Champion = ({parent}) => {
           duration={2000}
           iterationCount="infinite"
           style={styles.logo}
-          source={SECTIONS.trophy[mode]?.file}
+          source={getImage('trophy', mode)}
         />
       </Animatable.View>
       <Animatable.View animation="zoomIn" delay={500} duration={3000}>
@@ -46,7 +56,7 @@ const Champion = ({parent}) => {
           duration={2000}
           iterationCount="infinite"
           style={styles.logoTeam}
-          source={SECTIONS[mode][champion.short_name]?.file}
+          source={getImage(mode, champion?.short_name!)}
         />
       </Animatable.View>
       <Animatable.Text
@@ -54,7 +64,7 @@ const Champion = ({parent}) => {
         duration={3000}
         iterationCount="infinite"
         style={[styles.title, globalStyles[`text-${mode}`], styles.name]}>
-        {champion.name}
+        {champion?.name}
       </Animatable.Text>
     </View>
   );

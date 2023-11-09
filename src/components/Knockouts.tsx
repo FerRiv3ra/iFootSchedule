@@ -6,13 +6,15 @@ import moment from 'moment';
 import KnockoutSide from './KnockoutSide';
 import globalStyles from '../theme/styles';
 import useApp from '../hooks/useApp';
-import {getUTC, SECTIONS} from '../helpers';
+import {getUTC} from '../helpers';
+import {MatchDBInterface} from '../types';
+import {getImage} from '../helpers';
 
 const Knockouts = () => {
   const [utc, setUtc] = useState('+00:00');
-  const [matchesP1, setMatchesP1] = useState([]);
-  const [matchesP2, setMatchesP2] = useState([]);
-  const [finalMatch, setFinalMatch] = useState({});
+  const [matchesP1, setMatchesP1] = useState<MatchDBInterface[]>([]);
+  const [matchesP2, setMatchesP2] = useState<MatchDBInterface[]>([]);
+  const [finalMatch, setFinalMatch] = useState<MatchDBInterface>();
   const [final, setFinal] = useState(false);
 
   const {matchesC, matchesPlayedC} = useApp();
@@ -41,32 +43,32 @@ const Knockouts = () => {
       {final ? (
         <View>
           <View style={styles.containerFinal}>
-            <Text style={styles.team}>{finalMatch.local}</Text>
+            <Text style={styles.team}>{finalMatch?.local}</Text>
             <Image
               style={styles.logoTeam}
-              source={SECTIONS[finalMatch.local]?.file}
+              source={getImage('UCL', finalMatch?.local!)}
             />
             <Text style={{color: '#111111'}}>VRS</Text>
             <Image
               style={styles.logoTeam}
-              source={SECTIONS[finalMatch.visit]?.file}
+              source={getImage('UCL', finalMatch?.visit!)}
             />
-            <Text style={styles.team}>{finalMatch.visit}</Text>
+            <Text style={styles.team}>{finalMatch?.visit}</Text>
           </View>
           <Text style={styles.date}>
-            {moment(finalMatch.dat).format('lll')}
+            {moment(finalMatch?.date).format('lll')}
           </Text>
         </View>
       ) : (
         <View style={styles.container}>
           <View style={globalStyles.flex}>
             {matchesP1.map(match => (
-              <KnockoutSide key={match._id} match={match} utc={utc} left />
+              <KnockoutSide key={match.id} match={match} utc={utc} left />
             ))}
           </View>
           <View style={globalStyles.flex}>
             {matchesP2.map(match => (
-              <KnockoutSide key={match._id} match={match} utc={utc} />
+              <KnockoutSide key={match.id} match={match} utc={utc} />
             ))}
           </View>
         </View>
