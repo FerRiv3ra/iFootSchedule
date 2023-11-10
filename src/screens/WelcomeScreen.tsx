@@ -22,7 +22,7 @@ import {leaguesData} from '../data/leaguesData';
 import CardLeague from '../components/CardLeague';
 import GradientBackground from '../components/GradientBackground';
 import ThemeContext from '../context/ThemeContext';
-import {RootStackParams} from '../types/navigator';
+import {MatchMode, RootStackParams} from '../types';
 import MainButton from '../components/MainButton';
 
 interface Props extends StackScreenProps<RootStackParams, 'WelcomeScreen'> {}
@@ -36,7 +36,7 @@ const WelcomeScreen = ({navigation}: Props) => {
 
   const selectGradient = (index: number) => {
     setMainColors(leaguesData[index].gradient);
-    setMode(leaguesData[index].id);
+    setMode(leaguesData[index].id as MatchMode);
   };
 
   const navigate = () => {

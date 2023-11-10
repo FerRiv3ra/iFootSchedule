@@ -35,6 +35,7 @@
     "ga": "GA",
     "gd": "GD",
     "gf": "GF",
+    "group": "Group",
     "pts": "Pts",
     "mp": "MP",
     "team": "TEAM"
@@ -43,28 +44,14 @@
     "editing": "Editing ",
     "editPlayed": "Edit Matches Played",
     "endTime": "End full time",
+    "goBack": "Go back",
     "goHome": "Go home",
     "match": "Match",
+    "matchPlayed": "Matches played",
     "nextMatch": "Next match",
     "pendingMatches": "Pending Matches",
     "round16": "Round of 16",
-    "todayMatches": "Today matches"
-  },
-  "cancel": "Cancel",
-  "chooseMode": "Choose mode",
-  "delete": "Delete",
-  "deletePlayground": "Delete playground data",
-  "errorChangeDay": "You will be able to change the day when you have saved all the results of the current day.",
-  "goBack": "Go back",
-  "group": "Group",
-  "matchPlayed": "Matches played",
-  "matchPlayedMessage": "You can edit before distributing round of 16.",
-  "msgPlayground": "The playground is not available in Champions League mode",
-  "playground": "Playground",
-  "quarter": "Quarter final",
-  "successMessage": "Data restored",
-  "thirdPlace": "Third place",
-  "winProbability": "Win Probability",
-  "draw": "Draw",
-  "waitingDraw": "Waiting for the quarter-final draw"
+    "todayMatches": "Today matches",
+    "waitingDraw": "Waiting for the quarter-final draw"
+  }
 }

@@ -11,8 +11,7 @@ import {
   laLigaDataMatches,
   premierLegueMatches,
 } from '../data';
-
-import {getDataFetch} from '../helpers';
+import {MatchInterface, MatchMode, TeamInterface} from '../types';
 
 // Realm
 const teamsSchemaConstructor = (name: string) => ({
@@ -55,6 +54,51 @@ const quickStart = async () => {
       deleteRealmIfMigrationNeeded: true,
     });
 
+    const writeTeamData = (data: TeamInterface[], collection: MatchMode) => {
+      if (!!data[0].draw) {
+        data.forEach(team => {
+          realm.write(() => {
+            realm.create(collection, {
+              _id: uuid(),
+              name: team.name,
+              short_name: team.short_name,
+              stadium: team.stadium,
+              p: team.p,
+              win: team.win,
+              draw: team.draw,
+              last: team.last,
+              lost: team.lost,
+              gf: team.gf,
+              ga: team.ga,
+              gd: team.gf - team.ga,
+              pts: team.pts,
+            });
+          });
+        });
+      }
+    };
+
+    const writeMatchData = (data: MatchInterface[], collection: MatchMode) => {
+      data.forEach(match => {
+        realm.write(() => {
+          realm.create(
+            `${
+              collection === 'UCL' ? collection.toLowerCase() : collection
+            }Matches`,
+            {
+              _id: uuid(),
+              local: match.local,
+              visit: match.visit,
+              date: match.date,
+              goll: match.goll,
+              golv: match.golv,
+              played: match.played,
+            },
+          );
+        });
+      });
+    };
+
     // await AsyncStorage.removeItem('newVersion');
     // await AsyncStorage.removeItem('laLigaVersion');
     // await AsyncStorage.removeItem('premierVersion');
@@ -78,13 +122,6 @@ const quickStart = async () => {
       await AsyncStorage.setItem('newVersion', 'true');
     }
 
-    if (!asKeys.includes('laLigaVersion')) {
-      await AsyncStorage.setItem('laLigaVersion', '1.0.0');
-      await AsyncStorage.setItem('premierVersion', '1.0.0');
-      await AsyncStorage.setItem('laLigaMatchesVersion', '1.0.0');
-      await AsyncStorage.setItem('premierMatchesVersion', '1.0.0');
-    }
-
     const dbLaLiga = realm.objects('laLiga');
     const dbPremier = realm.objects('premier');
     const dbUclTeams = realm.objects('uclTeams');
@@ -92,123 +129,17 @@ const quickStart = async () => {
     const dbPremierMatches = realm.objects('premierMatches');
     const dbUclMatches = realm.objects('uclMatches');
 
-    const {
-      laLigaDataFetch,
-      premierDataFetch,
-      laLigaMatchesDataFetch,
-      premierMatchesDataFetch,
-    } = await getDataFetch();
+    if (!dbLaLiga.length) {
+      writeTeamData(laLigaData, 'laLiga');
 
-    const laLigaVersion = await AsyncStorage.getItem('laLigaVersion');
-    const premierVersion = await AsyncStorage.getItem('premierVersion');
-    const laLigaMatchesVersion = await AsyncStorage.getItem(
-      'laLigaMatchesVersion',
-    );
-    const premierMatchesVersion = await AsyncStorage.getItem(
-      'premierMatchesVersion',
-    );
+      await AsyncStorage.setItem('laLigaVersion', '1.0.0');
+    }
 
-    // if (laLigaVersion === laLigaDataFetch.version) {
-    //   if (!dbLaLiga.length) {
-    //     laLigaData.forEach(team => {
-    //       realm.write(() => {
-    //         realm.create('laLiga', {
-    //           _id: uuid(),
-    //           name: team.name,
-    //           short_name: team.short_name,
-    //           stadium: team.stadium,
-    //           p: team.p,
-    //           win: team.win,
-    //           draw: team.draw,
-    //           last: team.last,
-    //           lost: team.lost,
-    //           gf: team.gf,
-    //           ga: team.ga,
-    //           gd: team.gf - team.ga,
-    //           pts: team.pts,
-    //         });
-    //       });
-    //     });
+    if (!dbPremier.length) {
+      writeTeamData(premierLeagueData, 'premier');
 
-    //     await AsyncStorage.setItem('laLigaVersion', '1.0.0');
-    //   }
-    // } else {
-    //   realm.write(() => {
-    //     realm.delete(dbLaLiga);
-    //   });
-
-    //   laLigaDataFetch.data.forEach(team => {
-    //     realm.write(() => {
-    //       realm.create('laLiga', {
-    //         _id: uuid(),
-    //         name: team.name,
-    //         short_name: team.short_name,
-    //         stadium: team.stadium,
-    //         p: team.p,
-    //         win: team.win,
-    //         draw: team.draw,
-    //         last: team.last,
-    //         lost: team.lost,
-    //         gf: team.gf,
-    //         ga: team.ga,
-    //         gd: team.gf - team.ga,
-    //         pts: team.pts,
-    //       });
-    //     });
-    //   });
-
-    //   await AsyncStorage.setItem('laLigaVersion', laLigaDataFetch.version);
-    // }
-
-    // if (premierVersion === premierDataFetch.version) {
-    //   if (!dbPremier.length) {
-    //     premierLeagueData.forEach(team => {
-    //       realm.write(() => {
-    //         realm.create('premier', {
-    //           _id: uuid(),
-    //           name: team.name,
-    //           short_name: team.short_name,
-    //           stadium: team.stadium,
-    //           p: team.p,
-    //           win: team.win,
-    //           draw: team.draw,
-    //           lost: team.lost,
-    //           gf: team.gf,
-    //           ga: team.ga,
-    //           gd: team.gf - team.ga,
-    //           pts: team.pts,
-    //         });
-    //       });
-    //     });
-
-    //     await AsyncStorage.setItem('premierVersion', '1.0.0');
-    //   }
-    // } else {
-    //   realm.write(() => {
-    //     realm.delete(dbPremier);
-    //   });
-
-    //   premierDataFetch.data.forEach(team => {
-    //     realm.write(() => {
-    //       realm.create('premier', {
-    //         _id: uuid(),
-    //         name: team.name,
-    //         short_name: team.short_name,
-    //         stadium: team.stadium,
-    //         p: team.p,
-    //         win: team.win,
-    //         draw: team.draw,
-    //         lost: team.lost,
-    //         gf: team.gf,
-    //         ga: team.ga,
-    //         gd: team.gf - team.ga,
-    //         pts: team.pts,
-    //       });
-    //     });
-    //   });
-
-    //   await AsyncStorage.setItem('premierVersion', premierDataFetch.version);
-    // }
+      await AsyncStorage.setItem('premierVersion', '1.0.0');
+    }
 
     if (!dbUclTeams.length) {
       champData.forEach(team => {
@@ -228,102 +159,20 @@ const quickStart = async () => {
       });
     }
 
-    // if (laLigaMatchesVersion === laLigaMatchesDataFetch.version) {
-    //   if (!dbLaLigaMatches.length) {
-    //     laLigaDataMatches.forEach(match => {
-    //       realm.write(() => {
-    //         realm.create('laLigaMatches', {
-    //           _id: uuid(),
-    //           local: match.local,
-    //           visit: match.visit,
-    //           date: match.date,
-    //           goll: match.goll,
-    //           golv: match.golv,
-    //           played: match.played,
-    //         });
-    //       });
-    //     });
-    //     await AsyncStorage.setItem('laLigaMatchesVersion', '1.0.0');
-    //   }
-    // } else {
-    //   realm.write(() => {
-    //     realm.delete(dbLaLigaMatches);
-    //   });
+    if (!dbLaLigaMatches.length) {
+      writeMatchData(laLigaDataMatches, 'laLiga');
 
-    //   laLigaMatchesDataFetch.data.forEach(match => {
-    //     realm.write(() => {
-    //       realm.create('laLigaMatches', {
-    //         _id: uuid(),
-    //         local: match.local,
-    //         visit: match.visit,
-    //         date: match.date,
-    //         goll: match.goll,
-    //         golv: match.golv,
-    //         played: match.played,
-    //       });
-    //     });
-    //   });
+      await AsyncStorage.setItem('laLigaMatchesVersion', '1.0.0');
+    }
 
-    //   await AsyncStorage.setItem(
-    //     'laLigaMatchesVersion',
-    //     laLigaMatchesDataFetch.version,
-    //   );
-    // }
+    if (!dbPremierMatches.length) {
+      writeMatchData(premierLegueMatches, 'premier');
 
-    // if (premierMatchesVersion === premierMatchesDataFetch.version) {
-    //   if (!dbPremierMatches.length) {
-    //     premierLegueMatches.forEach(match => {
-    //       realm.write(() => {
-    //         realm.create('premierMatches', {
-    //           _id: uuid(),
-    //           local: match.local,
-    //           visit: match.visit,
-    //           date: match.date,
-    //           goll: match.goll,
-    //           golv: match.golv,
-    //           played: match.played,
-    //         });
-    //       });
-    //     });
-
-    //     await AsyncStorage.setItem('premierMatchesVersion', '1.0.0');
-    //   }
-    // } else {
-    //   realm.write(() => {
-    //     realm.delete(dbPremierMatches);
-    //   });
-
-    //   premierMatchesDataFetch.data.forEach(match => {
-    //     realm.write(() => {
-    //       realm.create('premierMatches', {
-    //         _id: uuid(),
-    //         local: match.local,
-    //         visit: match.visit,
-    //         date: match.date,
-    //         goll: match.goll,
-    //         golv: match.golv,
-    //         played: match.played,
-    //       });
-    //     });
-    //   });
-
-    //   await AsyncStorage.setItem(
-    //     'premierMatchesVersion',
-    //     premierMatchesDataFetch.version,
-    //   );
-    // }
+      await AsyncStorage.setItem('premierMatchesVersion', '1.0.0');
+    }
 
     if (!dbUclMatches.length) {
-      champMatches.forEach(match => {
-        realm.write(() => {
-          realm.create('uclMatches', {
-            _id: uuid(),
-            local: match.local,
-            visit: match.visit,
-            date: match.date,
-          });
-        });
-      });
+      writeMatchData(champMatches, 'UCL');
     }
 
     realm.close();

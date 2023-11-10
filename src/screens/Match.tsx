@@ -128,7 +128,7 @@ const Match = ({route, navigation}: Props) => {
       date: match.date,
       goll,
       golv,
-      id: match.id,
+      _id: match._id,
       local: match.local,
       penl,
       penv,

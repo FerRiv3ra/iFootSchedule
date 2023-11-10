@@ -63,12 +63,12 @@ const Knockouts = () => {
         <View style={styles.container}>
           <View style={globalStyles.flex}>
             {matchesP1.map(match => (
-              <KnockoutSide key={match.id} match={match} utc={utc} left />
+              <KnockoutSide key={match._id} match={match} utc={utc} left />
             ))}
           </View>
           <View style={globalStyles.flex}>
             {matchesP2.map(match => (
-              <KnockoutSide key={match.id} match={match} utc={utc} />
+              <KnockoutSide key={match._id} match={match} utc={utc} />
             ))}
           </View>
         </View>

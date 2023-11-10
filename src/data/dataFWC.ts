@@ -1,4 +1,4 @@
-const matchData = [
+export const dataFWC = [
   // Match 1
   {
     local: 'QAT',
@@ -648,5 +648,3 @@ const matchData = [
     date: '2022-12-18T15:00:00+00:00',
   },
 ];
-
-export default matchData;

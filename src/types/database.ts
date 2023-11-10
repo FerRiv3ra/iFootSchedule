@@ -10,7 +10,7 @@ export interface MatchInterface {
 }
 
 export interface MatchDBInterface extends MatchInterface {
-  id: string;
+  _id: string;
 }
 
 export interface MatchResponse {
@@ -31,7 +31,7 @@ export interface TeamInterface {
   stadium: string;
   p: number;
   win: number;
-  last: MatchResult[];
+  last?: MatchResult[];
   draw: number;
   lost: number;
   gf: number;

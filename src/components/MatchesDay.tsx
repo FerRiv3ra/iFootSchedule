@@ -5,7 +5,7 @@ import MatchDay from './MatchDay';
 import {MatchDBInterface} from '../types';
 
 interface Props {
-  matchData: MatchDBInterface[];
+  matchData?: MatchDBInterface[];
   editing?: boolean;
 }
 
@@ -13,7 +13,7 @@ const MatchesDay = ({matchData, editing = false}: Props) => {
   return (
     <View>
       <View>
-        {matchData.map((match, index) => (
+        {matchData?.map((match, index) => (
           <MatchDay key={index} match={match} editing={editing} />
         ))}
       </View>

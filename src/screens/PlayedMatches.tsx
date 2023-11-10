@@ -11,20 +11,20 @@ import React, {useContext, useEffect, useState} from 'react';
 import useApp from '../hooks/useApp';
 import MatchesDay from '../components/MatchesDay';
 import globalStyles from '../theme/styles';
-import {language} from '../helpers';
 import ThemeContext from '../context/ThemeContext';
 import FooterBannerAd from '../components/FooterBannerAd';
 import {MatchDBInterface} from '../types/database';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParams} from '../types/navigator';
+import {useTranslation} from 'react-i18next';
 
 interface Props extends StackScreenProps<RootStackParams, 'PlayedMatches'> {}
 
 const PlayedMatches = ({navigation}: Props) => {
-  // TODO: Finalizar esta pantalla
   const [dataMatches, setDataMatches] = useState<MatchDBInterface[]>();
 
-  const {matchesC, laLigaMatches, premierMatches, DBLoading, lang} = useApp();
+  const {matchesC, laLigaMatches, premierMatches, DBLoading} = useApp();
+  const {t} = useTranslation();
   const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const PlayedMatches = ({navigation}: Props) => {
         <ScrollView>
           <View style={styles.container}>
             <Text style={[styles.titleMatch, globalStyles[`text-${mode}`]]}>
-              {language[lang.toUpperCase() as 'EN'].matchPlayed}
+              {t('Match.matchPlayed')}
             </Text>
             <MatchesDay matchData={dataMatches} editing={true} />
           </View>
@@ -59,7 +59,7 @@ const PlayedMatches = ({navigation}: Props) => {
               styles.btn,
             ]}>
             <Text style={[globalStyles.textBtn, {color: '#FFF'}]}>
-              {language[lang.toUpperCase() as 'EN'].goBack}
+              {t('Match.goBack')}
             </Text>
           </Pressable>
         </ScrollView>

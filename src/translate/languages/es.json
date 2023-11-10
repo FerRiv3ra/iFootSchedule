@@ -36,6 +36,7 @@
     "pts": "Pts",
     "ga": "GC",
     "gd": "DG",
+    "group": "Grupo",
     "mp": "PJ",
     "team": "SELECCIÓN"
   },
@@ -43,28 +44,14 @@
     "editing": "Editando ",
     "editPlayed": "Editar Partidos Jugados",
     "endTime": "Tiempo terminado",
+    "goBack": "Volver",
     "goHome": "Volver al inicio",
     "match": "Partido",
+    "matchPlayed": "Juegos jugados",
     "nextMatch": "Siguiente partido",
     "pendingMatches": "Partidos pendientes",
     "round16": "Octavos de final",
-    "todayMatches": "Partidos del día"
-  },
-  "cancel": "Cancelar",
-  "chooseMode": "Selecciona el modo",
-  "delete": "Borrar",
-  "waitingDraw": "Esperando el sorteo de cuartos de final",
-  "deletePlayground": "Borrar datos de simulación",
-  "errorChangeDay": "Podrás cambiar el día cuando hayas guardado todos los resultados del día actual.",
-  "goBack": "Volver",
-  "group": "Grupo",
-  "matchPlayed": "Juegos jugados",
-  "matchPlayedMessage": "Podrás editar antes de distribuir los octavos de final.",
-  "msgPlayground": "El modo simulación no está disponible en modo Champions League",
-  "playground": "Simulación",
-  "quarter": "Cuartos de final",
-  "successMessage": "Datos restaurados",
-  "thirdPlace": "Tercer puesto",
-  "winProbability": "Posibilidad de Victoria",
-  "draw": "Empate"
+    "todayMatches": "Partidos del día",
+    "waitingDraw": "Esperando el sorteo de cuartos de final"
+  }
 }
