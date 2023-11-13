@@ -34,7 +34,7 @@ const MatchDay = ({match, editing}: Props) => {
 
   return (
     <Pressable disabled={!editing} onPress={handleEdit}>
-      <View style={styles.container}>
+      <View style={{...styles.container, ...globalStyles.row}}>
         <Text style={styles.text}>{local}</Text>
         <Image style={styles.logoTeam} source={getImage(mode, local)} />
         <Text style={styles.hour}>
@@ -62,7 +62,6 @@ export default MatchDay;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderTopWidth: 1,

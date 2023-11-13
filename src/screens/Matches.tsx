@@ -1,22 +1,15 @@
-import {
-  Text,
-  View,
-  SafeAreaView,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native';
+import {Text, View, SafeAreaView, ScrollView, Pressable} from 'react-native';
 import React from 'react';
 
 import {useTranslation} from 'react-i18next';
 
 import Table from '../components/Table';
-import MatchesDay from '../components/MatchesDay';
 import globalStyles from '../theme/styles';
 import Knockouts from '../components/Knockouts';
 import FooterBannerAd from '../components/FooterBannerAd';
 import {useMatches} from '../hooks/useMatches';
 import {matchStyles} from '../theme/matchStyles';
+import {MatchesCard} from '../components/MatchesCard';
 
 const Matches = () => {
   const {
@@ -52,32 +45,19 @@ const Matches = () => {
 
         {getComponent(mode, loading, nextMatch)}
 
-        {loading ? (
-          <ActivityIndicator animating={loading} />
-        ) : (
-          todayMatches.length > 0 &&
-          playedGames < totalMatches && (
-            <View style={matchStyles.match}>
-              <Text
-                style={[matchStyles.titleMatch, globalStyles[`text-${mode}`]]}>
-                {t('Match.todayMatches')}
-              </Text>
-              <MatchesDay matchData={todayMatches} />
-            </View>
-          )
+        {todayMatches.length > 0 && playedGames < totalMatches && (
+          <MatchesCard
+            title={t('Match.todayMatches')}
+            matchData={todayMatches}
+            loading={loading}
+          />
         )}
-        {loading ? (
-          <ActivityIndicator animating={loading} />
-        ) : (
-          pendingMatches.length > 0 && (
-            <View style={matchStyles.match}>
-              <Text
-                style={[matchStyles.titleMatch, globalStyles[`text-${mode}`]]}>
-                {t('Match.pendingMatches')}
-              </Text>
-              <MatchesDay matchData={pendingMatches} />
-            </View>
-          )
+        {pendingMatches.length > 0 && (
+          <MatchesCard
+            title={t('Match.pendingMatches')}
+            matchData={pendingMatches}
+            loading={loading}
+          />
         )}
         {playedGames > 0 && !!nextMatch && (
           <Pressable

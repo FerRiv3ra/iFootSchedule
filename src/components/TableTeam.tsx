@@ -3,6 +3,7 @@ import React, {useContext} from 'react';
 
 import ThemeContext from '../context/ThemeContext';
 import {ChampTeamDBInterface, TeamDBInterface} from '../types';
+import globalStyles from '../theme/styles';
 
 interface Props {
   team: TeamDBInterface | ChampTeamDBInterface;
@@ -28,7 +29,7 @@ const TableTeam = ({team, index}: Props) => {
       : 'red';
 
   return (
-    <View style={{...styles.container, borderLeftColor}}>
+    <View style={{...styles.container, borderLeftColor, ...globalStyles.row}}>
       <Text style={styles.team}>{name}</Text>
       <View style={styles.border}>
         <Text style={styles.column}>{p}</Text>
@@ -57,7 +58,6 @@ const styles = StyleSheet.create({
     borderLeftColor: '#DDD',
   },
   container: {
-    flexDirection: 'row',
     borderTopWidth: 1,
     borderTopColor: '#DDD',
     paddingLeft: 3,

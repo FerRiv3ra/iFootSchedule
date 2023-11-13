@@ -35,7 +35,7 @@ const Champion = ({parent}: Props) => {
 
   console.log(champion);
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.whiteContainer}>
       <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
         {`${t('UI.championMessage')} ${getTitle('trophy', mode)}`}
       </Text>
@@ -73,12 +73,6 @@ const Champion = ({parent}: Props) => {
 export default Champion;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFF',
-    margin: 5,
-    padding: 10,
-    borderRadius: 10,
-  },
   logo: {
     height: heightScale(120),
     width: withScale(75),

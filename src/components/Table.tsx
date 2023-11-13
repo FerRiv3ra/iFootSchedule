@@ -47,7 +47,7 @@ const Table = ({group}: Props) => {
           ? 'La Liga'
           : 'Premier League'}
       </Text>
-      <View style={styles.containerGroup}>
+      <View style={{...styles.containerGroup, ...globalStyles.row}}>
         <Text style={styles.team}>{t('Table.team')}</Text>
         <View style={styles.border}>
           <Text style={styles.column}>{t('Table.mp')}</Text>
@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
   },
   containerGroup: {
     backgroundColor: '#FFF',
-    flexDirection: 'row',
     borderTopWidth: 1,
     borderTopColor: '#DDD',
   },

@@ -22,6 +22,7 @@ import {
   TeamDBInterface,
 } from '../types';
 import {getImage} from '../helpers';
+import globalStyles from '../theme/styles';
 
 interface Props {
   nextMatch: MatchDBInterface;
@@ -75,7 +76,7 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}: Props) => {
         <ActivityIndicator animating={loading} />
       ) : (
         <View>
-          <View style={styles.container}>
+          <View style={{...styles.container, ...globalStyles.row}}>
             <Text style={styles.team}>{nextMatch.local}</Text>
             <Image
               style={styles.logoTeam}
@@ -101,7 +102,6 @@ export default NextMatch;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,

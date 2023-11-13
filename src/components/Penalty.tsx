@@ -39,7 +39,7 @@ const Penalty = ({handleRounds, round}: Props) => {
   };
 
   return (
-    <View style={styles.buttons}>
+    <View style={{...styles.buttons, ...globalStyles.row}}>
       <Pressable onPress={handlePressL}>
         <FontAwesomeIcon
           style={[
@@ -80,7 +80,6 @@ export default Penalty;
 const styles = StyleSheet.create({
   buttons: {
     justifyContent: 'space-evenly',
-    flexDirection: 'row',
     marginVertical: 5,
   },
   icon: {

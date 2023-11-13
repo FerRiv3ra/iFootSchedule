@@ -20,7 +20,7 @@ const Penalties = ({setPenl, setPenv, handleSave}: Props) => {
   const {t} = useTranslation();
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.whiteContainer}>
       <Text style={[styles.title, globalStyles[`text-${mode}`]]}>
         {t('UI.penalties')}
       </Text>
@@ -55,12 +55,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     backgroundColor: '#DDD',
     marginVertical: 20,
-  },
-  container: {
-    backgroundColor: '#FFF',
-    margin: 5,
-    padding: 10,
-    borderRadius: 10,
   },
   icon: {
     color: '#FFF',

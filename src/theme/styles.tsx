@@ -55,6 +55,12 @@ const globalStyles = StyleSheet.create({
     fontSize: 16,
     color: '#111111',
   },
+  whiteContainer: {
+    backgroundColor: '#FFF',
+    margin: 5,
+    padding: 10,
+    borderRadius: 10,
+  },
   // Single
   flex: {
     flex: 1,
@@ -75,6 +81,9 @@ const globalStyles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     alignSelf: 'center',
+  },
+  row: {
+    flexDirection: 'row',
   },
 });
 

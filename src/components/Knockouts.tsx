@@ -42,7 +42,7 @@ const Knockouts = () => {
     <View>
       {final ? (
         <View>
-          <View style={styles.containerFinal}>
+          <View style={{...styles.containerFinal, ...globalStyles.row}}>
             <Text style={styles.team}>{finalMatch?.local}</Text>
             <Image
               style={styles.logoTeam}
@@ -60,7 +60,7 @@ const Knockouts = () => {
           </Text>
         </View>
       ) : (
-        <View style={styles.container}>
+        <View style={globalStyles.row}>
           <View style={globalStyles.flex}>
             {matchesP1.map(match => (
               <KnockoutSide key={match._id} match={match} utc={utc} left />
@@ -80,11 +80,7 @@ const Knockouts = () => {
 export default Knockouts;
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-  },
   containerFinal: {
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
