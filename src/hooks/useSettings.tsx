@@ -15,7 +15,7 @@ export const useSettings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentLang, setCurrentLang] = useState('');
 
-  const {lang, setLang} = useApp();
+  const {lang, setLanguage} = useApp();
   const {t} = useTranslation();
   const {mode} = useContext(ThemeContext);
 
@@ -118,7 +118,7 @@ export const useSettings = () => {
     await AsyncStorage.setItem('UTC', utc);
     await AsyncStorage.setItem('lang', currentLang);
 
-    setLang(currentLang as ValidLanguages);
+    setLanguage(currentLang as ValidLanguages);
 
     Alert.alert(t('Settings.success'), t('Settings.zoneLangMgs'));
   };

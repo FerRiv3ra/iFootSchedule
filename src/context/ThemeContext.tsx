@@ -1,5 +1,6 @@
 import React, {createContext, useState} from 'react';
 import {MatchMode, ThemeContextProps} from '../types';
+import useApp from '../hooks/useApp';
 
 const ThemeContext = createContext({} as ThemeContextProps);
 
@@ -13,6 +14,7 @@ export const ThemeProvider = ({children}: any) => {
   ]);
   const [prevColors, setPrevColors] = useState<string[]>([]);
   const [mode, setMode] = useState<MatchMode>('UCL');
+  const {changeMode} = useApp();
 
   const setMainColors = (colors: string[]) => {
     setColors(colors);
@@ -20,6 +22,11 @@ export const ThemeProvider = ({children}: any) => {
 
   const setPrevMainColors = (colors: string[]) => {
     setPrevColors(colors);
+  };
+
+  const setNewMode = (newMode: MatchMode) => {
+    setMode(newMode);
+    changeMode(newMode);
   };
 
   return (
@@ -30,7 +37,7 @@ export const ThemeProvider = ({children}: any) => {
         setMainColors,
         setPrevMainColors,
         mode,
-        setMode,
+        setNewMode,
       }}>
       {children}
     </ThemeContext.Provider>

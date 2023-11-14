@@ -8,29 +8,22 @@ import {
 
 export interface DataContextProps {
   DBLoading: boolean;
-  laLiga: TeamDBInterface[];
-  laLigaMatches: MatchDBInterface[];
-  lang: ValidLanguages;
-  matchesC: MatchDBInterface[];
-  matchesPlayed: number;
-  matchesPlayedC: number;
+  teams: TeamDBInterface[];
+  matches: MatchDBInterface[];
+  matchPlayed: number;
   nextMatch?: MatchDBInterface;
-  pendingMatches: MatchDBInterface[];
-  premier: TeamDBInterface[];
-  premierMatches: MatchDBInterface[];
-  premierPlayed: number;
-  teamsC: ChampTeamDBInterface[];
   todayMatches: MatchDBInterface[];
-  uiMode: MatchMode;
+  pendingMatches: MatchDBInterface[];
+  lang: ValidLanguages;
+  changeMode: (mode: MatchMode) => void;
   getChampion: (parent: MatchMode) => TeamDBInterface | ChampTeamDBInterface;
-  getMatchesToday: (parent: MatchMode) => void;
-  getNextMatch: (mode: MatchMode) => void;
-  getPendingMatches: (parent: MatchMode) => void;
+  getMatchesToday: () => void;
+  getNextMatch: () => void;
+  getPendingMatches: () => void;
   saveMatch: (
     match: MatchDBInterface,
     parent: MatchMode,
     editing?: boolean,
   ) => Promise<void>;
-  setLang: (lang: ValidLanguages) => void;
-  setUiMode: (mode: MatchMode) => void;
+  setLanguage: (language: ValidLanguages) => void;
 }

@@ -1,75 +1,61 @@
 import Realm from 'realm';
-import {
-  ChampTeamDBInterface,
-  MatchDBInterface,
-  TeamDBInterface,
-} from '../types/database';
+import {MatchDBInterface, TeamDBInterface} from '../types/database';
+import {MatchMode} from '../types';
 
 export const useRealmData = () => {
-  const getDataTeams = async () => {
+  const getDataTeams = async (collection: MatchMode) => {
     try {
       const realm = await Realm.open({path: 'ifootschedule'});
 
-      const laLiga = realm.objects<TeamDBInterface[]>('laLiga');
-      const premier = realm.objects<TeamDBInterface>('premier');
-      const dataTeamsC = realm.objects<ChampTeamDBInterface>('uclTeams');
+      let teamsData: TeamDBInterface[] = [];
+      let matchesDB;
+      let matchPlayed;
 
-      const laLigaMatches = realm.objects('laLigaMatches');
-      const premierMatches = realm.objects('premierMatches');
-      const dataMatchesC = realm.objects('uclMatches');
+      if (collection === 'laLiga') {
+        teamsData = realm
+          .objects('laLiga')
+          .sorted([
+            ['pts', true],
+            ['gd', true],
+            ['win', true],
+            ['gf', true],
+          ])
+          .toJSON();
+        matchesDB = realm.objects('laLigaMatches');
+      } else if (collection === 'premier') {
+        teamsData = realm
+          .objects('premier')
+          .sorted([
+            ['pts', true],
+            ['gd', true],
+            ['gf', true],
+          ])
+          .toJSON();
+        matchesDB = realm.objects('premierMatches');
+      } else if (collection === 'UCL') {
+        teamsData = realm
+          .objects('uclTeams')
+          .sorted([
+            ['pts', true],
+            ['gd', true],
+            ['gf', true],
+          ])
+          .toJSON();
+        matchesDB = realm.objects('uclMatches');
+      }
 
-      const orderTeamsC = dataTeamsC.sorted([
-        ['pts', true],
-        ['gd', true],
-        ['gf', true],
-      ]);
+      matchPlayed = matchesDB!.filtered('played = true').length;
 
-      const laLigaPlayed = laLigaMatches.filtered('played = true').length;
-      const premierPlayed = premierMatches.filtered('played = true').length;
-      const champPlayed = dataMatchesC.filtered('played = true').length;
-
-      const laLigaData: TeamDBInterface[] = laLiga
-        .sorted([
-          ['pts', true],
-          ['gd', true],
-          ['win', true],
-          ['gf', true],
-        ])
-        .toJSON();
-
-      const premierData: TeamDBInterface[] = premier
-        .sorted([
-          ['pts', true],
-          ['gd', true],
-          ['win', true],
-          ['gf', true],
-        ])
-        .toJSON();
-
-      const champTeams: ChampTeamDBInterface[] = orderTeamsC.toJSON();
-
-      const laLigaDataMatches: MatchDBInterface[] = laLigaMatches
-        .sorted([['date', false]])
-        .toJSON();
-      const premierDataMatches: MatchDBInterface[] = premierMatches
-        .sorted([['date', false]])
-        .toJSON();
-      const champDataMatches: MatchDBInterface[] = dataMatchesC
+      const matchData: MatchDBInterface[] = matchesDB!
         .sorted([['date', false]])
         .toJSON();
 
       realm.close();
 
       return {
-        laLigaPlayed,
-        premierPlayed,
-        champPlayed,
-        laLigaData,
-        premierData,
-        champTeams,
-        laLigaDataMatches,
-        premierDataMatches,
-        champDataMatches,
+        teamsData,
+        matchPlayed,
+        matchData,
       };
     } catch (err: any) {
       throw new Error(err.message);

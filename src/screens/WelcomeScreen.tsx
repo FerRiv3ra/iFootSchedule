@@ -30,13 +30,13 @@ interface Props extends StackScreenProps<RootStackParams, 'WelcomeScreen'> {}
 const WelcomeScreen = ({navigation}: Props) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {setMainColors, setMode, mode} = useContext(ThemeContext);
+  const {setMainColors, setNewMode, mode} = useContext(ThemeContext);
   const {top} = useSafeAreaInsets();
   const {width} = Dimensions.get('window');
 
   const selectGradient = (index: number) => {
     setMainColors(leaguesData[index].gradient);
-    setMode(leaguesData[index].id as MatchMode);
+    setNewMode(leaguesData[index].id as MatchMode);
   };
 
   const navigate = () => {

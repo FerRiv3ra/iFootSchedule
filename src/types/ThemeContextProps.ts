@@ -3,8 +3,8 @@ import {MatchMode} from './MatchesContextProps';
 export interface ThemeContextProps {
   colors: string[];
   prevColors: string[];
+  mode: MatchMode;
   setMainColors: (colors: string[]) => void;
   setPrevMainColors: (colors: string[]) => void;
-  mode: MatchMode;
-  setMode: (mode: MatchMode) => void;
+  setNewMode: (newMode: MatchMode) => void;
 }
