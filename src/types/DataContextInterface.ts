@@ -1,10 +1,6 @@
 import {ValidLanguages} from './ConfigContexInterface';
 import {MatchMode} from './MatchesContextProps';
-import {
-  ChampTeamDBInterface,
-  MatchDBInterface,
-  TeamDBInterface,
-} from './database';
+import {MatchDBInterface, TeamDBInterface} from './database';
 
 export interface DataContextProps {
   DBLoading: boolean;
@@ -16,7 +12,7 @@ export interface DataContextProps {
   pendingMatches: MatchDBInterface[];
   lang: ValidLanguages;
   changeMode: (mode: MatchMode) => void;
-  getChampion: (parent: MatchMode) => TeamDBInterface | ChampTeamDBInterface;
+  getChampion: (parent: MatchMode) => TeamDBInterface;
   getMatchesToday: () => void;
   getNextMatch: () => void;
   getPendingMatches: () => void;

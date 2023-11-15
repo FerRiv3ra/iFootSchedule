@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '../translate/i18nConfig';
 import {useAds} from '../hooks/useAds';
 import {
-  ChampTeamDBInterface,
   MatchDBInterface,
   TeamDBInterface,
   MatchMode,
@@ -120,7 +119,7 @@ const AppProvider = ({children}: any) => {
   };
 
   const getChampion = (parent: MatchMode) => {
-    let champion: TeamDBInterface | ChampTeamDBInterface;
+    let champion: TeamDBInterface;
 
     if (parent === 'UCL') {
       const lastMatch = matches[matches.length - 1];
@@ -138,159 +137,149 @@ const AppProvider = ({children}: any) => {
     parent: MatchMode,
     editing = false,
   ) => {
-    // TODO: Refactor this
-    //   try {
-    //     const realm = await Realm.open({path: 'ifootschedule'});
-    //     const dataMatch = parent === 'UCL' ? 'uclMatches' : `${parent}Matches`;
-    //     const dataTeam = parent === 'UCL' ? 'uclTeams' : parent;
-    //     let currentMatch: MatchDBInterface;
-    //     let local: TeamDBInterface | ChampTeamDBInterface;
-    //     let visit: TeamDBInterface | ChampTeamDBInterface;
-    //     if (parent === 'UCL') {
-    //       local = teamsC.filter(team => team.short_name === match.local)[0];
-    //       visit = teamsC.filter(team => team.short_name === match.visit)[0];
-    //     } else if (parent === 'laLiga') {
-    //       local = laLiga.filter(team => team.short_name === match.local)[0];
-    //       visit = laLiga.filter(team => team.short_name === match.visit)[0];
-    //     } else {
-    //       local = premier.filter(team => team.short_name === match.local)[0];
-    //       visit = premier.filter(team => team.short_name === match.visit)[0];
-    //     }
-    //     realm.write(() => {
-    //       const tempMatch = realm.objectForPrimaryKey<MatchDBInterface>(
-    //         dataMatch,
-    //         match._id,
-    //       );
-    //       currentMatch.goll = tempMatch?.goll || 0;
-    //       currentMatch.golv = tempMatch?.golv || 0;
-    //       tempMatch!.goll = match.goll;
-    //       tempMatch!.golv = match.golv;
-    //       tempMatch!.penl = match.penl;
-    //       tempMatch!.penv = match.penv;
-    //       tempMatch!.played = match.played;
-    //     });
-    //     let winner = '';
-    //     if (match.goll === match.golv) {
-    //       winner = 'draw';
-    //     } else if (match.goll > match.golv) {
-    //       winner = 'local';
-    //     } else {
-    //       winner = 'visit';
-    //     }
-    //     if (editing) {
-    //       let winEdit =
-    //         currentMatch!.goll === currentMatch!.golv
-    //           ? 'draw'
-    //           : currentMatch!.goll > currentMatch!.golv
-    //           ? 'local'
-    //           : 'visit';
-    //       realm.write(() => {
-    //         const tempTeamL = realm.objectForPrimaryKey<TeamDBInterface>(
-    //           dataTeam,
-    //           local._id,
-    //         );
-    //         tempTeamL!.gf = tempTeamL!.gf - currentMatch.goll + match.goll;
-    //         tempTeamL!.ga = tempTeamL!.ga - currentMatch.golv + match.golv;
-    //         tempTeamL!.gd = tempTeamL!.gf - tempTeamL!.ga;
-    //         tempTeamL!.pts =
-    //           tempTeamL!.pts -
-    //           (winEdit === 'draw' ? 1 : winEdit === 'local' ? 3 : 0) +
-    //           (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0);
-    //         if (parent !== 'UCL') {
-    //           tempTeamL!.win +=
-    //             (winEdit === 'local' ? -1 : 0) + (winner === 'local' ? 1 : 0);
-    //           tempTeamL!.draw +=
-    //             (winEdit === 'draw' ? -1 : 0) + (winner === 'draw' ? 1 : 0);
-    //           tempTeamL!.lost +=
-    //             (winEdit === 'visit' ? -1 : 0) + (winner === 'visit' ? 1 : 0);
-    //           tempTeamL!.last = [
-    //             ...tempTeamL!.last!.filter((item, index) => {
-    //               if (index > 0) return item;
-    //             }),
-    //             winner === 'draw' ? 'D' : winner === 'local' ? 'W' : 'L',
-    //           ];
-    //         }
-    //         const tempTeamV = realm.objectForPrimaryKey<TeamDBInterface>(
-    //           dataTeam,
-    //           visit._id,
-    //         );
-    //         tempTeamV!.gf = tempTeamV!.gf - currentMatch.golv + match.golv;
-    //         tempTeamV!.ga = tempTeamV!.ga - currentMatch.goll + match.goll;
-    //         tempTeamV!.gd = tempTeamV!.gf - tempTeamV!.ga;
-    //         tempTeamV!.pts =
-    //           tempTeamV!.pts -
-    //           (winEdit === 'draw' ? 1 : winEdit === 'visit' ? 3 : 0) +
-    //           (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0);
-    //         if (parent !== 'UCL') {
-    //           tempTeamV!.win =
-    //             tempTeamV!.win -
-    //             (winEdit === 'visit' ? 1 : 0) +
-    //             (winner === 'visit' ? 1 : 0);
-    //           tempTeamV!.draw =
-    //             tempTeamV!.draw -
-    //             (winEdit === 'draw' ? 1 : 0) +
-    //             (winner === 'draw' ? 1 : 0);
-    //           tempTeamV!.lost =
-    //             tempTeamV!.lost -
-    //             (winEdit === 'local' ? 1 : 0) +
-    //             (winner === 'local' ? 1 : 0);
-    //           tempTeamV!.last = [
-    //             ...tempTeamV!.last!.filter((item, index) => {
-    //               if (index > 0) return item;
-    //             }),
-    //             winner === 'draw' ? 'D' : winner === 'visit' ? 'W' : 'L',
-    //           ];
-    //         }
-    //       });
-    //     } else {
-    //       realm.write(() => {
-    //         const tempTeamL = realm.objectForPrimaryKey<TeamDBInterface>(
-    //           dataTeam,
-    //           local._id,
-    //         );
-    //         tempTeamL!.p += 1;
-    //         tempTeamL!.gf += match.goll;
-    //         tempTeamL!.ga += match.golv;
-    //         tempTeamL!.gd = tempTeamL!.gf - tempTeamL!.ga;
-    //         tempTeamL!.pts += winner === 'draw' ? 1 : winner === 'local' ? 3 : 0;
-    //         if (parent !== 'UCL') {
-    //           tempTeamL!.win += winner === 'local' ? 1 : 0;
-    //           tempTeamL!.draw += winner === 'draw' ? 1 : 0;
-    //           tempTeamL!.lost += winner === 'visit' ? 1 : 0;
-    //           tempTeamL!.last = [
-    //             ...tempTeamL!.last!.filter((item, index) => {
-    //               if (index > 0) return item;
-    //             }),
-    //             winner === 'draw' ? 'D' : winner === 'local' ? 'W' : 'L',
-    //           ];
-    //         }
-    //         const tempTeamV = realm.objectForPrimaryKey<TeamDBInterface>(
-    //           dataTeam,
-    //           visit._id,
-    //         );
-    //         tempTeamV!.p += 1;
-    //         tempTeamV!.gf += match.golv;
-    //         tempTeamV!.ga += match.goll;
-    //         tempTeamV!.gd = tempTeamV!.gf - tempTeamV!.ga;
-    //         tempTeamV!.pts += winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0;
-    //         if (parent !== 'UCL') {
-    //           tempTeamV!.win += winner === 'visit' ? 1 : 0;
-    //           tempTeamV!.draw += winner === 'draw' ? 1 : 0;
-    //           tempTeamV!.lost += winner === 'local' ? 1 : 0;
-    //           tempTeamV!.last = [
-    //             ...tempTeamV!.last!.filter((item, index) => {
-    //               if (index > 0) return item;
-    //             }),
-    //             winner === 'draw' ? 'D' : winner === 'visit' ? 'W' : 'L',
-    //           ];
-    //         }
-    //       });
-    //     }
-    //     realm.close();
-    //     await getData();
-    //   } catch (err: any) {
-    //     console.error('Failed to open the realm', err.message);
-    //   }
+    try {
+      const realm = await Realm.open({path: 'ifootschedule'});
+
+      const collectionMatch =
+        parent === 'UCL' ? 'uclMatches' : `${parent}Matches`;
+      const collectionTeam = parent === 'UCL' ? 'uclTeams' : parent;
+
+      let currentMatch: MatchDBInterface;
+      let local = teams.filter(team => team.short_name === match.local)[0];
+      let visit = teams.filter(team => team.short_name === match.visit)[0];
+
+      realm.write(() => {
+        const tempMatch = realm.objectForPrimaryKey<MatchDBInterface>(
+          collectionMatch,
+          match._id,
+        );
+        currentMatch.goll = tempMatch?.goll || 0;
+        currentMatch.golv = tempMatch?.golv || 0;
+        tempMatch!.goll = match.goll;
+        tempMatch!.golv = match.golv;
+        tempMatch!.penl = match.penl;
+        tempMatch!.penv = match.penv;
+        tempMatch!.played = match.played;
+      });
+      let winner = '';
+      if (match.goll === match.golv) {
+        winner = 'draw';
+      } else if (match.goll > match.golv) {
+        winner = 'local';
+      } else {
+        winner = 'visit';
+      }
+      if (editing) {
+        let winEdit =
+          currentMatch!.goll === currentMatch!.golv
+            ? 'draw'
+            : currentMatch!.goll > currentMatch!.golv
+            ? 'local'
+            : 'visit';
+        realm.write(() => {
+          const tempTeamL = realm.objectForPrimaryKey<TeamDBInterface>(
+            collectionTeam,
+            local._id,
+          );
+          tempTeamL!.gf = tempTeamL!.gf - currentMatch.goll + match.goll;
+          tempTeamL!.ga = tempTeamL!.ga - currentMatch.golv + match.golv;
+          tempTeamL!.gd = tempTeamL!.gf - tempTeamL!.ga;
+          tempTeamL!.pts =
+            tempTeamL!.pts -
+            (winEdit === 'draw' ? 1 : winEdit === 'local' ? 3 : 0) +
+            (winner === 'draw' ? 1 : winner === 'local' ? 3 : 0);
+
+          tempTeamL!.win +=
+            (winEdit === 'local' ? -1 : 0) + (winner === 'local' ? 1 : 0);
+          tempTeamL!.draw +=
+            (winEdit === 'draw' ? -1 : 0) + (winner === 'draw' ? 1 : 0);
+          tempTeamL!.lost +=
+            (winEdit === 'visit' ? -1 : 0) + (winner === 'visit' ? 1 : 0);
+          tempTeamL!.last = [
+            ...tempTeamL!.last!.filter((item, index) => {
+              if (index > 0) return item;
+            }),
+            winner === 'draw' ? 'D' : winner === 'local' ? 'W' : 'L',
+          ];
+
+          const tempTeamV = realm.objectForPrimaryKey<TeamDBInterface>(
+            collectionTeam,
+            visit._id,
+          );
+          tempTeamV!.gf = tempTeamV!.gf - currentMatch.golv + match.golv;
+          tempTeamV!.ga = tempTeamV!.ga - currentMatch.goll + match.goll;
+          tempTeamV!.gd = tempTeamV!.gf - tempTeamV!.ga;
+          tempTeamV!.pts =
+            tempTeamV!.pts -
+            (winEdit === 'draw' ? 1 : winEdit === 'visit' ? 3 : 0) +
+            (winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0);
+          tempTeamV!.win =
+            tempTeamV!.win -
+            (winEdit === 'visit' ? 1 : 0) +
+            (winner === 'visit' ? 1 : 0);
+          tempTeamV!.draw =
+            tempTeamV!.draw -
+            (winEdit === 'draw' ? 1 : 0) +
+            (winner === 'draw' ? 1 : 0);
+          tempTeamV!.lost =
+            tempTeamV!.lost -
+            (winEdit === 'local' ? 1 : 0) +
+            (winner === 'local' ? 1 : 0);
+          tempTeamV!.last = [
+            ...tempTeamV!.last!.filter((item, index) => {
+              if (index > 0) return item;
+            }),
+            winner === 'draw' ? 'D' : winner === 'visit' ? 'W' : 'L',
+          ];
+        });
+      } else {
+        realm.write(() => {
+          const tempTeamL = realm.objectForPrimaryKey<TeamDBInterface>(
+            collectionTeam,
+            local._id,
+          );
+          tempTeamL!.p += 1;
+          tempTeamL!.gf += match.goll;
+          tempTeamL!.ga += match.golv;
+          tempTeamL!.gd = tempTeamL!.gf - tempTeamL!.ga;
+          tempTeamL!.pts += winner === 'draw' ? 1 : winner === 'local' ? 3 : 0;
+
+          tempTeamL!.win += winner === 'local' ? 1 : 0;
+          tempTeamL!.draw += winner === 'draw' ? 1 : 0;
+          tempTeamL!.lost += winner === 'visit' ? 1 : 0;
+          tempTeamL!.last = [
+            ...tempTeamL!.last!.filter((item, index) => {
+              if (index > 0) return item;
+            }),
+            winner === 'draw' ? 'D' : winner === 'local' ? 'W' : 'L',
+          ];
+
+          const tempTeamV = realm.objectForPrimaryKey<TeamDBInterface>(
+            collectionTeam,
+            visit._id,
+          );
+          tempTeamV!.p += 1;
+          tempTeamV!.gf += match.golv;
+          tempTeamV!.ga += match.goll;
+          tempTeamV!.gd = tempTeamV!.gf - tempTeamV!.ga;
+          tempTeamV!.pts += winner === 'draw' ? 1 : winner === 'visit' ? 3 : 0;
+
+          tempTeamV!.win += winner === 'visit' ? 1 : 0;
+          tempTeamV!.draw += winner === 'draw' ? 1 : 0;
+          tempTeamV!.lost += winner === 'local' ? 1 : 0;
+          tempTeamV!.last = [
+            ...tempTeamV!.last!.filter((item, index) => {
+              if (index > 0) return item;
+            }),
+            winner === 'draw' ? 'D' : winner === 'visit' ? 'W' : 'L',
+          ];
+        });
+      }
+      realm.close();
+      await getData(parent);
+    } catch (err: any) {
+      console.error('Failed to open the realm', err.message);
+    }
   };
 
   return (

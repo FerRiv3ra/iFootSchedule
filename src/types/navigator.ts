@@ -1,8 +1,4 @@
-import {
-  ChampTeamInterface,
-  MatchDBInterface,
-  TeamDBInterface,
-} from './database';
+import {MatchDBInterface, TeamDBInterface} from './database';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
@@ -10,7 +6,7 @@ export type RootStackParams = {
   Match: {
     match: MatchDBInterface;
     editing?: boolean;
-    local?: TeamDBInterface | ChampTeamInterface;
+    local?: TeamDBInterface;
   };
   PlayedMatches: {parent: 'Matches' | 'Playground'};
   Countdown: undefined;

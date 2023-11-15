@@ -29,8 +29,7 @@ export const useMatches = () => {
     pendingMatches,
     getNextMatch,
     nextMatch,
-    matchesPlayed,
-    matchesPlayedC,
+    matchPlayed,
   } = useApp();
   const {mode} = useContext(ThemeContext);
 
@@ -38,14 +37,11 @@ export const useMatches = () => {
 
   const focusEffect = useCallback(() => {
     setLoading(true);
-    getNextMatch(mode);
-    getPendingMatches(mode);
-    getMatchesToday(mode);
-    if (mode === 'UCL') {
-      setPlayedGames(matchesPlayedC);
-    } else {
-      setPlayedGames(matchesPlayed);
-    }
+    getNextMatch();
+    getPendingMatches();
+    getMatchesToday();
+    setPlayedGames(matchPlayed);
+
     setLoading(false);
   }, [DBLoading]);
 

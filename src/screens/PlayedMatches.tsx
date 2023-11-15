@@ -23,18 +23,12 @@ interface Props extends StackScreenProps<RootStackParams, 'PlayedMatches'> {}
 const PlayedMatches = ({navigation}: Props) => {
   const [dataMatches, setDataMatches] = useState<MatchDBInterface[]>();
 
-  const {matchesC, laLigaMatches, premierMatches, DBLoading} = useApp();
+  const {matches, DBLoading} = useApp();
   const {t} = useTranslation();
   const {mode} = useContext(ThemeContext);
 
   useEffect(() => {
-    if (mode === 'laLiga') {
-      setDataMatches(laLigaMatches.filter(match => match.played));
-    } else if (mode === 'UCL') {
-      setDataMatches(matchesC.filter(match => match.played));
-    } else {
-      setDataMatches(premierMatches.filter(match => match.played));
-    }
+    setDataMatches(matches.filter(match => match.played));
   }, [DBLoading]);
 
   const goBack = () => {

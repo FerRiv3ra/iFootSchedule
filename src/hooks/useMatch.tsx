@@ -25,7 +25,7 @@ export const useMatch = (match: MatchDBInterface, editing?: boolean) => {
 
   const [prevMatch, setPrevMatch] = useState<MatchDBInterface>();
 
-  const {saveMatch, matchesC, DBLoading} = useApp();
+  const {saveMatch, matches, DBLoading} = useApp();
   const {mode} = useContext(ThemeContext);
   const navigation = useNavigation();
 
@@ -40,7 +40,7 @@ export const useMatch = (match: MatchDBInterface, editing?: boolean) => {
   useEffect(() => {
     if (mode === 'UCL') {
       setPrevMatch(
-        matchesC.filter(m => {
+        matches.filter(m => {
           if (match.visit === m.local && m.played) return m;
         })[0],
       );

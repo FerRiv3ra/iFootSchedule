@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Realm from 'realm';
 import {v4 as uuid} from 'uuid';
 
-import {matchesProps, teamsChampProps, teamsProperties} from './dbProperties';
+import {matchesProps, teamsProperties} from './dbProperties';
 import {
   laLigaData,
   premierLeagueData,
@@ -20,12 +20,6 @@ const teamsSchemaConstructor = (name: string) => ({
   primaryKey: '_id',
 });
 
-const teamsSchemaChampions = (name: string) => ({
-  name,
-  properties: teamsChampProps,
-  primaryKey: '_id',
-});
-
 const matchesSchemaConstructor = (name: string) => ({
   name,
   primaryKey: '_id',
@@ -34,9 +28,9 @@ const matchesSchemaConstructor = (name: string) => ({
 
 const laLiga = teamsSchemaConstructor('laLiga');
 const premier = teamsSchemaConstructor('premier');
+const uclTeams = teamsSchemaConstructor('uclTeams');
 const laLigaMatches = matchesSchemaConstructor('laLigaMatches');
 const premierMatches = matchesSchemaConstructor('premierMatches');
-const uclTeams = teamsSchemaChampions('uclTeams');
 const uclMatches = matchesSchemaConstructor('uclMatches');
 
 const quickStart = async () => {
@@ -58,7 +52,7 @@ const quickStart = async () => {
       if (!!data[0].draw) {
         data.forEach(team => {
           realm.write(() => {
-            realm.create(collection, {
+            realm.create(collection === 'UCL' ? 'uclTeams' : collection, {
               _id: uuid(),
               name: team.name,
               short_name: team.short_name,
@@ -142,21 +136,7 @@ const quickStart = async () => {
     }
 
     if (!dbUclTeams.length) {
-      champData.forEach(team => {
-        realm.write(() => {
-          realm.create('uclTeams', {
-            _id: uuid(),
-            name: team.name,
-            short_name: team.short_name,
-            stadium: team.stadium,
-            group: team.group,
-            p: team.p,
-            gf: team.gf,
-            gd: team.gf - team.ga,
-            pts: team.pts,
-          });
-        });
-      });
+      writeTeamData(champData, 'UCL');
     }
 
     if (!dbLaLigaMatches.length) {

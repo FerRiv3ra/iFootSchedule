@@ -1,16 +1,12 @@
 import {MatchMode} from '../types/MatchesContextProps';
-import {
-  ChampTeamDBInterface,
-  MatchDBInterface,
-  TeamDBInterface,
-} from '../types/database';
+import {MatchDBInterface, TeamDBInterface} from '../types/database';
 
 export const getChampionData = (
-  teamsData: TeamDBInterface[] | ChampTeamDBInterface[],
+  teamsData: TeamDBInterface[],
   matchMode: MatchMode,
   lastMatch?: MatchDBInterface,
 ) => {
-  let champion: TeamDBInterface | ChampTeamDBInterface;
+  let champion: TeamDBInterface;
 
   if (matchMode === 'UCL') {
     const {local, goll, penl, visit, golv, penv} = lastMatch!;

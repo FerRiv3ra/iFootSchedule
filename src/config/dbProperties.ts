@@ -41,34 +41,6 @@ export const teamsProperties = {
   },
 };
 
-export const teamsChampProps = {
-  _id: 'string',
-  name: 'string',
-  group: 'string',
-  short_name: 'string',
-  stadium: 'string',
-  p: {
-    type: 'int',
-    default: 0,
-  },
-  gf: {
-    type: 'int',
-    default: 0,
-  },
-  ga: {
-    type: 'int',
-    default: 0,
-  },
-  gd: {
-    type: 'int',
-    default: 0,
-  },
-  pts: {
-    type: 'int',
-    default: 0,
-  },
-};
-
 export const matchesProps = {
   _id: 'string',
   local: 'string',

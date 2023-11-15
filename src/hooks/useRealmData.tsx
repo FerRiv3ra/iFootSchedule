@@ -4,6 +4,12 @@ import {MatchMode} from '../types';
 
 export const useRealmData = () => {
   const getDataTeams = async (collection: MatchMode) => {
+    if (collection === 'FWC')
+      return {
+        teamsData: [],
+        matchPlayed: 0,
+        matchData: [],
+      };
     try {
       const realm = await Realm.open({path: 'ifootschedule'});
 
@@ -46,9 +52,8 @@ export const useRealmData = () => {
 
       matchPlayed = matchesDB!.filtered('played = true').length;
 
-      const matchData: MatchDBInterface[] = matchesDB!
-        .sorted([['date', false]])
-        .toJSON();
+      const matchData: MatchDBInterface[] =
+        matchesDB!.sorted([['date', false]]).toJSON() || [];
 
       realm.close();
 

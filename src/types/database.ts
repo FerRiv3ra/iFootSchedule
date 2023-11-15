@@ -32,6 +32,7 @@ export interface TeamInterface {
   p: number;
   win: number;
   last?: MatchResult[];
+  group?: string;
   draw: number;
   lost: number;
   gf: number;
@@ -41,26 +42,5 @@ export interface TeamInterface {
 }
 
 export interface TeamDBInterface extends TeamInterface {
-  _id: string;
-}
-
-export interface ChampResponse {
-  version: string;
-  data: ChampTeamInterface[];
-}
-
-export interface ChampTeamInterface {
-  name: string;
-  group: string;
-  short_name: string;
-  stadium: string;
-  p: number;
-  gf: number;
-  ga: number;
-  gd?: number;
-  pts: number;
-}
-
-export interface ChampTeamDBInterface extends ChampTeamInterface {
   _id: string;
 }

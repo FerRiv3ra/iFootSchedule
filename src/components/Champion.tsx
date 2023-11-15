@@ -8,7 +8,7 @@ import {heightScale, withScale} from '../helpers';
 import useApp from '../hooks/useApp';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
-import {ChampTeamDBInterface, TeamDBInterface, MatchMode} from '../types';
+import {TeamDBInterface, MatchMode} from '../types';
 import {getImage, getTitle} from '../helpers';
 
 interface Props {
@@ -16,9 +16,7 @@ interface Props {
 }
 
 const Champion = ({parent}: Props) => {
-  const [champion, setChampion] = useState<
-    TeamDBInterface | ChampTeamDBInterface
-  >();
+  const [champion, setChampion] = useState<TeamDBInterface>();
   const [loading, setLoading] = useState(true);
 
   const {getChampion} = useApp();

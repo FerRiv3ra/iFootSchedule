@@ -16,11 +16,7 @@ import {useTranslation} from 'react-i18next';
 import {getUTC} from '../helpers';
 import useApp from '../hooks/useApp';
 import ThemeContext from '../context/ThemeContext';
-import {
-  ChampTeamDBInterface,
-  MatchDBInterface,
-  TeamDBInterface,
-} from '../types';
+import {MatchDBInterface, TeamDBInterface} from '../types';
 import {getImage} from '../helpers';
 import globalStyles from '../theme/styles';
 
@@ -33,11 +29,11 @@ interface Props {
 const NextMatch = ({nextMatch, pendingMatches, todayMatches}: Props) => {
   const [date, setDate] = useState(moment(nextMatch.date));
   const [loading, setLoading] = useState(true);
-  const [local, setLocal] = useState<TeamDBInterface | ChampTeamDBInterface>();
+  const [local, setLocal] = useState<TeamDBInterface>();
 
   const navigation = useNavigation<any>();
   const {t} = useTranslation();
-  const {teamsC, laLiga, premier} = useApp();
+  const {teams} = useApp();
   const {mode} = useContext(ThemeContext);
 
   const matchSet = [...pendingMatches, ...todayMatches];
@@ -45,13 +41,7 @@ const NextMatch = ({nextMatch, pendingMatches, todayMatches}: Props) => {
   useEffect(() => {
     setLoading(true);
 
-    if (mode === 'UCL') {
-      setLocal(teamsC.filter(team => team.short_name === nextMatch.local)[0]);
-    } else if (mode === 'laLiga') {
-      setLocal(laLiga.filter(team => team.short_name === nextMatch.local)[0]);
-    } else {
-      setLocal(premier.filter(team => team.short_name === nextMatch.local)[0]);
-    }
+    setLocal(teams.filter(team => team.short_name === nextMatch.local)[0]);
 
     getUTC().then(
       value => value && setDate(moment(nextMatch.date).utcOffset(value)),

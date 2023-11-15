@@ -9,15 +9,15 @@ export const useKnockoutSide = (match: MatchDBInterface) => {
   const [prevMatch, setPrevMatch] = useState<MatchDBInterface>();
 
   const {mode} = useContext(ThemeContext);
-  const {matchesPlayedC, matchesC} = useApp();
+  const {matchPlayed, matches} = useApp();
 
   useEffect(() => {
-    const previous = matchesC.filter(
+    const previous = matches.filter(
       m => match.visit === m.local && m.played,
     )[0];
 
     setPrevMatch(previous);
-    if (match.played && matchesPlayedC > 8) {
+    if (match.played && matchPlayed > 8) {
       if (
         previous &&
         match.goll + match.penl + previous.golv >

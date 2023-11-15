@@ -2,11 +2,11 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {useContext} from 'react';
 
 import ThemeContext from '../context/ThemeContext';
-import {ChampTeamDBInterface, TeamDBInterface} from '../types';
+import {TeamDBInterface} from '../types';
 import globalStyles from '../theme/styles';
 
 interface Props {
-  team: TeamDBInterface | ChampTeamDBInterface;
+  team: TeamDBInterface;
   index: number;
 }
 

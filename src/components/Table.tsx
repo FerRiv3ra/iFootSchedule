@@ -7,36 +7,26 @@ import TableTeam from './TableTeam';
 import useApp from '../hooks/useApp';
 import globalStyles from '../theme/styles';
 import ThemeContext from '../context/ThemeContext';
-import {ChampTeamDBInterface, TeamDBInterface} from '../types';
+import {TeamDBInterface} from '../types';
 
 interface Props {
   group: string;
 }
 
 const Table = ({group}: Props) => {
-  const [data, setData] = useState<ChampTeamDBInterface[] | TeamDBInterface[]>(
-    [],
-  );
+  const [data, setData] = useState<TeamDBInterface[]>([]);
 
   const {mode} = useContext(ThemeContext);
   const {t} = useTranslation();
-  const {laLiga, premier, teamsC} = useApp();
+  const {teams} = useApp();
 
   useEffect(() => {
-    switch (mode) {
-      case 'UCL':
-        setData(teamsC.filter(t => t.group === group));
-        break;
-      case 'laLiga':
-        setData(laLiga);
-        break;
-      case 'premier':
-        setData(premier);
-        break;
-      default:
-        break;
+    if (mode === 'UCL') {
+      setData(teams.filter(t => t.group === group));
+    } else {
+      setData(teams);
     }
-  }, [laLiga, premier, teamsC]);
+  }, [teams]);
 
   return (
     <View style={styles.container}>

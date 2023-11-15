@@ -17,26 +17,26 @@ const Knockouts = () => {
   const [finalMatch, setFinalMatch] = useState<MatchDBInterface>();
   const [final, setFinal] = useState(false);
 
-  const {matchesC, matchesPlayedC} = useApp();
+  const {matches, matchPlayed} = useApp();
 
   useEffect(() => {
     getUTC().then(value => value && setUtc(value));
   }, []);
 
   useEffect(() => {
-    const limit = matchesPlayedC < 8 ? 8 : 16;
+    const limit = matchPlayed < 8 ? 8 : 16;
 
     setMatchesP1(
-      matchesC.filter((match, index) => {
+      matches.filter((match, index) => {
         if (index >= limit - 8 && index < limit - 4) return match;
       }),
     );
     setMatchesP2(
-      matchesC.filter((match, index) => {
+      matches.filter((match, index) => {
         if (index >= limit - 4 && index < limit) return match;
       }),
     );
-  }, [matchesPlayedC]);
+  }, [matchPlayed]);
 
   return (
     <View>
